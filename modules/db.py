@@ -1,19 +1,42 @@
 #!/usr/bin/env python
 import sqlite
 
+import time
 from string import strip
 
 class database:
 
 	def __init__(self):
 
-		self.db = sqlite.connect("meta.db")
+		self.db = sqlite.connect("/etc/datenfresser.db")
 		self.cursor = self.db.cursor()
 
 
 	def install(self):
 		'''check if our database is installed properly'''
 		self.checkTables()
+
+	def tickAction(self):
+		#1. get all dataContainer without any log entry
+		sql="SELECT dataID FROM 'log'"		
+		self.cursor.execute(sql)
+		rows=self.cursor.fetchall()
+		print rows
+
+		sql="SELECT dataID FROM 'dataContainer'"		
+		self.cursor.execute(sql)
+		rows=self.cursor.fetchall()
+		for row in rows:
+			print row[0]
+
+
+
+		#2. get all entries where schedule="weekly" and timestamp - today > 604800 (7*24*60*60)
+		today=time.time()
+		
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE %s - log.timestamp > 604800 AND dataContainer.dataID = log.dataID"
+		rows=self.cursor.fetchall()
+		print rows
 
 
 
@@ -29,7 +52,7 @@ class database:
 
         	if not row:
 			sql="CREATE TABLE 'rootContainer' (rootID INTEGER PRIMARY KEY, name TEXT, comment TEXT)"
-			self.cursor.execute(sql);
+			self.cursor.execute(sql)
 			self.db.commit()
 
 
@@ -40,10 +63,19 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, rootID INTEGER, name TEXT, comment TEXT)"
-			self.cursor.execute(sql);
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, rootID INTEGER, name TEXT, comment TEXT, origin TEXT,path TEXT,type TEXT,schedule TEXT)"
+			self.cursor.execute(sql)
 			self.db.commit()
 
+		#table log
+		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='log'"
+        	self.cursor.execute(sql)
+        	row = self.cursor.fetchone()
+
+        	if not row:
+			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, dataID INTEGER,timestamp TEXT, entry TEXT)"
+			self.cursor.execute(sql)
+			self.db.commit()
 
 
 
@@ -59,20 +91,29 @@ class database:
 		self.cursor.execute(sql)
 		self.db.commit()
 
-		print self.cursor.execute("SELECT * FROM rootContainer;")
+		self.cursor.execute("SELECT * FROM rootContainer;")
 		rows = self.cursor.fetchall()
-		print rows
 
 
 
- 	def addDataContainer(self,rootContainer,name,comment,dirtype="none"):
+ 	def addDataContainer(self,rootContainer,name,comment,origin,path,dirtype="none",schedule="weekly"):
 		#get rootContainer ID
+		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
+			schedule="weekly"
+
 		sql="SELECT rootID FROM rootContainer WHERE name='%s'" % rootContainer
 		self.cursor.execute(sql)
 		rootID=self.cursor.fetchall()
 		rootID=rootID[0][0]
 
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(rootID)s','%(name)s','%(comment)s','%(type)s" % { 'rootID': rootID, 'name': name, 'comment': comment, 'type': dirtype   }
+		sql="SELECT * FROM dataContainer WHERE name='%s'" % name
+		self.cursor.execute(sql)
+		if self.cursor.fetchone():
+			print "dataContainer %s exists already" % name
+			return -1
+
+
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(rootID)s','%(name)s','%(comment)s','%(origin)s','%(path)s','%(type)s','%(schedule)s')" % { 'rootID': rootID, 'name': name, 'comment': comment,'origin': origin, 'path': path, 'type': dirtype, 'schedule': schedule}
 		self.cursor.execute(sql)
 		self.db.commit()
 
@@ -92,5 +133,5 @@ class database:
 if __name__ == "__main__":
 	db=database()
 	db.install()
-	db.addRootContainer("server","my tiny backup server")
-	db.addDataContainer("server","backup-data","blabla")
+	db.addRootContainer("kazan-music.de","my tiny backup server")
+	db.addDataContainer("kazan-music.de","backup-data","blabla","kazan-music.de","/var/www/test","normal","weekly")
