@@ -8,7 +8,7 @@ class database:
 
 	def __init__(self):
 
-		self.db = sqlite.connect("/etc/datenfresser.db")
+		self.db = sqlite.connect("datenfresser.db")
 		self.cursor = self.db.cursor()
 
 
@@ -35,8 +35,12 @@ class database:
 		today=time.time()
 		
 		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE %s - log.timestamp > 604800 AND dataContainer.dataID = log.dataID"
-		rows=self.cursor.fetchall()
-		print rows
+		dataContainer=self.cursor.fetchall()
+		print dataContainerTuple
+		
+
+
+
 
 
 

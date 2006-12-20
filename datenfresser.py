@@ -1,5 +1,14 @@
 #!/usr/bin/python
 
+
+# TODO: Installer 1. copy daemon to /usr/sbin
+#                 2. init.d scripts
+#		  3. rc.d links
+#                 4. create /etc/datenfresser.db
+#		  5. create rootContainer (if wanted)
+#		  6. start daemon	
+# 	addCommand:   datenfresser -c rootContainer -d dataContainer -s server -m method 
+
 import os
 import sys
 
@@ -10,7 +19,8 @@ from time import sleep
 
 #check if rsync is installed (local)
 if os.system("which rsync > /dev/null") != 0:
-	print "rsync not found "
+	print "FATAL ERROR: rsync not found "
+	sys.exit(1)
 
 db=database()
 db.install()
