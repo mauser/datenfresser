@@ -23,6 +23,11 @@ print "Welcome to the datenfresser installer.This is free software,you can distr
 CONFIG_FILENAME="/etc/datenfresser.conf"
 CONFIG_TEMPLATE="./datenfresser.conf.tmpl"
 
+
+######################################################################
+# Create config file 
+######################################################################
+
 if os.path.isfile(CONFIG_TEMPLATE):
 
 	if os.path.isfile(CONFIG_FILENAME):
@@ -33,18 +38,18 @@ if os.path.isfile(CONFIG_TEMPLATE):
 	shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
 	print "Config file copied"
 
-	rootContainer=raw_input("rootContainer:  [/var/datenfresser]")
-	backupUser=raw_input("backup user: [backup]")
+	backupDir=raw_input("backupDir:  [/var/datenfresser]")
+	backupUser=raw_input("backup User: [backup]")
 
 	if backupUser=="":
 		backupUser="backup"
 
-	if rootContainer=="":
-		rootContainer="/var/datenfresser"
+	if backupDir=="":
+		backupDir="/var/datenfresser"
 
 
 	search_dict={}
-	search_dict["@@rootContainer@@"]=rootContainer
+	search_dict["@@backupDir@@"]=backupDir
 	search_dict["@@backupUser@@"]=backupUser
 
 	input = open(CONFIG_FILENAME)
@@ -61,6 +66,36 @@ else:
 	print "Configuration-Template ./datenfresser.conf.tmpl can't be found,  \
 	aborting."
 	sys.exit(0)
+
+
+###################################################################
+#check if user backupUser exists
+###################################################################
+
+try:
+        pwd_entry=getpwnam(backupUser)
+        backupUser_uid=pwd_entry[2]
+        backupUser_gid=pwd_entry[3]
+
+        if pwd_entry[6] != "":
+                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." %backupUser
+
+
+except KeyError:
+
+        ShellObj = os.popen('/usr/sbin/useradd %s' % backupUser )
+        ShellObj.close()
+
+        try:
+                pwd_entry=getpwnam(backupUser)
+                kabbit_uid=pwd_entry[2]
+                kabbit_gid=pwd_entry[3]
+
+        except KeyError:
+                print "Failed to create user '%s'.Aborting." % backupUser
+                sys.exit(1)
+
+##################################################################
 
 
 try:

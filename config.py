@@ -21,9 +21,9 @@ class config:
 		config.readfp(open(CONFIG_FILENAME))
 		self.base_dir="/usr/share/datenfresser"
 		try:		
-			self.rootContainer=os.path.expanduser(config.get("main","rootContainer"))
+			self.rootContainer=os.path.expanduser(config.get("main","backupDir"))
 		except Exception:
-			print "FATAL ERROR: Unable to retrieve rootContainer from configuration."
+			print "FATAL ERROR: Unable to retrieve backupDir from configuration."
 			sys.exit(0)	
 
 		#parse command line arguments
