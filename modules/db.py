@@ -35,7 +35,7 @@ class database:
 		today=time.time()
 		
 		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE %s - log.timestamp > 604800 AND dataContainer.dataID = log.dataID"
-		dataContainer=self.cursor.fetchall()
+		dataContainerTuple=self.cursor.fetchall()
 		print dataContainerTuple
 		
 
@@ -98,9 +98,11 @@ class database:
 		self.cursor.execute("SELECT * FROM rootContainer;")
 		rows = self.cursor.fetchall()
 
+	def getRootContainer(self):
+		return	 
 
 
- 	def addDataContainer(self,rootContainer,name,comment,origin,path,dirtype="none",schedule="weekly"):
+ 	def addDataContainer(self,rootContainer,name,comment,path,dirtype="none",schedule="weekly"):
 		#get rootContainer ID
 		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
 			schedule="weekly"
@@ -122,8 +124,8 @@ class database:
 		self.db.commit()
 
 		#Check if theres no dataContainer named "name" in rootContainer
-
-
+		return 0
+		
 
 	def addComment(self,container,comment):
 		pass

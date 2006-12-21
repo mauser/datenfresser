@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 # TODO: Installer 1. copy daemon to /usr/sbin
 #                 2. init.d scripts
 #		  3. rc.d links
@@ -17,6 +16,8 @@ from db import database
 
 from time import sleep
 
+import config
+
 #check if rsync is installed (local)
 if os.system("which rsync > /dev/null") != 0:
 	print "FATAL ERROR: rsync not found "
@@ -25,7 +26,27 @@ if os.system("which rsync > /dev/null") != 0:
 db=database()
 db.install()
 
+conf=config.config()
+print "Using rootContainer %s" % conf.rootContainer
+#validating rootContainer
 
+#1. check if rootContainer exists
+if not os.path.isdir(conf.rootContainer):
+	os.path.mkdir(conf.rootContainer)
+
+
+#check command line arguments
+
+# --create
+if conf.create!=0:
+	
+	print conf.create
+	if db.addDataContainer(conf.rootContainer,conf.create,"",conf.path,dirtype="none",schedule="weekly")==0:
+		print "datacontainer %s created" % conf.create
+	sys.exit(0)
+
+
+#main loop
 while 1:
 	sleep(1)
 	db.tickAction()
