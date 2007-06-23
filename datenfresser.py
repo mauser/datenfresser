@@ -11,6 +11,7 @@
 import os
 import sys
 
+
 sys.path.append("./modules")
 from db import database
 
@@ -32,7 +33,7 @@ print "Using rootContainer %s" % conf.rootContainer
 
 #1. check if rootContainer exists
 if not os.path.isdir(conf.rootContainer):
-	os.path.mkdir(conf.rootContainer)
+	os.mkdir(conf.rootContainer)
 
 
 #check command line arguments
