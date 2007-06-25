@@ -20,16 +20,11 @@ class config:
 
 		config.readfp(open(CONFIG_FILENAME))
 		self.base_dir="/usr/share/datenfresser"
-		try:		
-			self.rootContainer=os.path.expanduser(config.get("main","backupDir"))
-		except Exception:
-			print "FATAL ERROR: Unable to retrieve backupDir from configuration."
-			sys.exit(0)	
 
 		#parse command line arguments
 		try:
 			long_opts=["help","create=","Port=","method=","path=","list"]
-        		opts, args = getopt.getopt(sys.argv[1:], "hc:p:m:P:",long_opts )
+        		opts, args = getopt.getopt(sys.argv[1:], "hc:p:m:P:l",long_opts )
 
 		except getopt.GetoptError:
         		# wrong options etc.
@@ -41,6 +36,7 @@ class config:
 		self.port=0
 		self.method=""
 		self.create=0
+		self.list=0
 
 		for option, argument in opts:
 			#if o == "-r":
@@ -48,6 +44,9 @@ class config:
 			if option in ("-h", "--help"):
 				self.usage()
 				sys.exit()
+
+			if option in ("-l","--list"):
+				self.list=1;
 
 			if option in ("-p","--path"):
 				self.path=argument
@@ -63,6 +62,7 @@ class config:
 				if self.path=="":
 					self.usage()
 					sys.exit(0)
+			
 				
 	
 			else:

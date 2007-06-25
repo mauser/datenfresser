@@ -1,8 +1,16 @@
 #!/usr/bin/env python
+import sys
+
+sys.path.append("/usr/lib/datenfresser/modules")
+
 import sqlite
 
+import os
 import time
+
+
 from string import strip
+from core import dataContainer
 
 class database:
 
@@ -20,15 +28,21 @@ class database:
 		#1. get all dataContainer without any log entry
 		sql="SELECT dataID FROM 'log'"		
 		self.cursor.execute(sql)
-		rows=self.cursor.fetchall()
-		print rows
+		logrows=self.cursor.fetchall()
+		
 
-		sql="SELECT dataID FROM 'dataContainer'"		
+		sql="SELECT * FROM 'dataContainer'"		
 		self.cursor.execute(sql)
 		rows=self.cursor.fetchall()
 		for row in rows:
-			print row[0]
+			if row[0] not in logrows:
+				print "dataID:" +  str(row[0])
 
+		actionList=[]			
+		
+
+		
+		
 
 
 		#2. get all entries where schedule="weekly" and timestamp - today > 604800 (7*24*60*60)
@@ -49,17 +63,6 @@ class database:
 		'''check if all tables  exists, create it otherwise'''
 
 
-		#table rootContainer
-		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='rootContainer'"
-        	self.cursor.execute(sql)
-        	row = self.cursor.fetchone()
-
-        	if not row:
-			sql="CREATE TABLE 'rootContainer' (rootID INTEGER PRIMARY KEY, name TEXT, comment TEXT)"
-			self.cursor.execute(sql)
-			self.db.commit()
-
-
 
 		#table dataContainer
 		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='dataContainer'"
@@ -67,9 +70,10 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, rootID INTEGER, name TEXT, comment TEXT, origin TEXT,path TEXT,type TEXT,schedule TEXT)"
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY,  localPath TEXT, comment TEXT ,remotePath TEXT,type TEXT,schedule TEXT,groupID INTEGER)"
 			self.cursor.execute(sql)
 			self.db.commit()
+
 
 		#table log
 		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='log'"
@@ -81,47 +85,68 @@ class database:
 			self.cursor.execute(sql)
 			self.db.commit()
 
+		#table groups 
+		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='groups'"
+        	self.cursor.execute(sql)
+        	row = self.cursor.fetchone()
+
+        	if not row:
+			sql="CREATE TABLE 'groups' (groupID INTEGER PRIMARY KEY, name TEXT)"
+			self.cursor.execute(sql)
+			sql="INSERT INTO groups VALUES (NULL,'*')"
+			self.db.commit()
 
 
-	def addRootContainer(self,name,comment):
-		sql="SELECT * FROM 'rootContainer' WHERE name='%s'" % name
+
+
+
+	def getDataContainer(self,name=""):
+
+		if name=="":
+			nameCondition=""
+		else:
+			nameCondition=" WHERE name='%s'" % name
+			
+		sql="SELECT * FROM dataContainer" + nameCondition
 		self.cursor.execute(sql)
-		row=self.cursor.fetchone()
-		if row:
-			print "rootContainer %s exists already" % name
-			return -1
+		dataContainerList = []
+		for c in self.cursor.fetchall():
+			tmp = dataContainer(c[1],c[2],c[3],c[4],c[5],c[6]);
+			dataContainerList.append(tmp)
+		return dataContainerList
 
-		sql="INSERT INTO rootContainer VALUES (NULL,'%(name)s','%(comment)s')" % {'name': name, 'comment': comment}
-		self.cursor.execute(sql)
-		self.db.commit()
+						
+					
 
-		self.cursor.execute("SELECT * FROM rootContainer;")
-		rows = self.cursor.fetchall()
-
-	def getRootContainer(self):
-		return	 
-
-
- 	def addDataContainer(self,rootContainer,name,comment,path,dirtype="none",schedule="weekly"):
-		#get rootContainer ID
+ 	def addDataContainer(self,name,comment,path,dirtype="none",schedule="weekly",group="s"):
 		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
 			schedule="weekly"
 
-		sql="SELECT rootID FROM rootContainer WHERE name='%s'" % rootContainer
-		self.cursor.execute(sql)
-		rootID=self.cursor.fetchall()
-		rootID=rootID[0][0]
 
-		sql="SELECT * FROM dataContainer WHERE name='%s'" % name
+		sql="SELECT * FROM dataContainer WHERE localPath='%s'" % name
 		self.cursor.execute(sql)
 		if self.cursor.fetchone():
 			print "dataContainer %s exists already" % name
 			return -1
+		
+		
+		gid=0;
+		if group != "":
+			sql="SELECT groupID FROM groups WHERE name='%s'" % group
+			self.cursor.execute(sql)
+			gid=self.cursor.fetchone()
 
+			if gid != None:
+				gid=gid[0][0]
+			else:
+				gid=0;
 
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(rootID)s','%(name)s','%(comment)s','%(origin)s','%(path)s','%(type)s','%(schedule)s')" % { 'rootID': rootID, 'name': name, 'comment': comment,'origin': origin, 'path': path, 'type': dirtype, 'schedule': schedule}
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(path)s','%(type)s','%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'path': path, 'type': dirtype, 'schedule': schedule,'group':gid}
 		self.cursor.execute(sql)
 		self.db.commit()
+
+		if not os.path.isdir(name):
+			os.mkdir(name);
 
 		#Check if theres no dataContainer named "name" in rootContainer
 		return 0
@@ -139,5 +164,4 @@ class database:
 if __name__ == "__main__":
 	db=database()
 	db.install()
-	db.addRootContainer("kazan-music.de","my tiny backup server")
 	db.addDataContainer("kazan-music.de","backup-data","blabla","kazan-music.de","/var/www/test","normal","weekly")

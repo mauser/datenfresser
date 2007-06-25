@@ -1,11 +1,11 @@
-from linux_utils import linux_utils
+#from linux_utils import linux_utils
 from time import strftime
 from time import localtime
 class lso_design:
 
 	def __init__(self):
-	 	self.lx=linux_utils()
-
+	 	#self.lx=linux_utils()
+		pass
 	def printHeader(self,lang,siteList):
 		print "<html><head><title>datenfresser</title>"
 		print '<link rel="stylesheet" type="text/css" href="red.css" /></head><body>'

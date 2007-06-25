@@ -47,7 +47,7 @@ if os.path.isfile(CONFIG_TEMPLATE):
 	if os.path.isfile(CONFIG_FILENAME):
 		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
 		if raw_input()!="y":
-			self.exit(0)
+			sys.exit(0)
 
 	shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
 	print "Config file copied"
@@ -137,13 +137,16 @@ if not os.path.isdir(DATA_PATH):
 
 
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
+shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
+
+shutil.copyfile("./config.py",LIB_PATH + "/config.py")
 
 #init.d skript
 #shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
 
 #our executable
 shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
-
+os.system("chmod +x /usr/sbin/datenfresser")
 #Look in our config file for mysql settings
 sys.path.append(LIB_PATH)
 

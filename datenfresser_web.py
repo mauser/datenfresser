@@ -9,11 +9,8 @@ sys.path.append("./modules")
 #web.py module
 import web
 
-
-
-
 #our design module
-#from design import *
+from design import *
 
 
 #module to determine mimetypes (used by image function..)
@@ -28,9 +25,6 @@ urls = (
   )
 
 class index:
-
-
-
 	def GET(self):
 
 		get_input = web.input()

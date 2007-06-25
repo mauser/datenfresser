@@ -12,7 +12,10 @@ import os
 import sys
 
 
-sys.path.append("./modules")
+sys.path.append("/usr/lib/datenfresser/modules")
+sys.path.append("/usr/lib/datenfresser")
+
+
 from db import database
 
 from time import sleep
@@ -28,12 +31,7 @@ db=database()
 db.install()
 
 conf=config.config()
-print "Using rootContainer %s" % conf.rootContainer
-#validating rootContainer
 
-#1. check if rootContainer exists
-if not os.path.isdir(conf.rootContainer):
-	os.mkdir(conf.rootContainer)
 
 
 #check command line arguments
@@ -42,9 +40,20 @@ if not os.path.isdir(conf.rootContainer):
 if conf.create!=0:
 	
 	print conf.create
-	if db.addDataContainer(conf.rootContainer,conf.create,"",conf.path,dirtype="none",schedule="weekly")==0:
+	if db.addDataContainer(conf.create,"",conf.path,"none","weekly","bla")==0:
 		print "datacontainer %s created" % conf.create
 	sys.exit(0)
+
+#--list
+if conf.list!=0:
+	for c in db.getDataContainer():
+		print "path: " + c.localPath
+		print "remote path:" +  c.remotePath
+		print "comment:" + c.comment
+		print "type:" + c.type
+		
+		print "\n"
+	sys.exit(0)		
 
 
 #main loop
