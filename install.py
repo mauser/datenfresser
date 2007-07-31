@@ -46,36 +46,35 @@ if os.path.isfile(CONFIG_TEMPLATE):
 
 	if os.path.isfile(CONFIG_FILENAME):
 		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
-		if raw_input()!="y":
-			sys.exit(0)
+		if raw_input()=="y": 
 
-	shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
-	print "Config file copied"
+			shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
+			print "Config file copied"
 
-	backupDir=raw_input("backupDir:  [/var/datenfresser]")
-	backupUser=raw_input("backup User: [backup]")
+			backupDir=raw_input("backupDir:  [/var/datenfresser]")
+			backupUser=raw_input("backup User: [backup]")
 
-	if backupUser=="":
-		backupUser="backup"
+			if backupUser=="":
+				backupUser="backup"
 
-	if backupDir=="":
-		backupDir="/var/datenfresser"
+			if backupDir=="":
+				backupDir="/var/datenfresser"
 
 
-	search_dict={}
-	search_dict["@@backupDir@@"]=backupDir
-	search_dict["@@backupUser@@"]=backupUser
+			search_dict={}
+			search_dict["@@backupDir@@"]=backupDir
+			search_dict["@@backupUser@@"]=backupUser
 
-	input = open(CONFIG_FILENAME)
-	tmp=CONFIG_FILENAME + "~"
-	output = open(tmp,'w')
-	for s in input:
-		for search_string in search_dict:
-			s=s.replace(search_string,search_dict[search_string])
-		output.write(s)
-	output.close()
-	input.close()
-	shutil.move(tmp,CONFIG_FILENAME)
+			input = open(CONFIG_FILENAME)
+			tmp=CONFIG_FILENAME + "~"
+			output = open(tmp,'w')
+			for s in input:
+				for search_string in search_dict:
+					s=s.replace(search_string,search_dict[search_string])
+				output.write(s)
+			output.close()
+			input.close()
+			shutil.move(tmp,CONFIG_FILENAME)
 else:
 	print "Configuration-Template ./datenfresser.conf.tmpl can't be found,  \
 	aborting."
@@ -85,29 +84,29 @@ else:
 ###################################################################
 #check if user backupUser exists
 ###################################################################
-
-try:
-        pwd_entry=getpwnam(backupUser)
-        backupUser_uid=pwd_entry[2]
-        backupUser_gid=pwd_entry[3]
-
-        if pwd_entry[6] != "":
-                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." %backupUser
-
-
-except KeyError:
-
-        ShellObj = os.popen('/usr/sbin/useradd %s' % backupUser )
-        ShellObj.close()
-
-        try:
-                pwd_entry=getpwnam(backupUser)
-                kabbit_uid=pwd_entry[2]
-                kabbit_gid=pwd_entry[3]
-
-        except KeyError:
-                print "Failed to create user '%s'.Aborting." % backupUser
-                sys.exit(1)
+#
+#try:
+#        pwd_entry=getpwnam(backupUser)
+#        backupUser_uid=pwd_entry[2]
+#        backupUser_gid=pwd_entry[3]
+#
+#        if pwd_entry[6] != "":
+#                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." %backupUser
+#
+#
+#except KeyError:
+#
+#        ShellObj = os.popen('/usr/sbin/useradd %s' % backupUser )
+#        ShellObj.close()
+#
+#        try:
+#                pwd_entry=getpwnam(backupUser)
+#                kabbit_uid=pwd_entry[2]
+#                kabbit_gid=pwd_entry[3]
+#
+#        except KeyError:
+#                print "Failed to create user '%s'.Aborting." % backupUser
+#                sys.exit(1)
 
 ##################################################################
 
@@ -138,8 +137,9 @@ if not os.path.isdir(DATA_PATH):
 
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
 shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
+shutil.copyfile("./modules/rsync.py",LIB_PATH + "/modules/rsync.py")
 
-shutil.copyfile("./config.py",LIB_PATH + "/config.py")
+shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
 
 #init.d skript
 #shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")

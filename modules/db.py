@@ -56,9 +56,6 @@ class database:
 
 
 
-
-
-
 	def checkTables(self):
 		'''check if all tables  exists, create it otherwise'''
 
@@ -118,7 +115,7 @@ class database:
 						
 					
 
- 	def addDataContainer(self,name,comment,path,dirtype="none",schedule="weekly",group="s"):
+ 	def addDataContainer(self,name,path,schedule="weekly",group="ALL"):
 		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
 			schedule="weekly"
 
@@ -141,7 +138,7 @@ class database:
 			else:
 				gid=0;
 
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(path)s','%(type)s','%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'path': path, 'type': dirtype, 'schedule': schedule,'group':gid}
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(path)s',,'%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'path': path, 'schedule': schedule,'group':gid}
 		self.cursor.execute(sql)
 		self.db.commit()
 
