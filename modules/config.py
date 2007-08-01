@@ -1,6 +1,7 @@
 import ConfigParser
 import os
 import sys
+import cPickle
 
 sys.path.append("/usr/lib/datenfresser/modules")
 

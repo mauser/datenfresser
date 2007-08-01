@@ -84,38 +84,31 @@ else:
 ###################################################################
 #check if user backupUser exists
 ###################################################################
-#
-#try:
-#        pwd_entry=getpwnam(backupUser)
-#        backupUser_uid=pwd_entry[2]
-#        backupUser_gid=pwd_entry[3]
-#
-#        if pwd_entry[6] != "":
-#                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." %backupUser
-#
-#
-#except KeyError:
-#
-#        ShellObj = os.popen('/usr/sbin/useradd %s' % backupUser )
-#        ShellObj.close()
-#
-#        try:
-#                pwd_entry=getpwnam(backupUser)
-#                kabbit_uid=pwd_entry[2]
-#                kabbit_gid=pwd_entry[3]
-#
-#        except KeyError:
-#                print "Failed to create user '%s'.Aborting." % backupUser
-#                sys.exit(1)
+
+backupUser = "datenfresser"
+
+try:
+        pwd_entry=getpwnam(backupUser)
+
+        if pwd_entry[6] != "":
+                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." %backupUser
+
+
+except KeyError:
+
+        ShellObj = os.popen('/usr/sbin/useradd %s' % backupUser )
+        ShellObj.close()
+
+        try:
+                pwd_entry=getpwnam(backupUser)
+
+        except KeyError:
+                print "Failed to create user '%s'.Aborting." % backupUser
+                sys.exit(1)
 
 ##################################################################
 
 
-try:
-	import sqlite
-except Exception:
-	print "python module sqlite is missing. Please install it."
-	sys.exit(0)
 
 #copy our own modules to /usr/lib/datenfresser
 LIB_PATH="/usr/lib/datenfresser"
@@ -135,18 +128,27 @@ if not os.path.isdir(DATA_PATH):
 
 
 
-shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
+shutil.copyfile("./modules/metaStorage.py",LIB_PATH + "/modules/metaStorage.py")
 shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
 shutil.copyfile("./modules/rsync.py",LIB_PATH + "/modules/rsync.py")
+
 
 shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
 
 #init.d skript
-#shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
+shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
 
 #our executable
 shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
+shutil.copyfile("./datenfresserLCD.py","/usr/sbin/datenfresserLCD")
+
+
+
 os.system("chmod +x /usr/sbin/datenfresser")
+os.system("chmod +x /usr/sbin/datenfresserLCD")
+os.system("chmod +x /etc/init.d/datenfresser")
+
+
 #Look in our config file for mysql settings
 sys.path.append(LIB_PATH)
 

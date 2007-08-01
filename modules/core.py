@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-import os
-from os.path import isdir
-
-
 class dataContainer:
 	''' a dataContainer represents the entrys in the main configuration file'''
 	def __init__(self,name,localPath, remotePath,dataType,schedule,group,typeData):
@@ -26,4 +22,6 @@ class metaData:
 		
 		#lock is true if this container is in use 
 		self.lock = False
+
+
 
