@@ -2,7 +2,18 @@
 
 #
 # datenfresser is a backup software written by Sebastian Moors under GPL
+# implemented features:
+#  - daily/weekly rsync-backup 
+
+
+
+
 #
+# You can configure datenfresser with /etc/datenfresser.conf .
+# Persistent metadata is stored with Pickle (default: /var/datenfresser/pickledData)
+#
+
+
 
 import os
 import sys
