@@ -7,8 +7,6 @@
 #
 
 
-
-
 import sys
 import os
 import shutil
@@ -25,6 +23,11 @@ print "Welcome to the datenfresser installer.This is free software,you can distr
 CONFIG_FILENAME="/etc/datenfresser.conf"
 CONFIG_TEMPLATE="./datenfresser.conf.tmpl"
 
+
+username  = "datenfresser"
+
+
+
 def getpwnam(name,pwfile='/etc/passwd'):
 	f = open(pwfile);
 	while 1:
@@ -37,73 +40,72 @@ def getpwnam(name,pwfile='/etc/passwd'):
 			f.close
 			return entry
 
+def createConfig( username , backupdir ):
+
+	shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
+	print "Config file copied"
+
+	backupDir=raw_input("backupDir:  [/var/datenfresser]")
+	backupUser=raw_input("backup User: [" + username  +"]")
+
+	if backupUser=="":
+		backupUser = username
+		username = backupUser
+
+	if backupDir=="":
+		backupDir = backupdir
+
+
+	search_dict={}
+	search_dict["@@backupDir@@"]=backupDir
+	search_dict["@@backupUser@@"]=backupUser
+
+	input = open(CONFIG_FILENAME)
+	tmp=CONFIG_FILENAME + "~"
+	output = open(tmp,'w')
+	for s in input:
+		for search_string in search_dict:
+			s=s.replace(search_string,search_dict[search_string])
+			output.write(s)
+	output.close()
+	input.close()
+	shutil.move(tmp,CONFIG_FILENAME)
 
 ######################################################################
 # Create config file 
 ######################################################################
 
 if os.path.isfile(CONFIG_TEMPLATE):
-
+	print "IN CONFIG TEMPL"
 	if os.path.isfile(CONFIG_FILENAME):
 		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
 		if raw_input()=="y": 
-
-			shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
-			print "Config file copied"
-
-			backupDir=raw_input("backupDir:  [/var/datenfresser]")
-			backupUser=raw_input("backup User: [backup]")
-
-			if backupUser=="":
-				backupUser="backup"
-
-			if backupDir=="":
-				backupDir="/var/datenfresser"
-
-
-			search_dict={}
-			search_dict["@@backupDir@@"]=backupDir
-			search_dict["@@backupUser@@"]=backupUser
-
-			input = open(CONFIG_FILENAME)
-			tmp=CONFIG_FILENAME + "~"
-			output = open(tmp,'w')
-			for s in input:
-				for search_string in search_dict:
-					s=s.replace(search_string,search_dict[search_string])
-				output.write(s)
-			output.close()
-			input.close()
-			shutil.move(tmp,CONFIG_FILENAME)
-else:
-	print "Configuration-Template ./datenfresser.conf.tmpl can't be found,  \
-	aborting."
-	sys.exit(0)
-
+			createConfig(username,"/var/datenfresser")
+	else:
+		createConfig(username,"/var/datenfresser")
 
 ###################################################################
 #check if user backupUser exists
 ###################################################################
 
-backupUser = "datenfresser"
 
 try:
-        pwd_entry=getpwnam(backupUser)
+        pwd_entry=getpwnam( username )
 
         if pwd_entry[6] != "":
-                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." %backupUser
+                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." % username
 
 
 except KeyError:
 
-        ShellObj = os.popen('/usr/sbin/useradd %s' % backupUser )
+        ShellObj = os.popen('/usr/sbin/useradd %s' % username )
         ShellObj.close()
 
         try:
-                pwd_entry=getpwnam(backupUser)
+                pwd_entry=getpwnam( username )
 
         except KeyError:
-                print "Failed to create user '%s'.Aborting." % backupUser
+                print "Failed to create user '%s'.Aborting." % username
                 sys.exit(1)
 
 ##################################################################
