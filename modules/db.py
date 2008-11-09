@@ -3,7 +3,7 @@ import sys
 
 sys.path.append("/usr/lib/datenfresser/modules")
 
-import sqlite
+import sqlite3
 
 import os
 import time
@@ -16,7 +16,7 @@ class database:
 
 	def __init__(self):
 
-		self.db = sqlite.connect("datenfresser.db")
+		self.db = sqlite3.connect("/var/datenfresser/datenfresser.db")
 		self.cursor = self.db.cursor()
 
 
@@ -67,7 +67,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY,  localPath TEXT, comment TEXT ,remotePath TEXT,type TEXT,schedule TEXT,groupID INTEGER)"
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text,  localPath TEXT, comment TEXT ,remotePath TEXT,type TEXT,schedule TEXT,groupID INTEGER)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
@@ -115,7 +115,7 @@ class database:
 						
 					
 
- 	def addDataContainer(self,name,path,schedule="weekly",group="ALL"):
+ 	def addDataContainer(self,name,comment,path,schedule="weekly",group="ALL"):
 		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
 			schedule="weekly"
 
@@ -138,7 +138,8 @@ class database:
 			else:
 				gid=0;
 
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(path)s',,'%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'path': path, 'schedule': schedule,'group':gid}
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','localPath','%(comment)s','%(path)s','type','%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'path': path, 'schedule': schedule,'group':gid}
+		print sql
 		self.cursor.execute(sql)
 		self.db.commit()
 
@@ -161,4 +162,4 @@ class database:
 if __name__ == "__main__":
 	db=database()
 	db.install()
-	db.addDataContainer("kazan-music.de","backup-data","blabla","kazan-music.de","/var/www/test","normal","weekly")
+	db.addDataContainer("kazan-music.de","kommentar","/var/www/test")
