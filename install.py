@@ -54,6 +54,8 @@ def createConfig( username , backupdir ):
 
 	if backupDir=="":
 		backupDir = backupdir
+		if not os.path.isdir( backupDir ):
+			os.mkdir( backupDir );	
 
 
 	search_dict={}
