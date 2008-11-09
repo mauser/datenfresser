@@ -42,6 +42,7 @@ def performBackup( dataID ):
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + container.localPath
 			print rsync_cmd
 			print os.system( rsync_cmd )
+			data.backupPerformed( int(dataID), time() , "ok");
 	
 
 def main():

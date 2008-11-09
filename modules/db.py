@@ -30,6 +30,10 @@ class database:
 		self.cursor.execute(sql)
 		logrows = self.cursor.fetchall()
 
+		log_ids = []
+		for row in logrows:
+			log_ids.append(row[0])	
+
 		sql = "SELECT * FROM 'dataContainer'"		
 		self.cursor.execute(sql)
 		rows = self.cursor.fetchall()
@@ -37,7 +41,7 @@ class database:
 		actionList=[]			
 		
 		for row in rows:
-			if row[0] not in logrows:
+			if row[0] not in log_ids:
 				print "dataID:" +  str(row[0])
 				actionList.append(str(row[0]));	
 
@@ -56,6 +60,11 @@ class database:
 		return actionList;	
 
 
+
+	def backupPerformed(self,dataID,timestamp,status):
+		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','%(status)s')" % { 'data' : dataID , 'time' : timestamp , 'status': status }
+		self.cursor.execute(sql)
+		self.db.commit()
 
 
 	def checkTables(self):
