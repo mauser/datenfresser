@@ -41,12 +41,12 @@ class index:
 		lang="de"
 
 		#check if the demanded site exists
-		if p.siteList.has_key(site):
-			siteObject=p.siteList[site]
-		else:
+		#if p.siteList.has_key(site):
+		#	siteObject=p.siteList[site]
+		#else:
 			#if not, print error page
 			#TODO: modify http-header to get 404
-			siteObject=p.siteList["404"]
+		#	siteObject=p.siteList["404"]
 
 
 		design.printHeader(lang,p.siteList)

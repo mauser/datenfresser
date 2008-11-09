@@ -2,17 +2,15 @@
 
 class dataContainer:
 	''' a dataContainer represents the entrys in the main configuration file'''
-	def __init__(self,name,localPath, remotePath,dataType,schedule,group,typeData):
+	def __init__(self , name, localPath, remotePath, comment, dataType, options , schedule, group):
 		self.name =  name
 		self.localPath = localPath
-		self.localPath = localPath
 		self.remotePath = remotePath
-		self.method = dataType
+		self.type = dataType
 		self.schedule = schedule
 		self.group = group
-		self.typeData = typeData
+		self.options = options
 		self.lastBackup = 0
-		self.lock = False
 
 class metaData:
 	''' This class contains data which belongs do datacontainers but is not stored in the configuration file'''
@@ -20,8 +18,6 @@ class metaData:
 		#Timestamp of last performed backup
 		self.lastBackup = 0
 		
-		#lock is true if this container is in use 
-		self.lock = False
 
 
 

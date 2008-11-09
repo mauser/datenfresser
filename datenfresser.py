@@ -13,6 +13,12 @@
 # Persistent metadata is stored with Pickle (default: /var/datenfresser/pickledData)
 #
 
+#Todo: backup archiving (when? (weekly, daily,startup),how long archived?)
+
+# directory structure:
+# $backupdir/container/          : represents a backup entity
+# $backupdir/container/cur       : current data
+# $backupdir/container/archived  : contains compressed versioned of "cur"
 
 
 import os
@@ -25,57 +31,28 @@ from time import sleep
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
+from db import database
 
-import config
-from rsync import rsync
-from core import metaData
-from metaStorage import storage
-
-conf=config.config()
-
-
-def backup(container,metaDataDict):
-	''' calls the underlying backup methods and updates meta data'''
+def performBackup( dataID ):
+	data = database()
+	container = data.getDataContainer( dataID );
+	if( container.type == "rsync" ):
+		if container.options == "":
+			print "no options given"
+			rsync_cmd = "rsync -avz " + container.remotePath + " " + container.localPath
+			print rsync_cmd
+			print os.system( rsync_cmd )
 	
-	s = storage()
-	
-	print "performing backup for container " + container.name
 
-	if not metaDataDict.has_key(container.name):
-		m = metaData()
-		metaDataDict[container.name] = m
-
-	metaDataDict[container.name].lock = True
-
-	#set lock
-	s.saveMetaData(metaDataDict)
-	
-	if container.method=="rsync":
-		rsync(container.localPath,container.remotePath,container.typeData.port,container.typeData.user)
-
-	#Unset lock
-	metaDataDict[container.name].lock = False
-	s.saveMetaData(metaDataDict)	
-
-
-	
 def main():
-
-	s=storage()
-
-	container = conf.getDataContainer()
-	metaDataDict = s.loadMetaData()
-
+	
+	d = database();
 	#main loop
 	while 1:
-		sleep(20)
-		for c in container:
-
-			if c.schedule == "daily" and time() - c.lastBackup > 24*60*60:
-				backup(c,metaDataDict)
-
-			if c.schedule == "weekly" and time() - c.lastBackup > 7*24*60*60:
-				backup(c,metaDataDict)
+		sleep(2)
+		for id in d.tickAction():
+			performBackup(id)
+		
 	
 if __name__ == "__main__":
 	main()

@@ -132,12 +132,12 @@ if not os.path.isdir(DATA_PATH):
 
 
 
-shutil.copyfile("./modules/metaStorage.py",LIB_PATH + "/modules/metaStorage.py")
+#shutil.copyfile("./modules/metaStorage.py",LIB_PATH + "/modules/metaStorage.py")
 shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
-shutil.copyfile("./modules/rsync.py",LIB_PATH + "/modules/rsync.py")
+shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
 
 
-shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
+#shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
 
 #init.d skript
 shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")

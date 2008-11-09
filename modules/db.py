@@ -28,17 +28,19 @@ class database:
 		#1. get all dataContainer without any log entry
 		sql="SELECT dataID FROM 'log'"		
 		self.cursor.execute(sql)
-		logrows=self.cursor.fetchall()
-		
+		logrows = self.cursor.fetchall()
 
-		sql="SELECT * FROM 'dataContainer'"		
+		sql = "SELECT * FROM 'dataContainer'"		
 		self.cursor.execute(sql)
-		rows=self.cursor.fetchall()
+		rows = self.cursor.fetchall()
+
+		actionList=[]			
+		
 		for row in rows:
 			if row[0] not in logrows:
 				print "dataID:" +  str(row[0])
+				actionList.append(str(row[0]));	
 
-		actionList=[]			
 		
 
 		
@@ -50,8 +52,8 @@ class database:
 		
 		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE %s - log.timestamp > 604800 AND dataContainer.dataID = log.dataID"
 		dataContainerTuple=self.cursor.fetchall()
-		print dataContainerTuple
-		
+		#print dataContainerTuple
+		return actionList;	
 
 
 
@@ -67,7 +69,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text,  localPath TEXT, comment TEXT ,remotePath TEXT,type TEXT,schedule TEXT,groupID INTEGER)"
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
@@ -97,25 +99,24 @@ class database:
 
 
 
-	def getDataContainer(self,name=""):
+	def getDataContainer(self,dataId):
 
-		if name=="":
+		if dataId=="":
 			nameCondition=""
 		else:
-			nameCondition=" WHERE name='%s'" % name
+			nameCondition=" WHERE dataId='%s'" % dataId
 			
 		sql="SELECT * FROM dataContainer" + nameCondition
 		self.cursor.execute(sql)
 		dataContainerList = []
 		for c in self.cursor.fetchall():
-			tmp = dataContainer(c[1],c[2],c[3],c[4],c[5],c[6]);
-			dataContainerList.append(tmp)
-		return dataContainerList
+			tmp = dataContainer(c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8]);
+			return tmp
 
 						
 					
 
- 	def addDataContainer(self,name,comment,path,schedule="weekly",group="ALL"):
+ 	def addDataContainer(self,name,comment,path,type="rsync",options="",schedule="weekly",group="ALL"):
 		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
 			schedule="weekly"
 
@@ -138,7 +139,9 @@ class database:
 			else:
 				gid=0;
 
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','localPath','%(comment)s','%(path)s','type','%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'path': path, 'schedule': schedule,'group':gid}
+		localPath = "/var/datenfresser/" + name;
+
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(localPath)s', '%(remotePath)s','%(comment)s','%(type)s','%(options)s','%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid}
 		print sql
 		self.cursor.execute(sql)
 		self.db.commit()
@@ -147,7 +150,7 @@ class database:
 			os.mkdir(name);
 
 		#Check if theres no dataContainer named "name" in rootContainer
-		return 0
+		return
 		
 
 	def addComment(self,container,comment):
@@ -162,4 +165,4 @@ class database:
 if __name__ == "__main__":
 	db=database()
 	db.install()
-	db.addDataContainer("kazan-music.de","kommentar","/var/www/test")
+	db.addDataContainer("kazan","kommentar","smoors.de:/var/www/trac_projects")
