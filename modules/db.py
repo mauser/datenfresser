@@ -42,7 +42,6 @@ class database:
 		
 		for row in rows:
 			if row[0] not in log_ids:
-				print "dataID:" +  str(row[0])
 				actionList.append(str(row[0]));	
 
 		
@@ -148,7 +147,13 @@ class database:
 			else:
 				gid=0;
 
-		localPath = "/var/datenfresser/" + name;
+		localPath = "/var/datenfresser/" + name + "/";
+	
+		
+		os.mkdir( localPath)
+		os.mkdir( localPath + "cur/")
+
+
 
 		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(localPath)s', '%(remotePath)s','%(comment)s','%(type)s','%(options)s','%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid}
 		print sql

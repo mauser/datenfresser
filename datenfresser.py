@@ -39,7 +39,14 @@ def performBackup( dataID ):
 	if( container.type == "rsync" ):
 		if container.options == "":
 			print "no options given"
-			rsync_cmd = "rsync -avz " + container.remotePath + " " + container.localPath
+		
+	
+			
+
+			if not os.path.isdir( container.localPath + "cur/" ):
+				os.mkdir( container.localPath + "cur/")
+
+			rsync_cmd = "rsync -avz " + container.remotePath + " " + container.localPath + "dir/"
 			print rsync_cmd
 			print os.system( rsync_cmd )
 			data.backupPerformed( int(dataID), time() , "ok");
