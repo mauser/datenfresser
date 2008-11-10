@@ -179,4 +179,4 @@ class database:
 if __name__ == "__main__":
 	db=database()
 	db.install()
-	db.addDataContainer("kazan","kommentar","smoors.de:/var/www/trac_projects")
+	db.addDataContainer("mail","kommentar","smoors.de:/home/mauser/mails")

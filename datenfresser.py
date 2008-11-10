@@ -43,9 +43,6 @@ def performBackup( dataID ):
 	
 			
 
-			if not os.path.isdir( container.localPath + "cur/" ):
-				os.mkdir( container.localPath + "cur/")
-
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + container.localPath + "dir/"
 			print rsync_cmd
 			print os.system( rsync_cmd )
