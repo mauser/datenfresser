@@ -1,5 +1,14 @@
+<html>
+	<head>
+		<title>Datenfresser</title>
+		<!-- <link rel="stylesheet" type="text/css" href="datenfresser.css">-->
+
+	</head>
+	
+	<body>
+
 <?php
-echo "<h3>Datenfresser</h3>";
+echo "<h3>Datenfresser</h3><a href='add_container.php'>Add container</a>";
 
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
@@ -20,3 +29,6 @@ foreach ($data->fetchAll(PDO::FETCH_ASSOC)
 
 print "</table>";
 ?>
+
+	</body>
+</html>

@@ -18,6 +18,7 @@ class database:
 
 		self.db = sqlite3.connect("/var/datenfresser/datenfresser.db")
 		self.cursor = self.db.cursor()
+		self.checkTables()
 
 
 	def install(self):
@@ -37,6 +38,7 @@ class database:
 		sql = "SELECT * FROM 'dataContainer'"		
 		self.cursor.execute(sql)
 		rows = self.cursor.fetchall()
+		print rows
 
 		actionList=[]			
 		
