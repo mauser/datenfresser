@@ -2,14 +2,6 @@
 
 class datenfresser 
 {
-	#object $dbh;
-
-	/*
-	function init()
-	{
-	}*/
-
-	#dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER)"
 
 	function addContainer( $name, $comment, $path, $type, $options, $schedule, $group) 
 	{
