@@ -1,18 +1,18 @@
 <html>
 	<head>
 		<title>Datenfresser</title>
-		<!-- <link rel="stylesheet" type="text/css" href="datenfresser.css">-->
+		<link rel="stylesheet" type="text/css" href="datenfresser.css">
 
 	</head>
 	
 	<body>
-
+<div id="banner">
 <?php
-echo "<h3>Datenfresser</h3><a href='add_container.php'>Add container</a>";
+echo "<h3>Datenfresser</h3><a href='add_container.php'>Add container</a></div>";
 
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
-print "<table bgcolor=lightgrey>";
+print "<br /><table bgcolor=lightgrey>";
 
 
 $data = $dbh->query("SELECT * FROM dataContainer");

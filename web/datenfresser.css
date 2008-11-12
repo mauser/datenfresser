@@ -1,3 +1,15 @@
-TABLE { border-collapse:collapse;}
- TD { border:2px blue solid; }:
+#banner
+{
+	background-color: #F53D00;
+	height: 100px;
+	width: 100%;
 
+	border-left: 1px solid #000000 ;
+	border-right: 1px solid #000000 ;
+	border-top: 1px solid #000000 ;
+	border-bottom: 1px solid #000000 ;
+}
+
+/*TABLE { border-collapse:collapse;}
+ TD { border:2px blue solid; }:
+*/
