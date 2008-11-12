@@ -19,6 +19,22 @@ class datenfresser
   			echo "Failed: " . $e->getMessage();
 		}
 	}
+
+
+	function print_header()
+	{
+		print("<html>
+			<head>
+				<title>Datenfresser</title>
+				<link rel='stylesheet' type='text/css' href='datenfresser.css'>
+			</head>
+			<body>");
+		print("<div id='banner'><h3>Datenfresser</h3>
+			<a href='datenfresser.php'>Show container</a>
+			<a href='add_container.php'>Add container</a></div>
+		
+		");
+	}
 }
 
 

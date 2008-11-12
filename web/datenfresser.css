@@ -10,6 +10,9 @@
 	border-bottom: 1px solid #000000 ;
 }
 
+a { color: black;}
+a:visited { color: black;}
+
 /*TABLE { border-collapse:collapse;}
  TD { border:2px blue solid; }:
 */

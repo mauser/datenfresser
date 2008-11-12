@@ -1,19 +1,20 @@
-<html>
-	<head>
-		<title>Datenfresser</title>
-		<link rel="stylesheet" type="text/css" href="datenfresser.css">
+<?
+	include("datenfresser_core.php");
 
-	</head>
-	
-	<body>
-<div id="banner">
-<?php
-echo "<h3>Datenfresser</h3><a href='add_container.php'>Add container</a></div>";
+
+
+
+
+
+
+
+$d = new datenfresser();
+$d->print_header();
 
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
-print "<br /><table bgcolor=lightgrey>";
-
+print "<br /><table bgcolor=lightgrey>\n";
+print "<tr><th>Nr.</th><th>Name</th><th>Locale location</th><th>Remote location</th><th>Comment</th><th>Type</th><th>Options</th><th>Schedule</th><th>Group</th></tr>";
 
 $data = $dbh->query("SELECT * FROM dataContainer");
 

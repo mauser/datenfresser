@@ -1,8 +1,11 @@
 <?php
 
+include("datenfresser_core.php");
+
+$core = new datenfresser(); 
+$core->print_header();
+
 if($_POST["name"] != ""){
-	include("datenfresser_core.php");
-	print "Name!!!";
 	
 	$name = $_POST['name'];
 	$rpath = $_POST['rpath'];
@@ -12,7 +15,6 @@ if($_POST["name"] != ""){
 	$group = "ALL";
 	$type = "rsync";
 
-	$core = new datenfresser(); 
 	#$core->init();
 	$core->addContainer( $name, $comment, $path, $type, $options, $schedule, $group);
 }
