@@ -29,11 +29,17 @@ class datenfresser
 				<link rel='stylesheet' type='text/css' href='datenfresser.css'>
 			</head>
 			<body>");
-		print("<div id='banner'><h3>Datenfresser</h3>
-			<a href='datenfresser.php'>Show container</a>
-			<a href='add_container.php'>Add container</a></div>
+		print(" <div id='banner'>
+				<img src='images/small.png'>			
+				<div id='banner_text'>
+					<a href='datenfresser.php'>Show container</a>
+					<a href='add_container.php'>Add container</a>
+				</div>
+			</div>
+			<div height='300'>&nbsp;</div>
 		
 		");
+
 	}
 }
 
