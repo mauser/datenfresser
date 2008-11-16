@@ -14,9 +14,9 @@ $d->print_header();
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
 print "<br /><table bgcolor=lightgrey>\n";
-print "<tr><th>Nr.</th><th>Name</th><th>Locale location</th><th>Remote location</th><th>Comment</th><th>Type</th><th>Options</th><th>Schedule</th><th>Group</th></tr>";
+print "<tr><th>Name</th><th>Remote location</th><th>Comment</th></tr>";
 
-$data = $dbh->query("SELECT * FROM dataContainer");
+$data = $dbh->query("SELECT name,remotePath,comment FROM dataContainer");
 
 foreach ($data->fetchAll(PDO::FETCH_ASSOC)
  as $row) {

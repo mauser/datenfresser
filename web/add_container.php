@@ -16,7 +16,7 @@ if($_POST["name"] != ""){
 	$type = "rsync";
 
 	#$core->init();
-	$core->addContainer( $name, $comment, $path, $type, $options, $schedule, $group);
+	$core->addContainer( $name, $comment, $rpath, $type, $options, $schedule, $group);
 }
 
 ?>
