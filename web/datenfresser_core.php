@@ -12,12 +12,24 @@ class datenfresser
 			$dbh->beginTransaction();
  			$dbh->query("INSERT INTO dataContainer(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID) values ( NULL , '$name', '$comment', '$name' , '$path' , '$type', '$options', '$schedule' , '$group')");
 			$dbh->commit();
-			print "hallo";
   
 		} catch (Exception $e) {
   			$dbh->rollBack();
   			echo "Failed: " . $e->getMessage();
 		}
+	}
+
+
+	function deleteContainer( $id ){
+		$dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
+		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		$data = $dbh->query("SELECT dataID FROM dataContainer WHERE dataID='".$id."'");
+		if( sizeof($data->fetchAll(PDO::FETCH_ASSOC)) > 0){
+				$dbh->query("DELETE FROM  dataContainer WHERE dataID='".$id."'");		
+	
+		}
+
+
 	}
 
 
