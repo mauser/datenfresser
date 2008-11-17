@@ -3,9 +3,18 @@
 class datenfresser 
 {
 
+	var $db_string;
+	var $db;
+
+	function __construct( ) {
+        	$this->db_string = 'sqlite:/var/datenfresser/datenfresser.db' ;
+		$this->db = new PDO('sqlite:/var/datenfresser/datenfresser.db');
+	}
+
+
 	function addContainer( $name, $comment, $path, $type, $options, $schedule, $group) 
 	{
-		$dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
+		$dbh = $this->db;
 		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		
 		try{
@@ -21,7 +30,7 @@ class datenfresser
 
 
 	function deleteContainer( $id ){
-		$dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
+		$dbh = $this->db;
 		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		$data = $dbh->query("SELECT dataID FROM dataContainer WHERE dataID='".$id."'");
 		if( sizeof($data->fetchAll(PDO::FETCH_ASSOC)) > 0){
