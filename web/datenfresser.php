@@ -19,7 +19,8 @@ foreach ($data->fetchAll(PDO::FETCH_ASSOC)
 		print "<td>".$row['name']."</td>";
 		print "<td>".$row['remotePath']."</td>";
 		print "<td>".$row['comment']."</td>";
-		print "<td><a href='delete_container.php?id=".$row['dataID']."'>delete</a></td>";
+		print "<td><a href='show_container.php?id=".$row['dataID']."'><img src='images/status.png' width='20' height='20' border='0'></a>";
+		print "<a href='delete_container.php?id=".$row['dataID']."'><img src='images/warning.png' width='20' height='20' border='0'></a></td>";
 		
 	print "</tr>";
 }
