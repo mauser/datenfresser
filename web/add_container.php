@@ -29,13 +29,27 @@ if($_POST["name"] != ""){
 	<tr><td>Remote path:</td><td><input type="text" name="rpath"></td></tr>
 	<tr><td>Rsync options:</td><td><input type="text" name="options"></td></tr>
 	<tr><td>Comment:</td><td><input type="text" name="comment"></td></tr>
-	<tr><td>Schedule</td><td>
+	<tr><td>Schedule:</td><td>
 					<select name="schedule">
 						<option>daily</option>
 						<option>weekly</option>
 						<option>monthly</option>
 					</select>
 				</td></tr>
+	
+	<tr><td>Archive:</td><td>
+					<select name="archive">
+						<option>disabled</option>
+						<option>hourly</option>
+						<option>daily</option>
+						<option>weekly</option>
+						<option>monthly</option>
+					</select>
+				</td></tr>
+
+	<tr><td>Keep archives:</td><td><input type="text" name="archive_age" > days</td></tr>
+
+
 	<tr><td colspan="2"><input type="submit"></td></tr>
 </table>
 </form>
