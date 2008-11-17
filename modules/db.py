@@ -154,6 +154,7 @@ class database:
 		
 		os.mkdir( localPath)
 		os.mkdir( localPath + "cur/")
+		os.mkdir( localPath + "archived/")
 
 
 
