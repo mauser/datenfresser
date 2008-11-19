@@ -33,17 +33,31 @@ sys.path.append("/usr/lib/datenfresser")
 
 from db import database
 
+
+def checkDirs( container ):
+ 	localPath = "/var/datenfresser/" + container.localPath	
+	
+	#be sure that the path ends with a "/"
+	if localPath[-1] != "/": 
+		localPath = localPath + "/"	
+
+	if not os.path.isdir( localPath ):   os.mkdir( localPath)
+	if not os.path.isdir( localPath + "cur/" ):   os.mkdir( localPath + "cur/")
+	if not os.path.isdir( localPath + "archived/"):   os.mkdir( localPath + "archived/")
+
 def performBackup( dataID ):
 	data = database()
 	container = data.getDataContainer( dataID );
+	print container.type 
 	if( container.type == "rsync" ):
+		print "rsync!!"
 		if container.options == "":
 			print "no options given"
 		
-	
 			
-
-			rsync_cmd = "rsync -avz " + container.remotePath + " " + container.localPath + "dir/"
+			
+			checkDirs( container )
+			rsync_cmd = "rsync -avz " + container.remotePath + " " + "/var/datenfresser/" + container.localPath + "/cur/"
 			print rsync_cmd
 			print os.system( rsync_cmd )
 			data.backupPerformed( int(dataID), time() , "ok");

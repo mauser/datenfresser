@@ -30,24 +30,25 @@ class database:
 		sql="SELECT dataID FROM 'log'"		
 		self.cursor.execute(sql)
 		logrows = self.cursor.fetchall()
+		
 
 		log_ids = []
 		for row in logrows:
 			log_ids.append(row[0])	
 
+
 		sql = "SELECT * FROM 'dataContainer'"		
 		self.cursor.execute(sql)
 		rows = self.cursor.fetchall()
-		print rows
 
 		actionList=[]			
 		
 		for row in rows:
-			if row[0] not in log_ids:
-				actionList.append(str(row[0]));	
+			#if row[0] not in log_ids:
+			actionList.append(str(row[0]));	
 
 		
-
+		print actionList
 		
 		
 
@@ -120,7 +121,7 @@ class database:
 		self.cursor.execute(sql)
 		dataContainerList = []
 		for c in self.cursor.fetchall():
-			tmp = dataContainer(c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8]);
+			tmp = dataContainer(c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8]);
 			return tmp
 
 						

@@ -11,9 +11,9 @@ if($_GET["id"] != ""){
 
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
-print "<br /><table bgcolor=lightgrey>\n";
+print "<br /><table>\n";
 
-$data = $dbh->query("SELECT dataID,name,remotePath,comment,schedule,options FROM dataContainer WHERE dataID ='".$_GET["id"]."'");
+$data = $dbh->query("SELECT dataID,name,remotePath,comment,schedule,type,options FROM dataContainer WHERE dataID ='".$_GET["id"]."'");
 $d = $data->fetchAll(PDO::FETCH_ASSOC);
 foreach ($d as $row) {
 

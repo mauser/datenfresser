@@ -2,7 +2,7 @@
 
 class dataContainer:
 	''' a dataContainer represents the entrys in the main configuration file'''
-	def __init__(self , name, localPath, remotePath, comment, dataType, options , schedule, group):
+	def __init__(self , dataID, name, comment, localPath, remotePath, dataType, options , schedule, group):
 		self.name =  name
 		self.localPath = localPath
 		self.remotePath = remotePath
