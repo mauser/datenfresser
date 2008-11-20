@@ -102,7 +102,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, dataID INTEGER,timestamp TEXT, entry TEXT, status TEXT)"
+			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
