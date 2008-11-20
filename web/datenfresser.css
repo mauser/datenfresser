@@ -32,10 +32,11 @@ img {
 table {
 	
 	position: relative;
-	top: 160px;	
 		
 	width: 1000px; 
 	text-align: center; 
 	margin-left: auto; 
-	margin-right: auto; 
+	margin-right: auto;
+
+	background: lightblue; 
 }

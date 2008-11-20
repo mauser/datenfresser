@@ -12,6 +12,20 @@ class datenfresser
 	}
 
 
+	function get_running_jobs(){
+		$dbh = $this->db;
+		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		$data = $dbh->query("SELECT log.logID,dataContainer.name FROM log,dataContainer WHERE log.status='running' AND log.dataID = dataContainer.dataID ");
+
+		$log_id = $data->fetchAll(PDO::FETCH_ASSOC);
+
+		return $log_id; 
+
+
+
+
+	}
+
 	function addContainer( $name, $comment, $path, $type, $options, $schedule, $group) 
 	{
 		$dbh = $this->db;

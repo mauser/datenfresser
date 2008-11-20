@@ -7,10 +7,24 @@ $d->print_header();
 
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
-print "<br /><table bgcolor=lightgrey>\n";
-print "<tr><th>Name</th><th>Remote location</th><th>Comment</th></tr>";
+
+
+
+print "<br /><br /><br /><br /><br />";
+
+print "<table><tr><th>Running Jobs</th></tr>";
+
+foreach($d->get_running_jobs() as $job){
+	print "<tr><td>" . $job["name"] . "</td></tr>";
+}
+
+print "</table><br>";
+
+print "<table><tr><th>Name</th><th>Remote location</th><th>Comment</th></tr>";
 
 $data = $dbh->query("SELECT dataID,name,remotePath,comment FROM dataContainer");
+
+
 
 foreach ($data->fetchAll(PDO::FETCH_ASSOC)
  as $row) {

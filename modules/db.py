@@ -64,7 +64,7 @@ class database:
 
 
 	def backupPerformed(self,dataID,timestamp,status):
-		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','%(status)s')" % { 'data' : dataID , 'time' : timestamp , 'status': status }
+		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','','%(status)s')" % { 'data' : dataID , 'time' : timestamp , 'status': status }
 		self.cursor.execute(sql)
 		self.db.commit()
 
@@ -117,8 +117,14 @@ class database:
 			sql="INSERT INTO groups VALUES (NULL,'*')"
 			self.db.commit()
 
-
-
+	def startJob(self, dataId ):
+		# create a log entry with status "running"
+		timestamp = str(int(time.time()))
+		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','','running')" % { 'data' : dataId , 'time' : timestamp }
+		self.cursor.execute(sql)
+		self.db.commit()
+		
+	
 
 
 	def getDataContainer(self,dataId):
