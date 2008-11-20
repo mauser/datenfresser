@@ -59,7 +59,7 @@ def performBackup( dataID ):
 			checkDirs( container )
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + "/var/datenfresser/" + container.localPath + "/cur/"
 			print rsync_cmd
-			print os.system( rsync_cmd )
+			print "return: " + os.system( rsync_cmd )
 			data.backupPerformed( int(dataID), time() , "ok");
 	
 

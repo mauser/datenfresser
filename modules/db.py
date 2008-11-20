@@ -84,6 +84,17 @@ class database:
 			self.cursor.execute(sql)
 			self.db.commit()
 
+		#table overview 
+		#contains data about free space, location of the root container (/var/datenfresser by default) etc.
+		#sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='overview'"
+        	#self.cursor.execute(sql)
+        	#row = self.cursor.fetchone()
+
+        	#if not row:
+		#	sql="CREATE TABLE 'overview' (rootID INTEGER PRIMARY KEY, path Text, current_job Text, current_job_started TEXT, last_job,type TEXT, options TEXT, schedule TEXT,groupID INTEGER)"
+		#	self.cursor.execute(sql)
+		#	self.db.commit()
+
 
 		#table log
 		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='log'"
@@ -91,7 +102,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, dataID INTEGER,timestamp TEXT, entry TEXT)"
+			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, dataID INTEGER,timestamp TEXT, entry TEXT, status TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
