@@ -62,9 +62,32 @@ class database:
 		return actionList;	
 
 
+	
+	def cleanupZombieJobs( self ):
+		# called on startup. switches every running job (status="running") to status = "unfinished"
+		sql = "SELECT logID FROM log WHERE status='running'"
+		self.cursor.execute(sql)
+		for c in self.cursor.fetchall():
+			print str(c[0]) + " not finished!"
+		
+		sql = "UPDATE log SET status='unfinished' WHERE status='running'"
+		self.cursor.execute(sql)
+		self.db.commit()
+	
 
-	def backupPerformed(self,dataID,timestamp,status):
-		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','','%(status)s')" % { 'data' : dataID , 'time' : timestamp , 'status': status }
+	def startJob(self, dataId ):
+		# create a log entry with status "running"
+		timestamp = str(int(time.time()))
+		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','','running')" % { 'data' : dataId , 'time' : timestamp }
+		ret = self.cursor.execute(sql)
+		self.db.commit()
+		return self.cursor.lastrowid
+
+	def backupPerformed( self , logID , status ):
+		
+		timestamp = time.time()		
+
+		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s'" % { 'time' : timestamp , 'status': status , 'id': logID}
 		self.cursor.execute(sql)
 		self.db.commit()
 
@@ -117,24 +140,6 @@ class database:
 			sql="INSERT INTO groups VALUES (NULL,'*')"
 			self.db.commit()
 
-	def startJob(self, dataId ):
-		# create a log entry with status "running"
-		timestamp = str(int(time.time()))
-		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','','running')" % { 'data' : dataId , 'time' : timestamp }
-		self.cursor.execute(sql)
-		self.db.commit()
-	
-	def cleanupZombieJobs( self ):
-		# called on startup. switches every running job (status="running") to status = "unfinished"
-		sql = "SELECT logID FROM log WHERE status='running'"
-		self.cursor.execute(sql)
-		for c in self.cursor.fetchall():
-			print str(c[0]) + " not finished!"
-		
-		sql = "UPDATE log SET status='unfinished' WHERE status='running'"
-		self.cursor.execute(sql)
-		self.db.commit()
-	
 
 
 	def getDataContainer(self,dataId):
