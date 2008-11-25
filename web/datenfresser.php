@@ -15,7 +15,7 @@ print "<br /><br /><br /><br /><br />";
 print "<table><tr><th>Running Jobs</th></tr>";
 
 foreach($d->get_running_jobs() as $job){
-	print "<tr><td>" . $job["name"] . "</td></tr>";
+	print "<tr><td>Job \"" . $job["name"] . "\" is running since  " . date(DATE_RFC822 ,  $job["start_timestamp"] ) . "</td></tr>";
 }
 
 print "</table><br>";

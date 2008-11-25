@@ -15,7 +15,7 @@ class datenfresser
 	function get_running_jobs(){
 		$dbh = $this->db;
 		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-		$data = $dbh->query("SELECT log.logID,dataContainer.name FROM log,dataContainer WHERE log.status='running' AND log.dataID = dataContainer.dataID ");
+		$data = $dbh->query("SELECT log.logID , log.start_timestamp , dataContainer.name FROM log,dataContainer WHERE log.status='running' AND log.dataID = dataContainer.dataID ");
 
 		$log_id = $data->fetchAll(PDO::FETCH_ASSOC);
 

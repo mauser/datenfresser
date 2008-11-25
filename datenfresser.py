@@ -71,8 +71,8 @@ def main():
 	#main loop
 	while 1:
 		sleep(2)
-		#for id in d.tickAction():
-			#performBackup(id)
+		for id in d.tickAction():
+			performBackup(id)
 		
 	
 if __name__ == "__main__":
