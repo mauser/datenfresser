@@ -123,7 +123,17 @@ class database:
 		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','','running')" % { 'data' : dataId , 'time' : timestamp }
 		self.cursor.execute(sql)
 		self.db.commit()
+	
+	def cleanupZombieJobs( self ):
+		# called on startup. switches every running job (status="running") to status = "unfinished"
+		sql = "SELECT logID FROM log WHERE status='running'"
+		self.cursor.execute(sql)
+		for c in self.cursor.fetchall():
+			print str(c[0]) + " not finished!"
 		
+		sql = "UPDATE log SET status='unfinished' WHERE status='running'"
+		self.cursor.execute(sql)
+		self.db.commit()
 	
 
 
