@@ -48,9 +48,7 @@ def checkDirs( container ):
 def performBackup( dataID ):
 	data = database()
 	container = data.getDataContainer( dataID );
-	print container.type 
 	if( container.type == "rsync" ):
-		print "rsync!!"
 		if container.options == "":
 		
 			checkDirs( container )

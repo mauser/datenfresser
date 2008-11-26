@@ -19,7 +19,7 @@ print "<tr><th>logID</th><th>dataID</th><th>start</th><th>end</th><th>status</th
 $data = $dbh->query("SELECT * FROM log WHERE dataID ='".$_GET["id"]."' ORDER BY start_timestamp desc");
 $d = $data->fetchAll(PDO::FETCH_ASSOC);
 
-$date_string = "F j, Y, g:i a";
+$date_string = "F j, Y, H:i ";
 
 foreach ($d as $row) {
 	
