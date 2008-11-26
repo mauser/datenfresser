@@ -71,7 +71,7 @@ class datenfresser
 					<a href='add_container.php'>Add container</a>
 				</div>
 			</div>
-			<div height='300'>&nbsp;</div>
+			<div height='300'>&nbsp;<br /><br /><br /><br /><br /></div>
 		
 		");
 
