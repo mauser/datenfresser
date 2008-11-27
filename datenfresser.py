@@ -23,7 +23,7 @@
 
 import os
 import sys
-
+import subprocess
 
 from time import time
 from time import sleep
@@ -32,6 +32,18 @@ sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
 from db import database
+
+
+def archiveFolder( container ):
+	localPath = "/var/datenfresser/" + container.localPath	
+
+	#be sure that the path ends with a "/"
+	if localPath[-1] != "/": 
+		localPath = localPath + "/"	
+
+	tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + ".tar.bz2 " + localPath + "cur/*"
+	print tar_cmd
+	subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
 
 
 def checkDirs( container ):
@@ -62,6 +74,7 @@ def performBackup( dataID ):
 			print "return: " + str(os.system( rsync_cmd ))
 			
 			data.backupPerformed( int(id), "finished");
+			archiveFolder( container )
 	
 
 def main():
