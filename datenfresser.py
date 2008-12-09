@@ -41,7 +41,7 @@ def archiveFolder( container ):
 	if localPath[-1] != "/": 
 		localPath = localPath + "/"	
 
-	tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + ".tar.bz2 " + localPath + "cur/*"
+	tar_cmd = "tar -cf " + localPath + "archived/" + container.name + ".tar " + localPath + "cur/*"
 	print tar_cmd
 	subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
 
@@ -68,14 +68,16 @@ def performBackup( dataID ):
 			
 			
 			id = 0
-			id = data.startJob(int(dataID))
-		
+			id = data.startJob( "rsync" , int(dataID))
+
 			print rsync_cmd
 			print "return: " + str(os.system( rsync_cmd ))
-			
-			data.backupPerformed( int(id), "finished");
+			data.finishJob( int(id), "finished");
+
+
+			id = data.startJob( "archive" , int(dataID))
 			archiveFolder( container )
-	
+			data.finishJob( int(id), "finished");
 
 def main():
 	

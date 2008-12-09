@@ -75,21 +75,23 @@ class database:
 		self.db.commit()
 	
 
-	def startJob(self, dataId ):
+	def startJob(self, typ , dataId ):
 		# create a log entry with status "running"
-		timestamp = str(int(time.time()))
-		sql = "INSERT INTO log VALUES ( NULL,'%(data)i','%(time)s','','running')" % { 'data' : dataId , 'time' : timestamp }
+		timestamp = str( int(time.time()) )
+		sql = "INSERT INTO log VALUES ( NULL,'%(typ)s','%(data)i','%(time)s','','running')" % {'typ': typ, 'data' : dataId , 'time' : timestamp }
 		ret = self.cursor.execute(sql)
 		self.db.commit()
 		return self.cursor.lastrowid
 
-	def backupPerformed( self , logID , status ):
+	def finishJob( self , logID , status ):
 		
 		timestamp = time.time()		
 
 		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s'" % { 'time' : timestamp , 'status': status , 'id': logID}
 		self.cursor.execute(sql)
 		self.db.commit()
+
+      
 
 
 	def checkTables(self):
@@ -125,7 +127,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT)"
+			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 

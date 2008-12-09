@@ -24,8 +24,9 @@ $date_string = "F j, Y, H:i ";
 foreach ($d as $row) {
 	
 	print "<tr>";
-	print "<td>". $row['logID'].  "</td>";
-	print "<td>". $row['dataID'].  "</td>";
+	#print "<td>". $row['logID'].  "</td>";
+	#print "<td>". $row['dataID'].  "</td>";
+	print "<td>". $row['type'].  "</td>";
 	print "<td>". @date($date_string , $row['start_timestamp']).  "</td>";
 	print "<td>". @date($date_string , $row['end_timestamp']).  "</td>";
 	print "<td>". $row['status'].  "</td>";
