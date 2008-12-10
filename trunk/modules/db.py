@@ -49,11 +49,29 @@ class database:
 			if row[0] not in log_ids:
 			   actionList.append( str(row[0]) );	
 
-
-
-		#2. get all entries where schedule="weekly" and timestamp - today > 36288000 (7*24*60*60*60)
+		#2. get all entries where schedule="daily" and timestamp - today > (24*60*60)
 		today=time.time()
-		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'weekly' AND " + str(today) + " - log.end_timestamp > 36288000 AND dataContainer.dataID = log.dataID" 
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'daily' AND " + str(today) + " - log.end_timestamp > 86400 AND dataContainer.dataID = log.dataID" 
+		self.cursor.execute(sql)
+		dataContainerTuple=self.cursor.fetchall()
+		#print dataContainerTuple
+		for row in dataContainerTuple:
+		    actionList.append( str(row[0]) );	
+		
+		
+
+		#3. get all entries where schedule="weekly" and timestamp - today > (7*24*60*60)
+		today=time.time()
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'weekly' AND " + str(today) + " - log.end_timestamp > 604800 AND dataContainer.dataID = log.dataID" 
+		self.cursor.execute(sql)
+		dataContainerTuple=self.cursor.fetchall()
+		#print dataContainerTuple
+		for row in dataContainerTuple:
+		    actionList.append( str(row[0]) );	
+
+		#4. get all entries where schedule="monthly" and timestamp - today > (4*7*24*60*60)
+		today=time.time()
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'hourly' AND " + str(today) + " - log.end_timestamp > 2419200 AND dataContainer.dataID = log.dataID" 
 		self.cursor.execute(sql)
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
