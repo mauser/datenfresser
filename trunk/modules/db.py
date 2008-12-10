@@ -45,7 +45,6 @@ class database:
 		#2. get all entries where schedule="daily" and timestamp - today > (24*60*60)
 		today=time.time()
 		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'daily' AND " + str(today) + " - log.end_timestamp > 86400 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID" 
-		print sql
 		self.cursor.execute(sql)
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
@@ -104,14 +103,18 @@ class database:
 
 		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s' " % { 'time' : timestamp , 'status': status , 'id': logID}
 		self.cursor.execute(sql)
-		print sql
+		
 		
 		sql = "UPDATE dataContainer SET lastJobID = '%(id)s' WHERE dataID ='%(did)s' " % { 'did': dataID , 'id': logID}
-		print sql
+		
 		self.cursor.execute(sql)
 		self.db.commit()
 
-      
+	def getArchiveInfo( self, dataID ):
+		
+		sql = "SELECT archive,compress,archive_ttl FROM dataContainer WHERE dataID = '%(id)s' " % { 'id': dataID }
+		self.cursor.execute(sql)
+		return self.cursor.fetchone()
 
 
 	def checkTables(self):
@@ -125,7 +128,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER)"
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT, compress TEXT,archive_ttl)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
@@ -213,7 +216,7 @@ class database:
 
 
 
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(localPath)s', '%(remotePath)s','%(comment)s','%(type)s','%(options)s','%(schedule)s','%(group)s','')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid}
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(localPath)s', '%(remotePath)s','%(comment)s','%(type)s','%(options)s','%(schedule)s','%(group)s','','','','')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid}
 		print sql
 		self.cursor.execute(sql)
 		self.db.commit()

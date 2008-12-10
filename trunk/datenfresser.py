@@ -34,14 +34,17 @@ sys.path.append("/usr/lib/datenfresser")
 from db import database
 
 
-def archiveFolder( container ):
+def archiveFolder( container , compress ):
 	localPath = "/var/datenfresser/" + container.localPath	
 
 	#be sure that the path ends with a "/"
 	if localPath[-1] != "/": 
 		localPath = localPath + "/"	
 
-	tar_cmd = "tar -cf " + localPath + "archived/" + container.name + ".tar " + localPath + "cur/*"
+	if compress == "on":
+	    tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + ".tar.bz2 " + localPath + "cur/*"
+	else:
+	    tar_cmd = "tar -cf " + localPath + "archived/" + container.name + ".tar " + localPath + "cur/*"
 	print tar_cmd
 	subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
 
@@ -73,11 +76,13 @@ def performBackup( dataID ):
 			print rsync_cmd
 			print "return: " + str(os.system( rsync_cmd ))
 			data.finishJob(int(dataID), int(id), "finished");
+			
+			archive,compress,ttl =  data.getArchiveInfo( int(dataID) )
 
-
-			id = data.startJob( "archive" , int(dataID))
-			archiveFolder( container )
-			data.finishJob( int(dataID),int(id), "finished");
+			if archive != "disabled":
+			    id = data.startJob( "archive" , int(dataID))
+			    archiveFolder( container , compress )
+			    data.finishJob( int(dataID),int(id), "finished");
 
 def main():
 	

@@ -37,14 +37,14 @@ class datenfresser
 
 	}
 
-	function addContainer( $name, $comment, $path, $type, $options, $schedule, $group) 
+	function addContainer( $name, $comment, $path, $type, $options, $schedule, $group,$archive,$compress,$archive_ttl) 
 	{
 		$dbh = $this->db;
 		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		
 		try{
 			$dbh->beginTransaction();
- 			$dbh->query("INSERT INTO dataContainer(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID) values ( NULL , '$name', '$comment', '$name' , '$path' , '$type', '$options', '$schedule' , '$group')");
+ 			$dbh->query("INSERT INTO dataContainer(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl) values ( NULL , '$name', '$comment', '$name' , '$path' , '$type', '$options', '$schedule' , '$group','$archive','$compress','$archive_ttl')");
 			$dbh->commit();
   
 		} catch (Exception $e) {
