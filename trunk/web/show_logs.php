@@ -13,7 +13,7 @@ $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
 print "<br /><table>\n";
 
-print "<tr><th>logID</th><th>dataID</th><th>start</th><th>end</th><th>status</th></tr>";
+print "<tr><th>Type</th><th>Start</th><th>End</th><th>Status</th></tr>";
 
 
 $data = $dbh->query("SELECT * FROM log WHERE dataID ='".$_GET["id"]."' ORDER BY start_timestamp desc");

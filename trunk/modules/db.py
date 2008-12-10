@@ -26,32 +26,26 @@ class database:
 		self.checkTables()
 
 	def tickAction(self):
+		#holds dataID's of the container which are scheduled for backup now
+		actionList=[]	
+	    
 		#1. get all dataContainer without any log entry
-		sql="SELECT dataID FROM 'log'"		
-		self.cursor.execute(sql)
-		logrows = self.cursor.fetchall()
-		
-
-		log_ids = []
-		for row in logrows:
-			log_ids.append(row[0])	
-
-
-		sql = "SELECT * FROM 'dataContainer'"		
+		sql="SELECT dataID FROM dataContainer WHERE dataID NOT IN ( SELECT dataID from log)"	
 		self.cursor.execute(sql)
 		rows = self.cursor.fetchall()
-
-		actionList=[]			
-		
-		
-
 		for row in rows:
-			if row[0] not in log_ids:
-			   actionList.append( str(row[0]) );	
+			actionList.append( str(row[0]) );
+		print actionList
+
+
+		#get logID of last backup
+		#sql = "SELECT log.logID FROM log WHERE dataID = " + dataID + " ORDER BY log.logID DESC LIMIT 1";
+
 
 		#2. get all entries where schedule="daily" and timestamp - today > (24*60*60)
 		today=time.time()
-		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'daily' AND " + str(today) + " - log.end_timestamp > 86400 AND dataContainer.dataID = log.dataID" 
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'daily' AND " + str(today) + " - log.end_timestamp > 86400 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID" 
+		print sql
 		self.cursor.execute(sql)
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
@@ -62,7 +56,7 @@ class database:
 
 		#3. get all entries where schedule="weekly" and timestamp - today > (7*24*60*60)
 		today=time.time()
-		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'weekly' AND " + str(today) + " - log.end_timestamp > 604800 AND dataContainer.dataID = log.dataID" 
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'weekly' AND " + str(today) + " - log.end_timestamp > 604800 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID" 
 		self.cursor.execute(sql)
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
@@ -71,13 +65,14 @@ class database:
 
 		#4. get all entries where schedule="monthly" and timestamp - today > (4*7*24*60*60)
 		today=time.time()
-		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'hourly' AND " + str(today) + " - log.end_timestamp > 2419200 AND dataContainer.dataID = log.dataID" 
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'hourly' AND " + str(today) + " - log.end_timestamp > 2419200 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID" 
 		self.cursor.execute(sql)
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
 		for row in dataContainerTuple:
 		    actionList.append( str(row[0]) );	
 		
+		print actionList
 		
 		return actionList;	
 
@@ -103,11 +98,16 @@ class database:
 		self.db.commit()
 		return self.cursor.lastrowid
 
-	def finishJob( self , logID , status ):
+	def finishJob( self , dataID , logID , status ):
 		
 		timestamp = time.time()		
 
-		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s'" % { 'time' : timestamp , 'status': status , 'id': logID}
+		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s' " % { 'time' : timestamp , 'status': status , 'id': logID}
+		self.cursor.execute(sql)
+		print sql
+		
+		sql = "UPDATE dataContainer SET lastJobID = '%(id)s' WHERE dataID ='%(did)s' " % { 'did': dataID , 'id': logID}
+		print sql
 		self.cursor.execute(sql)
 		self.db.commit()
 
@@ -125,7 +125,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER)"
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
@@ -213,7 +213,7 @@ class database:
 
 
 
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(localPath)s', '%(remotePath)s','%(comment)s','%(type)s','%(options)s','%(schedule)s','%(group)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid}
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(localPath)s', '%(remotePath)s','%(comment)s','%(type)s','%(options)s','%(schedule)s','%(group)s','')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid}
 		print sql
 		self.cursor.execute(sql)
 		self.db.commit()

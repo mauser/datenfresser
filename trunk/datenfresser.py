@@ -72,12 +72,12 @@ def performBackup( dataID ):
 
 			print rsync_cmd
 			print "return: " + str(os.system( rsync_cmd ))
-			data.finishJob( int(id), "finished");
+			data.finishJob(int(dataID), int(id), "finished");
 
 
 			id = data.startJob( "archive" , int(dataID))
 			archiveFolder( container )
-			data.finishJob( int(id), "finished");
+			data.finishJob( int(dataID),int(id), "finished");
 
 def main():
 	
@@ -87,6 +87,7 @@ def main():
 	while 1:
 		sleep(2)
 		for id in d.tickAction():
+			print id
 			performBackup(id)
 		
 	

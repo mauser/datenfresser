@@ -77,14 +77,14 @@ def createConfig( username , backupdir ):
 # Create config file 
 ######################################################################
 
-if os.path.isfile(CONFIG_TEMPLATE):
-	print "IN CONFIG TEMPL"
-	if os.path.isfile(CONFIG_FILENAME):
-		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
-		if raw_input()=="y": 
-			createConfig(username,"/var/datenfresser")
-	else:
-		createConfig(username,"/var/datenfresser")
+#if os.path.isfile(CONFIG_TEMPLATE):
+#	print "IN CONFIG TEMPL"
+#	if os.path.isfile(CONFIG_FILENAME):
+#		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
+#		if raw_input()=="y": 
+#			createConfig(username,"/var/datenfresser")
+#	else:
+#		createConfig(username,"/var/datenfresser")
 
 ###################################################################
 #check if user backupUser exists
@@ -131,20 +131,15 @@ if not os.path.isdir(DATA_PATH):
 		os.mkdir(DATA_PATH)
 
 
-
-#shutil.copyfile("./modules/metaStorage.py",LIB_PATH + "/modules/metaStorage.py")
 shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
 
-
-#shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
 
 #init.d skript
 shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
 
 #our executable
 shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
-shutil.copyfile("./datenfresserLCD.py","/usr/sbin/datenfresserLCD")
 
 
 
