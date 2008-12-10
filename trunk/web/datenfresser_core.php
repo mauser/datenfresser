@@ -11,6 +11,10 @@ class datenfresser
 		$this->db = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 	}
 
+	function print_error_message( $string ){
+		print "<div id='error'>" . $string . "</div>";
+	}
+
 
 	function get_running_jobs(){
 		$dbh = $this->db;

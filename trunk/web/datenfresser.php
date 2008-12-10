@@ -7,6 +7,10 @@ $d->print_header();
 
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
 
+if($dbh){
+	$d->print_error_message("Database error");
+	exit;
+}
 
 
 
