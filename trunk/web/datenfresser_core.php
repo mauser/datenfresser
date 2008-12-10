@@ -8,7 +8,14 @@ class datenfresser
 
 	function __construct( ) {
         	$this->db_string = 'sqlite:/var/datenfresser/datenfresser.db' ;
-		$this->db = new PDO('sqlite:/var/datenfresser/datenfresser.db');
+		
+		try{
+		    $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
+		} catch (PDOException $e) {
+		    $this->print_header();
+		    $this->print_error_message( $e->getMessage() );
+		    die();
+		}
 	}
 
 	function print_error_message( $string ){
