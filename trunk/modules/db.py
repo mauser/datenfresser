@@ -15,6 +15,8 @@ from core import dataContainer
 class database:
 
 	def __init__(self):
+		if not os.path.isdir("/var/datenfresser"):
+			os.mkdir("/var/datenfresser")
 
 		self.db = sqlite3.connect("/var/datenfresser/datenfresser.db")
 		self.cursor = self.db.cursor()
