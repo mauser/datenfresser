@@ -147,7 +147,7 @@ os.system("chmod +x /usr/sbin/datenfresser")
 os.system("chmod +x /usr/sbin/datenfresserLCD")
 os.system("chmod +x /etc/init.d/datenfresser")
 
-os.system("chown -R "+ username + "/var/datenfresser")
+os.system("chown -R " + username + " /var/datenfresser")
 
 print "Configuration successful"
 
