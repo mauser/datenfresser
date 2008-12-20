@@ -142,17 +142,12 @@ shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
 shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
 
 
-
+#adjust permissions
 os.system("chmod +x /usr/sbin/datenfresser")
 os.system("chmod +x /usr/sbin/datenfresserLCD")
 os.system("chmod +x /etc/init.d/datenfresser")
 
-
-#Look in our config file for mysql settings
-sys.path.append(LIB_PATH)
-
-
-
+os.system("chown -R "+ username + "/var/datenfresser")
 
 print "Configuration successful"
 
