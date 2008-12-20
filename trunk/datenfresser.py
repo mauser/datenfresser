@@ -27,6 +27,7 @@ import subprocess
 
 from time import time
 from time import sleep
+from time import gmtime
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
@@ -41,10 +42,15 @@ def archiveFolder( container , compress ):
 	if localPath[-1] != "/": 
 		localPath = localPath + "/"	
 
+
+	dateTupel = gmtime(time())
+	dateString = str(dateTupel[0]) + "_" + str(dateTupel[1]) + "_" + str(dateTupel[2]) + "_" + str(dateTupel[3]) + "_" + str(dateTupel[4]) 
+
 	if compress == "on":
-	    tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + ".tar.bz2 " + localPath + "cur/*"
+	    tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + "_" + dateString + ".tar.bz2 " + localPath + "cur/*"
 	else:
-	    tar_cmd = "tar -cf " + localPath + "archived/" + container.name + ".tar " + localPath + "cur/*"
+	    tar_cmd = "tar -cf " + localPath + "archived/" + container.name + "_" + dateString + ".tar " + localPath + "cur/*"
+
 	print tar_cmd
 	subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
 
