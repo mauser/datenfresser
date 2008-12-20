@@ -12,7 +12,7 @@ binfile=/usr/sbin/datenfresser
 pidfile=/var/run/datenfresser.pid
 
 if [ ! -x $binfile ]; then
-	echo "kabbit binary not found"
+	echo "datenfresser binary not found"
 	exit 1
 fi
 
