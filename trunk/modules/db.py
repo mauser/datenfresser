@@ -32,7 +32,7 @@ class database:
 		actionList=[]	
 	    
 		#1. get all dataContainer without any log entry
-		sql="SELECT dataID FROM dataContainer WHERE dataID NOT IN ( SELECT dataID from log)"	
+		sql="SELECT dataID FROM dataContainer WHERE dataID NOT IN ( SELECT dataID from log WHERE NOT status = 'unfinished')"	
 		self.cursor.execute(sql)
 		rows = self.cursor.fetchall()
 		for row in rows:
@@ -130,7 +130,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT, compress TEXT,archive_ttl)"
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT, compress TEXT,archive_ttl TEXT,pre_command TEXT,post_command TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 

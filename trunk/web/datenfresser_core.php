@@ -44,7 +44,7 @@ class datenfresser
 		
 		try{
 			$dbh->beginTransaction();
- 			$dbh->query("INSERT INTO dataContainer(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl) values ( NULL , '$name', '$comment', '$name' , '$path' , '$type', '$options', '$schedule' , '$group','$archive','$compress','$archive_ttl')");
+ 			$dbh->query("INSERT INTO dataContainer(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command) values ( NULL , '$name', '$comment', '$name' , '$path' , '$type', '$options', '$schedule' , '$group','$archive','$compress','$archive_ttl','$pre_command','$post_command')");
 			$dbh->commit();
   
 		} catch (Exception $e) {

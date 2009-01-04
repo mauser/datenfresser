@@ -15,11 +15,13 @@ if($_POST["name"] != ""){
 	$archive = $_POST['archive'];
 	$archive_ttl = $_POST['archive_ttl'];
 	$compress = $_POST['compress'];
+	$pre_command = $_POST['pre'];
+	$post_command = $_POST['post'];
 	$group = "ALL";
 	$type = "rsync";
 
 	#$core->init();
-	$core->addContainer( $name, $comment, $rpath, $type, $options, $schedule, $group,$archive,$compress,$archive_ttl);
+	$core->addContainer( $name, $comment, $rpath, $type, $options, $schedule, $group,$archive,$compress,$archive_ttl,$pre_command,$post_command);
 }
 
 ?>
@@ -50,6 +52,9 @@ if($_POST["name"] != ""){
 				</td></tr>
 	<tr><td>Compress:</td><td><input type="checkbox" name="compress"></td></tr>
 	<tr><td>Keep archives:</td><td><input type="text" name="archive_ttl"> days</td></tr>
+	<tr><td>pre-command:</td><td><input type="text" name="pre_command"> days</td></tr>
+	<tr><td>post-command:</td><td><input type="text" name="post_command"> days</td></tr>
+	
 
 
 	<tr><td colspan="2"><input type="submit"></td></tr>
