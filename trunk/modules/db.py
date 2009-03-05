@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 
 sys.path.append("/usr/lib/datenfresser/modules")
@@ -11,14 +12,18 @@ import time
 
 from string import strip
 from core import dataContainer
+from config import config
+
+c = config()
+MAINVOLUME = c.getMainVolume()
 
 class database:
 
 	def __init__(self):
-		if not os.path.isdir("/var/datenfresser"):
-			os.mkdir("/var/datenfresser")
+		if not os.path.isdir( MAINVOLUME ):
+			os.mkdir( MAINVOLUME )
 
-		self.db = sqlite3.connect("/var/datenfresser/datenfresser.db")
+		self.db = sqlite3.connect( MAINVOLUME + "/datenfresser.db" )
 		self.cursor = self.db.cursor()
 		self.checkTables()
 
@@ -135,7 +140,7 @@ class database:
 			self.db.commit()
 
 		#table overview 
-		#contains data about free space, location of the root container (/var/datenfresser by default) etc.
+		#contains data about free space, location of the root container (MAINVOLUME by default) etc.
 		#sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='overview'"
         	#self.cursor.execute(sql)
         	#row = self.cursor.fetchone()
@@ -209,7 +214,7 @@ class database:
 			else:
 				gid=0;
 
-		localPath = "/var/datenfresser/" + name + "/";
+		localPath = MAINVOLUME + "/" + name + "/";
 	
 		
 		os.mkdir( localPath)
@@ -238,8 +243,3 @@ class database:
 
 	def removeComment(self,container,comment):
 		pass
-
-if __name__ == "__main__":
-	db=database()
-	db.install()
-	db.addDataContainer("mail","kommentar","smoors.de:/home/mauser/mails")
