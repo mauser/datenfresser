@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 #
 # datenfresser is a backup software written by Sebastian Moors under GPL
@@ -32,11 +33,14 @@ from time import gmtime
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
+from config import config
 from db import database
 
+c = config()
+MAINVOLUME = c.getMainVolume()
 
 def archiveFolder( container , compress ):
-	localPath = "/var/datenfresser/" + container.localPath	
+	localPath = MAINVOLUME + container.localPath	
 
 	#be sure that the path ends with a "/"
 	if localPath[-1] != "/": 
@@ -56,7 +60,7 @@ def archiveFolder( container , compress ):
 
 
 def checkDirs( container ):
- 	localPath = "/var/datenfresser/" + container.localPath	
+ 	localPath = MAINVOLUME + container.localPath	
 	
 	#be sure that the path ends with a "/"
 	if localPath[-1] != "/": 
@@ -68,12 +72,12 @@ def checkDirs( container ):
 
 def performBackup( dataID ):
 	data = database()
-	container = data.getDataContainer( dataID );
+	container = data.getDataContainer( dataID )
 	if( container.type == "rsync" ):
 		if container.options == "":
 		
 			checkDirs( container )
-			rsync_cmd = "rsync -avz " + container.remotePath + " " + "/var/datenfresser/" + container.localPath + "/cur/"
+			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + container.localPath + "/cur/"
 			
 			
 			id = 0
