@@ -40,51 +40,45 @@ def getpwnam(name,pwfile='/etc/passwd'):
 			f.close
 			return entry
 
-def createConfig( username , backupdir ):
+def createConfig( username , mainVolume_preset ):
 
 	shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
 	print "Config file copied"
 
-	backupDir=raw_input("backupDir:  [/var/datenfresser]")
-	backupUser=raw_input("backup User: [" + username  +"]")
+	mainVolume=raw_input("main backup volume:  [/var/datenfresser]")
+	backupUser=raw_input("backup user: [" + username  +"]")
 
 	if backupUser=="":
 		backupUser = username
-		username = backupUser
 
-	if backupDir=="":
-		backupDir = backupdir
-		if not os.path.isdir( backupDir ):
-			os.mkdir( backupDir );	
+	if mainVolume=="": 
+		mainVolume = mainVolume_preset
+		
+	if not os.path.isdir( mainVolume):
+		os.mkdir( mainVolume );	
 
 
-	search_dict={}
-	search_dict["@@backupDir@@"]=backupDir
-	search_dict["@@backupUser@@"]=backupUser
-
-	input = open(CONFIG_FILENAME)
-	tmp=CONFIG_FILENAME + "~"
-	output = open(tmp,'w')
-	for s in input:
-		for search_string in search_dict:
-			s=s.replace(search_string,search_dict[search_string])
-			output.write(s)
+	output = open( CONFIG_FILENAME , "w")
+	
+	output.write("[main]\n")
+	output.write("mainVolume=" + mainVolume + "\n")
+	output.write("username=" + backupUser + "\n")
+	
 	output.close()
-	input.close()
-	shutil.move(tmp,CONFIG_FILENAME)
+
 
 ######################################################################
 # Create config file 
 ######################################################################
 
-#if os.path.isfile(CONFIG_TEMPLATE):
-#	print "IN CONFIG TEMPL"
-#	if os.path.isfile(CONFIG_FILENAME):
-#		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
-#		if raw_input()=="y": 
-#			createConfig(username,"/var/datenfresser")
-#	else:
-#		createConfig(username,"/var/datenfresser")
+if os.path.isfile(CONFIG_TEMPLATE):
+	print "IN CONFIG TEMPL"
+	if os.path.isfile(CONFIG_FILENAME):
+		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
+		if raw_input()=="y": 
+			createConfig(username,"/var/datenfresser")
+	else:
+		createConfig(username,"/var/datenfresser")
 
 ###################################################################
 #check if user backupUser exists
@@ -144,7 +138,6 @@ shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
 
 #adjust permissions
 os.system("chmod +x /usr/sbin/datenfresser")
-os.system("chmod +x /usr/sbin/datenfresserLCD")
 os.system("chmod +x /etc/init.d/datenfresser")
 
 os.system("chown -R " + username + " /var/datenfresser")
