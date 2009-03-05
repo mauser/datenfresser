@@ -78,7 +78,7 @@ class datenfresser
 		print(" <div id='banner'>
 				<img src='images/small.png'>			
 				<div id='banner_text'>
-					<a href='datenfresser.php'>Show container</a>
+					<a href='index.php'>Show container</a>
 					<a href='add_container.php'>Add container</a>
 				</div>
 			</div>
