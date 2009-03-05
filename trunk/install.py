@@ -72,7 +72,6 @@ def createConfig( username , mainVolume_preset ):
 ######################################################################
 
 if os.path.isfile(CONFIG_TEMPLATE):
-	print "IN CONFIG TEMPL"
 	if os.path.isfile(CONFIG_FILENAME):
 		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
 		if raw_input()=="y": 
