@@ -42,9 +42,6 @@ def getpwnam(name,pwfile='/etc/passwd'):
 
 def createConfig( username , mainVolume_preset ):
 
-	shutil.copyfile("./datenfresser.conf.tmpl","/etc/datenfresser.conf")
-	print "Config file copied"
-
 	mainVolume=raw_input("main backup volume:  [/var/datenfresser]")
 	backupUser=raw_input("backup user: [" + username  +"]")
 
@@ -54,7 +51,7 @@ def createConfig( username , mainVolume_preset ):
 	if mainVolume=="": 
 		mainVolume = mainVolume_preset
 		
-	if not os.path.isdir( mainVolume):
+	if not os.path.isdir( mainVolume ):
 		os.mkdir( mainVolume );	
 
 
@@ -71,13 +68,12 @@ def createConfig( username , mainVolume_preset ):
 # Create config file 
 ######################################################################
 
-if os.path.isfile(CONFIG_TEMPLATE):
-	if os.path.isfile(CONFIG_FILENAME):
-		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
-		if raw_input()=="y": 
-			createConfig(username,"/var/datenfresser")
-	else:
+if os.path.isfile(CONFIG_FILENAME):
+	print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
+	if raw_input()=="y": 
 		createConfig(username,"/var/datenfresser")
+else:
+	createConfig(username,"/var/datenfresser")
 
 ###################################################################
 #check if user backupUser exists
