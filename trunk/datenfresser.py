@@ -40,7 +40,7 @@ c = config()
 MAINVOLUME = c.getMainVolume()
 
 def archiveFolder( container , compress ):
-	localPath = MAINVOLUME + container.localPath	
+	localPath = MAINVOLUME + "/" + container.localPath	
 
 	#be sure that the path ends with a "/"
 	if localPath[-1] != "/": 
@@ -60,7 +60,7 @@ def archiveFolder( container , compress ):
 
 
 def checkDirs( container ):
- 	localPath = MAINVOLUME + container.localPath	
+ 	localPath = MAINVOLUME + "/" + container.localPath	
 	
 	#be sure that the path ends with a "/"
 	if localPath[-1] != "/": 
@@ -77,7 +77,7 @@ def performBackup( dataID ):
 		if container.options == "":
 		
 			checkDirs( container )
-			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + container.localPath + "/cur/"
+			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
 			
 			
 			id = 0

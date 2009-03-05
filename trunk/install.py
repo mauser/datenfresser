@@ -124,8 +124,10 @@ if not os.path.isdir(DATA_PATH):
 		os.mkdir(DATA_PATH)
 
 
-shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
+shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
+shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
+
 
 
 #init.d skript

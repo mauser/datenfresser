@@ -217,9 +217,9 @@ class database:
 		localPath = MAINVOLUME + "/" + name + "/";
 	
 		
-		os.mkdir( localPath)
-		os.mkdir( localPath + "cur/")
-		os.mkdir( localPath + "archived/")
+		os.mkdir( localPath )
+		os.mkdir( localPath + "cur/" )
+		os.mkdir( localPath + "archived/" )
 
 
 
