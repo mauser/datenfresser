@@ -15,7 +15,12 @@ $core->print_header();
 <?
 
 if(isset($_POST['new_volume']) and $_POST['new_volume'] != ""){
-	$core->add_volume( $_POST['new_volume'] );
+	if( is_dir( $_POST['new_volume'] )){
+		$core->add_volume( $_POST['new_volume'] );
+	} else {
+		$core->print_error_message("'" . $_POST['new_volume'] . "' has to be an existing directory" );
+		return;
+	}
 }
 
 $dbh = new PDO('sqlite:/var/datenfresser/datenfresser.db');
