@@ -31,13 +31,18 @@ class datenfresser
 		$log_id = $data->fetchAll(PDO::FETCH_ASSOC);
 
 		return $log_id; 
+	}
+	
+	function get_volumes(){
+		$dbh = $this->db;
+		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		$data = $dbh->query("SELECT name FROM volumes");
 
-
-
-
+		return $data->fetchAll( PDO::FETCH_COLUMN );
 	}
 
-	function addContainer( $name, $comment, $path, $type, $options, $schedule, $group,$archive,$compress,$archive_ttl) 
+
+	function addContainer( $name, $comment, $path, $type, $options, $volume, $schedule, $group,$archive,$compress,$archive_ttl) 
 	{
 		$dbh = $this->db;
 		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
@@ -46,6 +51,21 @@ class datenfresser
 			$dbh->beginTransaction();
  			$dbh->query("INSERT INTO dataContainer(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command) values ( NULL , '$name', '$comment', '$name' , '$path' , '$type', '$options', '$schedule' , '$group','$archive','$compress','$archive_ttl','$pre_command','$post_command')");
 			$dbh->commit();
+
+			$dbh->beginTransaction();
+			$data = $dbh->query("SELECT dataID FROM dataContainer WHERE name='". $name . "'");
+			$container_id = $data->fetchAll(PDO::FETCH_COLUMN);
+	
+			$data = $dbh->query("SELECT volumeID FROM volumes WHERE name='". $volume . "'");
+			$volume_id = $data->fetchAll(PDO::FETCH_COLUMN);
+
+			print_r($volume_id);
+
+			$dbh->query("INSERT INTO rel_volumes_container(volumeID,containerID) VALUES ('".$volume_id[0]."','".$container_id[0]. "')");
+			
+			$dbh->commit();
+
+
   
 		} catch (Exception $e) {
   			$dbh->rollBack();

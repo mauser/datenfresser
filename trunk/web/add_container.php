@@ -11,6 +11,7 @@ if($_POST["name"] != ""){
 	$rpath = $_POST['rpath'];
 	$comment = $_POST['comment'];
 	$options = $_POST['options'];
+	$volume = $_POST['volume'];
 	$schedule = $_POST['schedule'];
 	$archive = $_POST['archive'];
 	$archive_ttl = $_POST['archive_ttl'];
@@ -21,7 +22,7 @@ if($_POST["name"] != ""){
 	$type = "rsync";
 
 	#$core->init();
-	$core->addContainer( $name, $comment, $rpath, $type, $options, $schedule, $group,$archive,$compress,$archive_ttl,$pre_command,$post_command);
+	$core->addContainer( $name, $comment, $rpath, $type, $options, $volume, $schedule, $group,$archive,$compress,$archive_ttl,$pre_command,$post_command);
 }
 
 ?>
@@ -33,6 +34,14 @@ if($_POST["name"] != ""){
 	<tr><td>Name:</td><td><input type="text" name="name"></td></tr>
 	<tr><td>Remote path:</td><td><input type="text" name="rpath"></td></tr>
 	<tr><td>Rsync options:</td><td><input type="text" name="options"></td></tr>
+	<tr><td>Volume:</td><td><select name="volume">
+	<?
+		$volumes = $core->get_volumes();
+		foreach( $volumes as $volume){
+			print "<option>$volume</option>";
+		}
+	?>
+	</td></tr>	
 	<tr><td>Comment:</td><td><input type="text" name="comment"></td></tr>
 	<tr><td>Schedule:</td><td>
 					<select name="schedule">

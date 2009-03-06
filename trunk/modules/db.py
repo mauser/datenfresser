@@ -192,7 +192,16 @@ class database:
 			sql="INSERT INTO volumes VALUES (NULL,'%s','unknown','unknown')" % MAINVOLUME
 			self.cursor.execute(sql)
 			self.db.commit()
+	
+		#tables rel_volumes_container
+		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='rel_volumes_container'"
+        	self.cursor.execute(sql)
+        	row = self.cursor.fetchone()
 
+        	if not row:
+			sql="CREATE TABLE 'rel_volumes_container' (containerID INTEGER, volumeID INTEGER )"
+			self.cursor.execute(sql)
+			self.db.commit()
 
 
 	def getDataContainer(self,dataId):
