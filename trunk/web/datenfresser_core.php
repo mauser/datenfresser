@@ -42,6 +42,23 @@ class datenfresser
 	}
 
 
+function add_volume( $name )
+{
+	$dbh = $this->db;
+	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+	
+	try{
+		$dbh->beginTransaction();
+		$dbh->query("INSERT INTO volumes(volumeID,name,used_space,free_space) VALUES (NULL, '$name', 'unknown', 'unknown')");
+		$dbh->commit();
+  
+	} catch (Exception $e) {
+  		$dbh->rollBack();
+  		echo "Failed: " . $e->getMessage();
+	}
+}
+
+
 	function addContainer( $name, $comment, $path, $type, $options, $volume, $schedule, $group,$archive,$compress,$archive_ttl) 
 	{
 		$dbh = $this->db;
