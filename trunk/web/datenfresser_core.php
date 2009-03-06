@@ -80,6 +80,7 @@ class datenfresser
 				<div id='banner_text'>
 					<a href='index.php'>Show container</a>
 					<a href='add_container.php'>Add container</a>
+					<a href='show_volumes.php'>Volumes</a>
 				</div>
 			</div>
 			<div height='300'>&nbsp;<br /><br /><br /><br /><br /></div>
