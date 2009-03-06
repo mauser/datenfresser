@@ -188,7 +188,9 @@ class database:
         	if not row:
 			sql="CREATE TABLE 'volumes' (volumeID INTEGER PRIMARY KEY, name TEXT, used_space TEXT,free_space TEXT)"
 			self.cursor.execute(sql)
-			sql="INSERT INTO volumes VALUES (NULL," + MAINVOLUME +")"
+
+			sql="INSERT INTO volumes VALUES (NULL,'%s','unknown','unknown')" % MAINVOLUME
+			self.cursor.execute(sql)
 			self.db.commit()
 
 
