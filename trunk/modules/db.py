@@ -172,6 +172,25 @@ class database:
 			sql="INSERT INTO groups VALUES (NULL,'*')"
 			self.db.commit()
 
+		#table volumes
+		
+		#
+		# volume = place to store backup data
+		# the mainVolume is a special volume, it is the default location
+		# and keeps the datenfresser database which stores the metadata
+		# thus it can't be deleted.
+		# 
+
+		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='volumes'"
+        	self.cursor.execute(sql)
+        	row = self.cursor.fetchone()
+
+        	if not row:
+			sql="CREATE TABLE 'volumes' (volumeID INTEGER PRIMARY KEY, name TEXT, used_space TEXT,free_space TEXT)"
+			self.cursor.execute(sql)
+			sql="INSERT INTO volumes VALUES (NULL," + MAINVOLUME +")"
+			self.db.commit()
+
 
 
 	def getDataContainer(self,dataId):
