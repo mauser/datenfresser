@@ -62,18 +62,22 @@ def createConfig( username , mainVolume_preset ):
 	output.write("username=" + backupUser + "\n")
 	
 	output.close()
+	return ( backupUser , mainVolume )
 
 
 ######################################################################
 # Create config file 
 ######################################################################
 
+user = "" 
+volume = ""
+
 if os.path.isfile(CONFIG_FILENAME):
 	print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
 	if raw_input()=="y": 
-		createConfig(username,"/var/datenfresser")
+		(user , volume) = createConfig(username,"/var/datenfresser")
 else:
-	createConfig(username,"/var/datenfresser")
+	( user,volume) = createConfig(username,"/var/datenfresser")
 
 ###################################################################
 #check if user backupUser exists
@@ -137,7 +141,7 @@ shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
 os.system("chmod +x /usr/sbin/datenfresser")
 os.system("chmod +x /etc/init.d/datenfresser")
 
-os.system("chown -R " + username + " /var/datenfresser")
+os.system("chown -R " + user + " " + volume)
 
 print "Configuration successful"
 
