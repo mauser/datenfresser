@@ -11,7 +11,7 @@ import time
 
 
 from string import strip
-from core import dataContainer
+from core import *
 from config import config
 
 c = config()
@@ -204,6 +204,28 @@ class database:
 			self.db.commit()
 
 
+	def get_running_jobs(self):
+		
+		jobList = []
+		
+		sql = "SELECT log.logID , log.start_timestamp , dataContainer.name FROM log,dataContainer WHERE log.status='running' AND log.dataID = dataContainer.dataID "
+		self.cursor.execute(sql)
+		for c in self.cursor.fetchall():
+			tmp = job( c[0],c[1],c[2] );
+			jobList.append( tmp )
+			
+		return jobList
+	
+	def get_log_entries(self, dataID):
+		sql = "SELECT * FROM log WHERE dataID ='%s' ORDER BY start_timestamp desc" % dataID
+		self.cursor.execute(sql)
+		logList = []
+		for c in self.cursor.fetchall():
+			tmp = logEntry( c[0],c[1],c[2],c[3],c[4],c[5], );
+			logList.append( tmp )
+			
+		return logList
+
 	def getDataContainer(self,dataId):
 
 		if dataId=="":
@@ -216,7 +238,7 @@ class database:
 		dataContainerList = []
 		for c in self.cursor.fetchall():
 			tmp = dataContainer(c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8]);
-			if dataId !="": return tmp
+			if dataId !="": return [ tmp ]
 			dataContainerList.append( tmp )
 			
 		return dataContainerList
