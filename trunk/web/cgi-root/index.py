@@ -5,7 +5,7 @@ import sys
 sys.path.append("/usr/lib/datenfresser/modules")
 from webcore import datenfresser_web
 from db import database
-
+from datetime import datetime
 
 a = datenfresser_web()
 a.print_header()
@@ -24,7 +24,7 @@ if len(c) == 0:
 print "<br /><br /><br /><br /><br />"
 print "<table><tr><th>Running Jobs</th></tr>"
 for job in data.get_running_jobs():
-	print "<tr><td>Job \"" +  job.name + "\" is running since  " + job.startTimestamp  + "</td></tr>"
+	print "<tr><td>Job \"" +  job.name + "\" is running since  " + datetime.fromtimestamp(float(job.startTimestamp)).ctime()  + "</td></tr>"
 print "</table><br>"
 
 

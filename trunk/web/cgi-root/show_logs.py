@@ -7,7 +7,7 @@ from webcore import datenfresser_web
 import cgi
 import cgitb
 from db import database
-
+from datetime import datetime
 
 cgitb.enable()
 
@@ -27,8 +27,8 @@ if form.has_key("id"):
 
 	print "<tr>";
 	print "<td>" + log.type +  "</td>";
-	print "<td>" + log.startTimestamp + "</td>";
-	print "<td>" + log.endTimestamp + "</td>";
+	print "<td>" + datetime.fromtimestamp(float(log.startTimestamp)).ctime() + "</td>";
+	print "<td>" + datetime.fromtimestamp(float(log.endTimestamp)).ctime() + "</td>";
 	print "<td>" + log.status + "</td>";
 
 	print "</tr>";
