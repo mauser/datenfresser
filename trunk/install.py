@@ -116,6 +116,7 @@ if os.path.isdir( LIB_PATH ):
 os.mkdir( LIB_PATH )
 os.mkdir( LIB_PATH + "/" + "modules" )
 os.mkdir( LIB_PATH + "/" + "web" )
+os.mkdir( LIB_PATH + "/" + "web/cgi-root" )
 
 
 
@@ -131,6 +132,16 @@ shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
 shutil.copyfile("./modules/webserver.py",LIB_PATH + "/modules/webserver.py")
 
 
+shutil.copyfile("./web/index.html",LIB_PATH + "/web/index.html")
+shutil.copyfile("./web/cgi-root/datenfresser.css",LIB_PATH + "/web/cgi-root/datenfresser.css")
+shutil.copyfile("./web/cgi-root/index.py",LIB_PATH + "/web/cgi-root/index.py")
+shutil.copyfile("./web/cgi-root/add_container.py",LIB_PATH + "/web/cgi-root/add_container.py")
+shutil.copyfile("./web/cgi-root/show_container.py",LIB_PATH + "/web/cgi-root/show_container.py")
+shutil.copyfile("./web/cgi-root/show_logs.py",LIB_PATH + "/web/cgi-root/show_logs.py")
+shutil.copyfile("./web/cgi-root/webcore.py",LIB_PATH + "/web/cgi-root/webcore.py")
+
+shutil.copytree("./web/cgi-root/images/", LIB_PATH + "/web/cgi-root/images")
+
 #init.d skript
 shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
 
@@ -141,6 +152,7 @@ shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
 #adjust permissions
 os.system("chmod +x /usr/sbin/datenfresser")
 os.system("chmod +x /etc/init.d/datenfresser")
+os.system("chmod +x " + LIB_PATH + "/web/cgi-root/*.py")
 
 os.system("chown -R " + user + " " + volume)
 

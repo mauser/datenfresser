@@ -287,7 +287,7 @@ class datenfresser_webserver:
     
     def startServer( self ):
 	
-	os.chdir( "/var/www/datenfresser/web")
+	os.chdir( "/usr/lib/datenfresser/web")
 	
 	try: 
 		pid = os.fork() 
