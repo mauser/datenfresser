@@ -110,24 +110,25 @@ except KeyError:
 #copy our own modules to /usr/lib/datenfresser
 LIB_PATH="/usr/lib/datenfresser"
 
-if os.path.isdir(LIB_PATH):
+if os.path.isdir( LIB_PATH ):
 	#create defined states :)
 	shutil.rmtree(LIB_PATH)
-os.mkdir(LIB_PATH)
-os.mkdir(LIB_PATH + "/" + "modules")
+os.mkdir( LIB_PATH )
+os.mkdir( LIB_PATH + "/" + "modules" )
+os.mkdir( LIB_PATH + "/" + "web" )
 
 
 
 #copy data to /usr/share/datenfresser
 DATA_PATH="/usr/share/datenfresser"
-if not os.path.isdir(DATA_PATH):
-		os.mkdir(DATA_PATH)
+if not os.path.isdir( DATA_PATH ):
+		os.mkdir( DATA_PATH )
 
 
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
 shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
 shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
-
+shutil.copyfile("./modules/webserver.py",LIB_PATH + "/modules/webserver.py")
 
 
 #init.d skript

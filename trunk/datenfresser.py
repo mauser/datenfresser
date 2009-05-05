@@ -35,6 +35,7 @@ sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
+from webserver import datenfresser_webserver
 
 c = config()
 MAINVOLUME = c.getMainVolume()
@@ -94,7 +95,15 @@ def performBackup( dataID ):
 			    archiveFolder( container , compress )
 			    data.finishJob( int(dataID),int(id), "finished");
 
+
+WEBSERVER = True
+
 def main():
+	
+	if WEBSERVER:
+	    #start our own webserver to serve the webinterface
+	    web = datenfresser_webserver()
+	    web.startServer()
 	
 	d = database()
 	d.cleanupZombieJobs()
