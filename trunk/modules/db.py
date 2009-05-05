@@ -216,12 +216,24 @@ class database:
 		dataContainerList = []
 		for c in self.cursor.fetchall():
 			tmp = dataContainer(c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8]);
-			return tmp
+			if dataId !="": return tmp
+			dataContainerList.append( tmp )
+			
+		return dataContainerList
 
 						
 					
+	def add_volume( self, name ):
+	    sql = "INSERT INTO volumes VALUES (NULL, '%s', 'unknown', 'unknown')" % name
+	    self.cursor.execute(sql)
+	    self.db.commit()		
 
- 	def addDataContainer(self,name,comment,path,type="rsync",options="",schedule="weekly",group="ALL"):
+
+ 	def addDataContainer(self,name,comment,path,type,options,schedule,group, volume, archive, compress, archive_ttl, pre_command, post_command):
+	    
+		if type == "": type = "rsync"
+		if schedule == "": schedule = "weekly"
+	    
 		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
 			schedule="weekly"
 
@@ -246,20 +258,15 @@ class database:
 
 		localPath = MAINVOLUME + "/" + name + "/";
 	
-		
-		os.mkdir( localPath )
-		os.mkdir( localPath + "cur/" )
-		os.mkdir( localPath + "archived/" )
-
-
-
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(localPath)s', '%(remotePath)s','%(comment)s','%(type)s','%(options)s','%(schedule)s','%(group)s','','','','')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid}
+		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
+		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(name)s', '%(remotePath)s','%(type)s','%(options)s','%(schedule)s','%(group)s', NULL ,'%(archive)s','%(compress)s','%(archive_ttl)s','%(pre_command)s','%(post_command)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid, 'archive': archive, 'compress': compress, 'archive_ttl': archive_ttl, 'pre_command': pre_command, 'post_command': post_command }
 		print sql
 		self.cursor.execute(sql)
 		self.db.commit()
 
-		if not os.path.isdir(name):
-			os.mkdir(name);
+		#if not os.path.isdir(name):
+		#	os.mkdir(name);
 
 		#Check if theres no dataContainer named "name" in rootContainer
 		return

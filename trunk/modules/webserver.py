@@ -61,15 +61,20 @@ class datenfresser_webserver:
     ListenPort = 80
     AllowIPs    = ('127.0.0.1', '192.168.*.*')
     
+    
     def startServer( self ):
+	
+	os.chdir( "/var/www/datenfresser/web")
+	
 	try: 
 		pid = os.fork() 
 		if pid > 0:
-		    sys.exit(0) 
+		    return
 	except OSError, e: 
 		print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
 		sys.exit(1) 
 
+	print "Starting datenfresser webserver on port %s" % self.ListenPort
 	httpd = MyThreadingServer( ("", self.ListenPort), MyRequestHandler, self.AllowIPs )
 	httpd.serve_forever()
 

@@ -67,9 +67,9 @@ def checkDirs( container ):
 	if localPath[-1] != "/": 
 		localPath = localPath + "/"	
 
-	if not os.path.isdir( localPath ):   os.mkdir( localPath)
-	if not os.path.isdir( localPath + "cur/" ):   os.mkdir( localPath + "cur/")
-	if not os.path.isdir( localPath + "archived/"):   os.mkdir( localPath + "archived/")
+	if not os.path.isdir( localPath ):   os.mkdir( localPath )
+	if not os.path.isdir( localPath + "cur/" ):   os.mkdir( localPath + "cur/" )
+	if not os.path.isdir( localPath + "archived/"):   os.mkdir( localPath + "archived/" )
 
 def performBackup( dataID ):
 	data = database()
