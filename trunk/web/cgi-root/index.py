@@ -6,6 +6,7 @@ sys.path.append("/usr/lib/datenfresser/modules")
 from webcore import datenfresser_web
 from db import database
 
+
 a = datenfresser_web()
 a.print_header()
 
