@@ -43,14 +43,20 @@ if  not form.has_key('name'):
 					    </select>
 				    </td></tr>
 	    
-	    <tr><td>Archive:</td><td>
-					    <select name="archive">
+	    <tr><td>Archive schedule:</td><td>
+					    <select name="archive_schedule">
 						    <option>disabled</option>
 						    <option>daily</option>
 						    <option>weekly</option>
 						    <option>monthly</option>
 					    </select>
 				    </td></tr>
+	    <tr><td>Archive method:</td><td>
+			    <select name="archive_method">
+				    <option>tar</option>
+				    <option>btrfs snapshot</option>
+			    </select>
+		    </td></tr>		   
 	    <tr><td>Compress:</td><td><input type="checkbox" name="compress"></td></tr>
 	    <tr><td>Keep archives:</td><td><input type="text" name="archive_ttl"> days</td></tr>
 	    <tr><td>pre-command:</td><td><input type="text" name="pre_command"> days</td></tr>
@@ -68,8 +74,11 @@ else:
     data = database()
     
 
+    if not form.has_key("rpath"):
+	print "Error: please fill in a remote path!"
+	sys.exit(0)
     
-    for element in  ['name', 'comment', 'rpath', 'type', 'options', 'volume', 'schedule','archive','compress','archive_ttl','pre_command','post_command' ]:
+    for element in  ['name', 'comment', 'rpath', 'type', 'options', 'volume', 'schedule','archive_schedule','archive_method', 'compress','archive_ttl','pre_command','post_command' ]:
 	if not form.has_key( element ):
 	    values[ element ] = ""
 	else:
@@ -77,4 +86,6 @@ else:
 	
     group = "ALL"
     
-    data.addDataContainer(values['name'],values['comment'],values['rpath'],values['type'],values['options'],values['schedule'],group, values['volume'], values['archive'], values['compress'], values['archive_ttl'], values['pre_command'], values['post_command'])
+    
+    
+    data.addDataContainer(values['name'],values['comment'],values['rpath'],values['type'],values['options'],values['schedule'],group, values['volume'], values['archive_schedule'], values['archive_method'],values['compress'], values['archive_ttl'], values['pre_command'], values['post_command'])

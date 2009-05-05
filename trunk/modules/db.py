@@ -119,7 +119,7 @@ class database:
 
 	def getArchiveInfo( self, dataID ):
 		
-		sql = "SELECT archive,compress,archive_ttl FROM dataContainer WHERE dataID = '%(id)s' " % { 'id': dataID }
+		sql = "SELECT archive,archive_method,compress,archive_ttl FROM dataContainer WHERE dataID = '%(id)s' " % { 'id': dataID }
 		self.cursor.execute(sql)
 		return self.cursor.fetchone()
 
@@ -135,7 +135,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT, compress TEXT,archive_ttl TEXT,pre_command TEXT,post_command TEXT)"
+			sql="CREATE TABLE 'dataContainer' (dataID INTEGER PRIMARY KEY, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT,archive_method TEXT, compress TEXT,archive_ttl TEXT,pre_command TEXT,post_command TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
@@ -245,13 +245,8 @@ class database:
 
 						
 					
-	def add_volume( self, name ):
-	    sql = "INSERT INTO volumes VALUES (NULL, '%s', 'unknown', 'unknown')" % name
-	    self.cursor.execute(sql)
-	    self.db.commit()		
-
-
- 	def addDataContainer(self,name,comment,path,type,options,schedule,group, volume, archive, compress, archive_ttl, pre_command, post_command):
+	
+ 	def addDataContainer(self,name,comment,path,type,options,schedule,group, volume, archive,archive_method, compress, archive_ttl, pre_command, post_command):
 	    
 		if type == "": type = "rsync"
 		if schedule == "": schedule = "weekly"
@@ -282,7 +277,7 @@ class database:
 	
 		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
 		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(name)s', '%(remotePath)s','%(type)s','%(options)s','%(schedule)s','%(group)s', NULL ,'%(archive)s','%(compress)s','%(archive_ttl)s','%(pre_command)s','%(post_command)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid, 'archive': archive, 'compress': compress, 'archive_ttl': archive_ttl, 'pre_command': pre_command, 'post_command': post_command }
+		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(name)s', '%(remotePath)s','%(type)s','%(options)s','%(schedule)s','%(group)s', NULL ,'%(archive)s','%(archive_method)s','%(compress)s','%(archive_ttl)s','%(pre_command)s','%(post_command)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid, 'archive': archive, 'archive_method': archive_method,'compress': compress, 'archive_ttl': archive_ttl, 'pre_command': pre_command, 'post_command': post_command }
 		print sql
 		self.cursor.execute(sql)
 		self.db.commit()

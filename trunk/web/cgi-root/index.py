@@ -23,7 +23,7 @@ if len(c) == 0:
 print "<br /><br /><br /><br /><br />"
 print "<table><tr><th>Running Jobs</th></tr>"
 for job in data.get_running_jobs():
-	print "<tr><td>Job \"" +  job.name + "\" is running since  " + job.start_timestamp  + "</td></tr>"
+	print "<tr><td>Job \"" +  job.name + "\" is running since  " + job.startTimestamp  + "</td></tr>"
 print "</table><br>"
 
 

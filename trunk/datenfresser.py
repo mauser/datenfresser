@@ -40,7 +40,7 @@ from webserver import datenfresser_webserver
 c = config()
 MAINVOLUME = c.getMainVolume()
 
-def archiveFolder( container , compress ):
+def archiveFolder( container , method , compress ):
 	localPath = MAINVOLUME + "/" + container.localPath	
 
 	#be sure that the path ends with a "/"
@@ -51,13 +51,22 @@ def archiveFolder( container , compress ):
 	dateTupel = gmtime(time())
 	dateString = str(dateTupel[0]) + "_" + str(dateTupel[1]) + "_" + str(dateTupel[2]) + "_" + str(dateTupel[3]) + "_" + str(dateTupel[4]) 
 
-	if compress == "on":
-	    tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + "_" + dateString + ".tar.bz2 " + localPath + "cur/*"
-	else:
-	    tar_cmd = "tar -cf " + localPath + "archived/" + container.name + "_" + dateString + ".tar " + localPath + "cur/*"
+	if method == "tar":
+	    if compress == "on":
+		tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + "_" + dateString + ".tar.bz2 " + localPath + "cur/*"
+	    else:
+		tar_cmd = "tar -cf " + localPath + "archived/" + container.name + "_" + dateString + ".tar " + localPath + "cur/*"
 
-	print tar_cmd
-	subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
+	    print tar_cmd
+	    subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
+	
+	if method == "btrfs snapshot":
+	    cmd = "btrfsctl -s " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
+
+	    print cmd
+	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()	    
+	 
+	   
 
 
 def checkDirs( container ):
@@ -68,12 +77,19 @@ def checkDirs( container ):
 		localPath = localPath + "/"	
 
 	if not os.path.isdir( localPath ):   os.mkdir( localPath )
+	
+	#stores current data ( retrieved with rsync )
 	if not os.path.isdir( localPath + "cur/" ):   os.mkdir( localPath + "cur/" )
+	
+	#holds archives 
 	if not os.path.isdir( localPath + "archived/"):   os.mkdir( localPath + "archived/" )
+	
+	#holds btrfs snapshots
+	if not os.path.isdir( localPath + "snapshots/"):   os.mkdir( localPath + "snapshots/" )
 
 def performBackup( dataID ):
 	data = database()
-	container = data.getDataContainer( dataID )
+	container = data.getDataContainer( dataID )[0]
 	if( container.type == "rsync" ):
 		if container.options == "":
 		
@@ -88,11 +104,11 @@ def performBackup( dataID ):
 			print "return: " + str(os.system( rsync_cmd ))
 			data.finishJob(int(dataID), int(id), "finished");
 			
-			archive,compress,ttl =  data.getArchiveInfo( int(dataID) )
+			archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
 
 			if archive != "disabled":
 			    id = data.startJob( "archive" , int(dataID))
-			    archiveFolder( container , compress )
+			    archiveFolder( container , method , compress )
 			    data.finishJob( int(dataID),int(id), "finished");
 
 
