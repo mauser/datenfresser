@@ -20,6 +20,8 @@ class config:
 		config.readfp(open('/etc/datenfresser.conf'))
 		
 		self.__main_volume = config.get("main","mainVolume")
+		self.__poll_interval = config.get("main","poll_interval")
+		
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
 
@@ -32,6 +34,9 @@ class config:
 		
 	def getWebserverPort( self ):
 		return self.__webserver_port
+		
+	def getPollInterval( self ):
+		return self.__poll_interval
 		
 
 

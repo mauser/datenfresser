@@ -61,6 +61,9 @@ def createConfig( username , mainVolume_preset ):
 	output.write("mainVolume=" + mainVolume + "\n")
 	output.write("username=" + backupUser + "\n")
 	
+	output.write("\n#seconds after datenfresser checks if a new job is ready to run\n")
+	output.write("poll_interval=60" "\n")
+	
 	output.write("[webserver]\n")
 	output.write("webserver_enabled=True\n")
 	output.write("webserver_port=8080\n")

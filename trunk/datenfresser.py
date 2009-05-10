@@ -126,10 +126,11 @@ def main():
 	d.cleanupZombieJobs()
 	#main loop
 	while 1:
-		sleep(2)
 		for id in d.tickAction():
-			print id
-			performBackup(id)
+			performBackup( id )
+		
+		#wait till we look for new ready-to-run jobs
+		sleep( float(c.getPollInterval()) )
 		
 	
 if __name__ == "__main__":
