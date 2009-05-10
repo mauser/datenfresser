@@ -288,6 +288,12 @@ class database:
 		#Check if theres no dataContainer named "name" in rootContainer
 		return
 		
+	def deleteContainer( self, dataID ):	
+		sql = "DELETE FROM  dataContainer WHERE dataID='" + dataID + "'"
+		self.cursor.execute( sql )
+		self.db.commit()
+		
+		return
 
 	def addComment(self,container,comment):
 		pass
