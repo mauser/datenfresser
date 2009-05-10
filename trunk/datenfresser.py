@@ -112,13 +112,14 @@ def performBackup( dataID ):
 			    data.finishJob( int(dataID),int(id), "finished");
 
 
-WEBSERVER = True
-
 def main():
+	c = config()
+	webserver = c.getWebserverEnabled()
+	webserver_port =  c.getWebserverPort()
 	
-	if WEBSERVER:
+	if webserver == "True":
 	    #start our own webserver to serve the webinterface
-	    web = datenfresser_webserver()
+	    web = datenfresser_webserver( webserver_port )
 	    web.startServer()
 	
 	d = database()

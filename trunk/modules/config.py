@@ -11,18 +11,28 @@ class config:
 
 	def __init__(self):
 		"""Class for Configuration Managment"""
+		
+
+		self.__username = ""
+		self.__main_volume = ""
+
 		config = ConfigParser.ConfigParser()
-
 		config.readfp(open('/etc/datenfresser.conf'))
-
-		self.__username=""
-		self.__main_volume=""
-
-		self.__main_volume= config.get("main","mainVolume")
+		
+		self.__main_volume = config.get("main","mainVolume")
+		self.__webserver = config.get("webserver","webserver_enabled")
+		self.__webserver_port = config.get("webserver","webserver_port")
 
 
 	def getMainVolume( self ):
 		return self.__main_volume
+	
+	def getWebserverEnabled( self ):
+		return self.__webserver
+		
+	def getWebserverPort( self ):
+		return self.__webserver_port
+		
 
 
 

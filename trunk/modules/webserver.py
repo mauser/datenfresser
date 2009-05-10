@@ -281,9 +281,11 @@ class MyThreadingServer( SocketServer.ThreadingTCPServer ):
 
 class datenfresser_webserver:
 
-    ListenPort = 80
+    # allow access from localhost and local network
     AllowIPs    = ('127.0.0.1', '192.168.*.*')
     
+    def __init__( self , port ):
+	    self.__listen_port = int(port)
     
     def startServer( self ):
 	
@@ -297,7 +299,7 @@ class datenfresser_webserver:
 		print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
 		sys.exit(1) 
 
-	print "Starting datenfresser webserver on port %s" % self.ListenPort
-	httpd = MyThreadingServer( ("", self.ListenPort), MyRequestHandler, self.AllowIPs )
+	print "Starting datenfresser webserver on port %s" % self.__listen_port
+	httpd = MyThreadingServer( ("", self.__listen_port ), MyRequestHandler, self.AllowIPs )
 	httpd.serve_forever()
 

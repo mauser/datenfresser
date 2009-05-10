@@ -61,6 +61,10 @@ def createConfig( username , mainVolume_preset ):
 	output.write("mainVolume=" + mainVolume + "\n")
 	output.write("username=" + backupUser + "\n")
 	
+	output.write("[webserver]\n")
+	output.write("webserver_enabled=True\n")
+	output.write("webserver_port=8080\n")
+
 	output.close()
 	return ( backupUser , mainVolume )
 
