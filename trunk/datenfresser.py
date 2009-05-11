@@ -113,6 +113,17 @@ def performBackup( dataID ):
 
 
 def main():
+
+
+	try: 
+		pid = os.fork() 
+		if pid > 0:
+		    return
+	except OSError, e: 
+		print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
+		sys.exit(1) 
+
+
 	c = config()
 	webserver = c.getWebserverEnabled()
 	webserver_port =  c.getWebserverPort()
