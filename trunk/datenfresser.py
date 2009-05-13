@@ -25,6 +25,7 @@
 import os
 import sys
 import subprocess
+import select
 
 from time import time
 from time import sleep
@@ -124,11 +125,11 @@ def main():
 	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
 	# disable automatic shutdown at startup
 
-	if auto_shutdown == "True":
+	if auto_shutdown >= 0:
 		print "Press 'enter' to disable automatic shutdown"
 		rfds, wfds, efds = select.select( [sys.stdin], [], [], 5)
 		if rfds != []:
-			auto_shutdown == "False"
+			auto_shutdown == 0
 
 
 	try: 
@@ -147,6 +148,10 @@ def main():
 	
 	d = database()
 	d.cleanupZombieJobs()
+
+	#current time
+	cur_time = time()
+
 	#main loop
 	while 1:
 		for id in d.tickAction():
@@ -155,7 +160,7 @@ def main():
 		#wait till we look for new ready-to-run jobs
 		sleep( float(c.getPollInterval()) )
 		
-		if auto_shutdown == "True":
+		if (cur_time + auto_shutdown) - time() < 0:
 			shutdown()
 		
 	
