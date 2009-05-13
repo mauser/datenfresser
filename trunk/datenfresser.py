@@ -111,8 +111,24 @@ def performBackup( dataID ):
 			    archiveFolder( container , method , compress )
 			    data.finishJob( int(dataID),int(id), "finished");
 
+def shutdown():
+	cmd = "shutdown -h now"
+	subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()
 
 def main():
+	c = config()
+	webserver = c.getWebserverEnabled()
+	webserver_port =  c.getWebserverPort()
+	auto_shutdown = c.getAutomaticShutdown()
+	
+	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
+	# disable automatic shutdown at startup
+
+	if auto_shutdown == "True":
+		print "Press 'enter' to disable automatic shutdown"
+		rfds, wfds, efds = select.select( [sys.stdin], [], [], 5)
+		if rfds != []:
+			auto_shutdown == "False"
 
 
 	try: 
@@ -124,10 +140,6 @@ def main():
 		sys.exit(1) 
 
 
-	c = config()
-	webserver = c.getWebserverEnabled()
-	webserver_port =  c.getWebserverPort()
-	
 	if webserver == "True":
 	    #start our own webserver to serve the webinterface
 	    web = datenfresser_webserver( webserver_port )
@@ -142,6 +154,9 @@ def main():
 		
 		#wait till we look for new ready-to-run jobs
 		sleep( float(c.getPollInterval()) )
+		
+		if auto_shutdown == "True":
+			shutdown()
 		
 	
 if __name__ == "__main__":

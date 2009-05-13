@@ -60,6 +60,7 @@ def createConfig( username , mainVolume_preset ):
 	output.write("[main]\n")
 	output.write("mainVolume=" + mainVolume + "\n")
 	output.write("username=" + backupUser + "\n")
+	output.write("automatic_shutdown=False\n")
 	
 	output.write("\n#seconds after datenfresser checks if a new job is ready to run\n")
 	output.write("poll_interval=60" "\n")
