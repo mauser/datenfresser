@@ -160,8 +160,9 @@ def main():
 		#wait till we look for new ready-to-run jobs
 		sleep( float(c.getPollInterval()) )
 		
-		if (cur_time + auto_shutdown) - time() < 0:
-			shutdown()
+		if (int(cur_time) + int (auto_shutdown)) - time() < 0:
+			#shutdown()
+			print "shutdown!!!"
 		
 	
 if __name__ == "__main__":
