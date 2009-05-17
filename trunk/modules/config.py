@@ -20,6 +20,7 @@ class config:
 		config.readfp(open('/etc/datenfresser.conf'))
 		
 		self.__main_volume = config.get("main","mainVolume")
+		self.__db_location = config.get("main","db_location")
 		self.__poll_interval = config.get("main","poll_interval")
 		self.__automatic_shutdown = config.get("main","automatic_shutdown")
 		
@@ -29,6 +30,9 @@ class config:
 
 	def getMainVolume( self ):
 		return self.__main_volume
+
+	def getDbLocation( self ):
+		return self.__db_location
 	
 	def getWebserverEnabled( self ):
 		return self.__webserver

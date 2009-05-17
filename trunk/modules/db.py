@@ -15,15 +15,21 @@ from core import *
 from config import config
 
 c = config()
-MAINVOLUME = c.getMainVolume()
+main_volume = c.getMainVolume()
+db_location = c.getDbLocation()
 
 class database:
 
 	def __init__(self):
-		if not os.path.isdir( MAINVOLUME ):
-			os.mkdir( MAINVOLUME )
+		if not os.path.isdir( main_volume ):
+			os.mkdir( main_volume )
+		
+		if not os.path.isdir( db_location ):
+			os.mkdir( db_location )
 
-		self.db = sqlite3.connect( MAINVOLUME + "/datenfresser.db" )
+
+
+		self.db = sqlite3.connect( db_location + "/datenfresser.db" )
 		self.cursor = self.db.cursor()
 		self.checkTables()
 
@@ -199,7 +205,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'rel_volumes_container' (containerID INTEGER, volumeID INTEGER )"
+			sql="CREATE TABLE 'rel_volumes_container' (volumeID INTEGER, containerID INTEGER )"
 			self.cursor.execute(sql)
 			self.db.commit()
 
