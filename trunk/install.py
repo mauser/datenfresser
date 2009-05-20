@@ -62,7 +62,7 @@ def createConfig( username , mainVolume_preset ):
 	output.write("username=" + backupUser + "\n")
 	output.write("db_location=/var/datenfresser\n")
 	output.write("automatic_shutdown=0\n")
-	output.write("sync_directory=\n"
+	output.write("sync_dir=\n")
 	
 	output.write("\n#seconds after datenfresser checks if a new job is ready to run\n")
 	output.write("poll_interval=60" "\n")

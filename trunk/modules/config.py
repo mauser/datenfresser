@@ -23,6 +23,7 @@ class config:
 		self.__db_location = config.get("main","db_location")
 		self.__poll_interval = config.get("main","poll_interval")
 		self.__automatic_shutdown = config.get("main","automatic_shutdown")
+		self.__sync_dir=config.get("main","sync_dir")
 		
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
@@ -46,6 +47,8 @@ class config:
 	def getAutomaticShutdown( self ):
 		return self.__automatic_shutdown
 		
+	def getSyncDir( self ):
+		return self.__sync_dir
 
 
 

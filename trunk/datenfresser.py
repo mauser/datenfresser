@@ -111,6 +111,18 @@ def performBackup( dataID ):
 			    id = data.startJob( "archive" , int(dataID))
 			    archiveFolder( container , method , compress )
 			    data.finishJob( int(dataID),int(id), "finished");
+def checkSyncDirs():
+	c = config()
+	d = database()
+	container = d.getDataContainer("")	
+	
+	print "in sync"
+	dir = c.getSyncDir()
+	if dir != "" and os.path.isdir( dir ):
+		for con in container:
+			print con.name
+			if os.path.isdir( dir + "/" + con.name ):
+				print "yes!"
 
 def shutdown():
 	cmd = "shutdown -h now"
@@ -125,7 +137,7 @@ def main():
 	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
 	# disable automatic shutdown at startup
 
-	if auto_shutdown >= 0:
+	if int(auto_shutdown) > 0:
 		print "Press 'enter' to disable automatic shutdown"
 		rfds, wfds, efds = select.select( [sys.stdin], [], [], 5)
 		if rfds != []:
@@ -154,11 +166,12 @@ def main():
 
 	#main loop
 	while 1:
+		checkSyncDirs()
 		for id in d.tickAction():
 			performBackup( id )
 		
 		#wait till we look for new ready-to-run jobs
-		sleep( float(c.getPollInterval()) )
+		sleep( float( c.getPollInterval() ) )
 		
 		if (int(cur_time) + int (auto_shutdown)) - time() < 0:
 			#shutdown()
