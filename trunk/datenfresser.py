@@ -116,13 +116,14 @@ def checkSyncDirs():
 	d = database()
 	container = d.getDataContainer("")	
 	
-	print "in sync"
 	dir = c.getSyncDir()
-	if dir != "" and os.path.isdir( dir ):
+	if dir[-1] == "/": dir = dir[:-1]	
+
+	if dir != "" and os.path.isdir( dir ): 
 		for con in container:
-			print con.name
-			if os.path.isdir( dir + "/" + con.name ):
-				print "yes!"
+			if os.path.isdir( dir + "/" + con.name ) and con.name != "" and con.name !="." and os.listdir(dir + "/" + con.name) != [] :
+				dest_path = MAINVOLUME + "/" + con.name + "/cur/"
+				os.system("mv " + dir + "/" + con.name + "/* " +  dest_path )
 
 def shutdown():
 	cmd = "shutdown -h now"
