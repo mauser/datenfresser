@@ -178,6 +178,16 @@ class database:
 			sql="INSERT INTO groups VALUES (NULL,'*')"
 			self.db.commit()
 
+		#table files  
+		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='files'"
+        	self.cursor.execute(sql)
+        	row = self.cursor.fetchone()
+        	
+		if not row:
+			sql="CREATE TABLE 'files' (groupID INTEGER PRIMARY KEY, path TEXT, hash TEXT )"
+			self.cursor.execute(sql)
+			self.db.commit()
+		
 		#table volumes
 		
 		#
@@ -208,6 +218,9 @@ class database:
 			sql="CREATE TABLE 'rel_volumes_container' (volumeID INTEGER, containerID INTEGER )"
 			self.cursor.execute(sql)
 			self.db.commit()
+
+	def addFile( self , path ):
+		pass
 
 
 	def get_running_jobs(self):
