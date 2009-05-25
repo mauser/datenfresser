@@ -67,7 +67,22 @@ def archiveFolder( container , method , compress ):
 	    print cmd
 	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()	    
 	 
-	   
+
+def getDirectorySize(directory):
+    #taken from http://roopindersingh.com/2008/04/22/calculating-directory-sizes-in-python/
+    class TotalSize:
+        def __init__(self):
+            self.total = 0
+
+    def visit(totalSize, dirname, names):
+        for name in names:
+            absFilename = os.path.join(dirname, name)
+            if os.path.isfile(absFilename):
+                totalSize.total += os.path.getsize(absFilename)
+
+    totalSize = TotalSize()
+    os.path.walk(directory, visit, totalSize)
+    return totalSize.total	   
 
 
 def checkDirs( container ):
@@ -117,7 +132,7 @@ def checkSyncDirs():
 	container = d.getDataContainer("")	
 	
 	dir = c.getSyncDir()
-	if dir[-1] == "/": dir = dir[:-1]	
+	if dir != "" and dir[-1] == "/": dir = dir[:-1]	
 
 	if dir != "" and os.path.isdir( dir ): 
 		for con in container:
