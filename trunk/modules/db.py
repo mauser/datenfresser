@@ -205,7 +205,7 @@ class database:
 			sql="CREATE TABLE 'volumes' (volumeID INTEGER PRIMARY KEY, name TEXT, used_space TEXT,free_space TEXT)"
 			self.cursor.execute(sql)
 
-			sql="INSERT INTO volumes VALUES (NULL,'%s','unknown','unknown')" % MAINVOLUME
+			sql="INSERT INTO volumes VALUES (NULL,'%s','unknown','unknown')" % main_volume
 			self.cursor.execute(sql)
 			self.db.commit()
 	
@@ -292,7 +292,7 @@ class database:
 			else:
 				gid=0;
 
-		localPath = MAINVOLUME + "/" + name + "/";
+		localPath = main_volume + "/" + name + "/";
 	
 		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
 		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
