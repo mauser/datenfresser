@@ -157,7 +157,7 @@ def main():
 		print "Press 'enter' to disable automatic shutdown"
 		rfds, wfds, efds = select.select( [sys.stdin], [], [], 5)
 		if rfds != []:
-			auto_shutdown == 0
+			auto_shutdown = 0
 
 
 	try: 
@@ -189,9 +189,8 @@ def main():
 		#wait till we look for new ready-to-run jobs
 		sleep( float( c.getPollInterval() ) )
 		
-		if (int(cur_time) + int (auto_shutdown)) - time() < 0:
-			#shutdown()
-			print "shutdown!!!"
+		if int(auto_shutdown) > 0 and  (int(cur_time) + int (auto_shutdown)) - time() < 0:
+			shutdown()
 		
 	
 if __name__ == "__main__":
