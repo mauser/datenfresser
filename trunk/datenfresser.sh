@@ -9,7 +9,6 @@ if [ $# -ne 1 ]; then
 fi
 
 binfile=/usr/sbin/datenfresser
-pidfile=/var/run/datenfresser.pid
 
 if [ ! -x $binfile ]; then
 	echo "datenfresser binary not found"
@@ -24,12 +23,11 @@ if [ ! -w $pidfile ]; then
 	exit 1
 fi
 
-chown datenfresser $pidfile
 
 if [  $1 == "start" ]; then
-	start-stop-daemon -x $binfile  --start --pidfile $pidfile -c datenfresser
+	start-stop-daemon -x $binfile  --start -c datenfresser
 fi
 
 if [ $1 == "stop" ]; then
-	start-stop-daemon  --stop --pidfile $pidfile
+	start-stop-daemon  --stop -n datenfresser
 fi
