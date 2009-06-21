@@ -60,7 +60,7 @@ def createConfig( username , mainVolume_preset ):
 	output.write("[main]\n")
 	output.write("mainVolume=" + mainVolume + "\n")
 	output.write("username=" + backupUser + "\n")
-	output.write("db_location=/var/datenfresser\n")
+	output.write("db_location=/var/lib/datenfresser\n")
 	output.write("automatic_shutdown=0\n")
 	output.write("sync_dir=\n")
 	
@@ -133,7 +133,11 @@ os.mkdir( LIB_PATH + "/" + "web/cgi-root" )
 #copy data to /usr/share/datenfresser
 DATA_PATH="/usr/share/datenfresser"
 if not os.path.isdir( DATA_PATH ):
-		os.mkdir( DATA_PATH )
+	os.mkdir( DATA_PATH )
+
+#database dir
+if not os.path.isdir ( "/var/lib/datenfresser" ):
+	os.mkdir( "/var/lib/datenfresser" ) 
 
 
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
@@ -166,6 +170,7 @@ os.system("chmod +x /etc/init.d/datenfresser")
 os.system("chmod +x " + LIB_PATH + "/web/cgi-root/*.py")
 
 os.system("chown -R " + user + " " + volume)
+os.system("chown -R " + user + " " + "/var/lib/datenfresser")
 
 print "Configuration successful"
 
