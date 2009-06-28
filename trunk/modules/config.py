@@ -24,10 +24,18 @@ class config:
 		self.__poll_interval = config.get("main","poll_interval")
 		self.__automatic_shutdown = config.get("main","automatic_shutdown")
 		self.__sync_dir=config.get("main","sync_dir")
+		self.__start_delay=config.get("main","start_delay")
+		self.__debug=config.get("main","debug")
+		
 		
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
 
+	def getDebug( self ):
+		return self.__debug
+
+	def getStartDelay( self ):
+		return self.__start_delay
 
 	def getMainVolume( self ):
 		return self.__main_volume
