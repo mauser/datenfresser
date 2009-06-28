@@ -149,7 +149,8 @@ def main():
 	webserver = c.getWebserverEnabled()
 	webserver_port =  c.getWebserverPort()
 	auto_shutdown = c.getAutomaticShutdown()
-	
+	start_delay = c.getStartDelay()
+	debug = c.getDebug()	
 	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
 	# disable automatic shutdown at startup
 
@@ -179,6 +180,9 @@ def main():
 
 	#current time
 	cur_time = time()
+
+	if int(start_delay) > 0:
+		sleep( float ( start_delay ) )
 
 	#main loop
 	while 1:
