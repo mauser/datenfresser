@@ -3,16 +3,8 @@
 
 #
 # datenfresser is a backup software written by Sebastian Moors under GPL
-# implemented features:
-#  - daily/weekly rsync-backup 
-
-
-
-
-#
 # You can configure datenfresser with /etc/datenfresser.conf .
-# Persistent metadata is stored with Pickle (default: /var/datenfresser/pickledData)
-#
+
 
 #Todo: backup archiving (when? (weekly, daily,startup),how long archived?)
 
@@ -41,6 +33,10 @@ from webserver import datenfresser_webserver
 c = config()
 MAINVOLUME = c.getMainVolume()
 
+def log( string , level="normal" ):
+	#print string
+	pass
+	
 def archiveFolder( container , method , compress ):
 	localPath = MAINVOLUME + "/" + container.localPath	
 
@@ -58,13 +54,13 @@ def archiveFolder( container , method , compress ):
 	    else:
 		tar_cmd = "tar -cf " + localPath + "archived/" + container.name + "_" + dateString + ".tar " + localPath + "cur/*"
 
-	    print tar_cmd
+	    log( tar_cmd , "verbose" )
 	    subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
 	
 	if method == "btrfs snapshot":
 	    cmd = "btrfsctl -s " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
 
-	    print cmd
+	    log( cmd , "verbose" )
 	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()	    
 	 
 
@@ -104,6 +100,9 @@ def checkDirs( container ):
 	if not os.path.isdir( localPath + "snapshots/"):   os.mkdir( localPath + "snapshots/" )
 
 def performBackup( dataID ):
+	c = config()
+	debug = c.getDebug()	
+	
 	data = database()
 	container = data.getDataContainer( dataID )[0]
 	if( container.type == "rsync" ):
@@ -116,8 +115,9 @@ def performBackup( dataID ):
 			id = 0
 			id = data.startJob( "rsync" , int(dataID))
 
-			print rsync_cmd
-			print "return: " + str(os.system( rsync_cmd ))
+			if debug == 1: 
+				log( rsync_cmd )
+				log( "return: " + str(os.system( rsync_cmd )) )
 			data.finishJob(int(dataID), int(id), "finished");
 			
 			archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
@@ -126,6 +126,8 @@ def performBackup( dataID ):
 			    id = data.startJob( "archive" , int(dataID))
 			    archiveFolder( container , method , compress )
 			    data.finishJob( int(dataID),int(id), "finished");
+				
+				
 def checkSyncDirs():
 	c = config()
 	d = database()

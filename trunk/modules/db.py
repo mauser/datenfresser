@@ -48,7 +48,7 @@ class database:
 		rows = self.cursor.fetchall()
 		for row in rows:
 			actionList.append( str(row[0]) );
-		print actionList
+		#print actionList
 
 
 		#get logID of last backup
@@ -84,7 +84,7 @@ class database:
 		for row in dataContainerTuple:
 		    actionList.append( str(row[0]) );	
 		
-		print actionList
+		#print actionList
 		
 		return actionList;	
 
@@ -294,10 +294,8 @@ class database:
 
 		localPath = main_volume + "/" + name + "/";
 	
-		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
-		#(dataID,name,comment,localPath,remotePath,type,options,schedule,groupID,archive,compress,archive_ttl,pre_command,post_command)
 		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(name)s', '%(remotePath)s','%(type)s','%(options)s','%(schedule)s','%(group)s', NULL ,'%(archive)s','%(archive_method)s','%(compress)s','%(archive_ttl)s','%(pre_command)s','%(post_command)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid, 'archive': archive, 'archive_method': archive_method,'compress': compress, 'archive_ttl': archive_ttl, 'pre_command': pre_command, 'post_command': post_command }
-		print sql
+		#print sql
 		self.cursor.execute(sql)
 		self.db.commit()
 
