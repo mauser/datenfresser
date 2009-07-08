@@ -33,6 +33,17 @@ from webserver import datenfresser_webserver
 c = config()
 MAINVOLUME = c.getMainVolume()
 
+
+def executeCommand( command ):
+	#excute command 
+	#return returnValue: 0 if everything went ok, 1 in case that something went wrong..
+	x = os.system( command )
+	
+	# convert "wait"-style exitcode to normal, shell-like exitcode
+	exitcode = (x >> 8) & 0xFF
+	return exitcode
+
+
 def log( string , level="normal" ):
 	#print string
 	pass
@@ -44,7 +55,7 @@ def archiveFolder( container , method , compress ):
 	if localPath[-1] != "/": 
 		localPath = localPath + "/"	
 
-
+	
 	dateTupel = gmtime(time())
 	dateString = str(dateTupel[0]) + "_" + str(dateTupel[1]) + "_" + str(dateTupel[2]) + "_" + str(dateTupel[3]) + "_" + str(dateTupel[4]) 
 
@@ -112,20 +123,30 @@ def performBackup( dataID ):
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
 			
 			
-			id = 0
+			id , returnValue = 0
 			id = data.startJob( "rsync" , int(dataID))
-
+			
+			returnValue = executeCommand( rsync_cmd )
+			
 			if debug == 1: 
 				log( rsync_cmd )
-				log( "return: " + str(os.system( rsync_cmd )) )
-			data.finishJob(int(dataID), int(id), "finished");
+				log( "return: " + str(returnValue ) )
+				
 			
-			archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
+			if returnValue == "0":
+				data.finishJob(int(dataID), int(id), "finished")
+				
+				#start to archive the backup, if necessary
+				archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
+				if archive != "disabled":
+					id = data.startJob( "archive" , int(dataID))
+					archiveFolder( container , method , compress )
+					data.finishJob( int(dataID),int(id), "finished")
+			else:
+				#Oh, the backup was not successful. Maybe we should try again later?
+				data.finishJob(int(dataID), int(id), "aborted")
 
-			if archive != "disabled":
-			    id = data.startJob( "archive" , int(dataID))
-			    archiveFolder( container , method , compress )
-			    data.finishJob( int(dataID),int(id), "finished");
+
 				
 				
 def checkSyncDirs():
