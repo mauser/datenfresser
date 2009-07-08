@@ -18,14 +18,23 @@ from os.path import join
 import os
 import time
 
+sys.path.append("./modules")
+
+from config import config
+
 print "Welcome to the datenfresser installer.This is free software,you can distribute it under the terms of the GPL\n";
 
-CONFIG_FILENAME="/etc/datenfresser.conf"
-CONFIG_TEMPLATE="./datenfresser.conf.tmpl"
+CONFIG_FILENAME = "/etc/datenfresser.conf"
+CONFIG_TEMPLATE = "./datenfresser.conf.tmpl"
+
+USERNAME  = "datenfresser"
 
 
-username  = "datenfresser"
-
+if os.path.isfile( CONFIG_FILENAME ):
+	c = config()
+	DEFAULT_MAINVOLUME = c.getMainVolume()
+else:
+	DEFAULT_MAINVOLUME = "/var/datenfresser"
 
 
 def getpwnam(name,pwfile='/etc/passwd'):
@@ -40,16 +49,17 @@ def getpwnam(name,pwfile='/etc/passwd'):
 			f.close
 			return entry
 
-def createConfig( username , mainVolume_preset ):
+def createConfig( USERNAME , mainVolume_preset ):
 
-	mainVolume=raw_input("main backup volume:  [/var/datenfresser]")
-	backupUser=raw_input("backup user: [" + username  +"]")
 
-	if backupUser=="":
-		backupUser = username
+	mainVolume = raw_input( "main backup volume:  " + "[" + DEFAULT_MAINVOLUME + "]" )
+	backupUser = raw_input( "backup user: [" + USERNAME  +"]" )
 
-	if mainVolume=="": 
-		mainVolume = mainVolume_preset
+	if backupUser == "":
+		backupUser = USERNAME
+
+	if mainVolume == "": 
+		mainVolume = DEFAULT_MAINVOLUME
 		
 	if not os.path.isdir( mainVolume ):
 		os.mkdir( mainVolume );	
@@ -87,9 +97,9 @@ volume = ""
 if os.path.isfile(CONFIG_FILENAME):
 	print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
 	if raw_input()=="y": 
-		(user , volume) = createConfig(username,"/var/datenfresser")
+		(user , volume) = createConfig(USERNAME,"/var/datenfresser")
 else:
-	( user,volume) = createConfig(username,"/var/datenfresser")
+	( user,volume) = createConfig(USERNAME,"/var/datenfresser")
 
 ###################################################################
 #check if user backupUser exists
@@ -97,22 +107,22 @@ else:
 
 
 try:
-        pwd_entry=getpwnam( username )
+        pwd_entry=getpwnam( USERNAME )
 
         if pwd_entry[6] != "":
-                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." % username
+                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." % USERNAME
 
 
 except KeyError:
 
-        ShellObj = os.popen('/usr/sbin/useradd %s' % username )
+        ShellObj = os.popen('/usr/sbin/useradd %s' % USERNAME )
         ShellObj.close()
 
         try:
-                pwd_entry=getpwnam( username )
+                pwd_entry=getpwnam( USERNAME )
 
         except KeyError:
-                print "Failed to create user '%s'.Aborting." % username
+                print "Failed to create user '%s'.Aborting." % USERNAME
                 sys.exit(1)
 
 ##################################################################
@@ -171,7 +181,7 @@ os.system("chmod +x /usr/sbin/datenfresser")
 os.system("chmod +x /etc/init.d/datenfresser")
 os.system("chmod +x " + LIB_PATH + "/web/cgi-root/*.py")
 
-os.system("chown -R " + user + " " + volume)
+#os.system("chown -R " + user + " " + volume)
 os.system("chown -R " + user + " " + "/var/lib/datenfresser")
 
 print "Configuration successful"
