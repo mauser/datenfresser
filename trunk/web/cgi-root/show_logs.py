@@ -24,11 +24,21 @@ if form.has_key("id"):
     print "<br /><table>\n";
     print "<tr><th>Type</th><th>Start</th><th>End</th><th>Status</th></tr>";
     for log in daba.get_log_entries( id ):
+		
+		if log.startTimestamp == "": 
+			startTimestamp = 0
+		else:
+			startTimestamp = log.startTimestamp
+		
+		if log.endTimestamp == "": 
+			endTimestamp = 0
+		else:
+			endTimestamp = log.endTimestamp
+		
+		print "<tr>";
+		print "<td>" + log.type +  "</td>";
+		print "<td>" + datetime.fromtimestamp( float(startTimestamp) ).ctime() + "</td>";
+		print "<td>" + datetime.fromtimestamp( float(endTimestamp) ).ctime() + "</td>";
+		print "<td>" + log.status + "</td>";
 
-	print "<tr>";
-	print "<td>" + log.type +  "</td>";
-	print "<td>" + datetime.fromtimestamp(float(log.startTimestamp)).ctime() + "</td>";
-	print "<td>" + datetime.fromtimestamp(float(log.endTimestamp)).ctime() + "</td>";
-	print "<td>" + log.status + "</td>";
-
-	print "</tr>";
+		print "</tr>";
