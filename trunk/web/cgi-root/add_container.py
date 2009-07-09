@@ -55,6 +55,7 @@ if  not form.has_key('name'):
 			    <select name="archive_method">
 				    <option>tar</option>
 				    <option>btrfs snapshot</option>
+					<option>hardlinks</option>
 			    </select>
 		    </td></tr>		   
 	    <tr><td>Compress:</td><td><input type="checkbox" name="compress"></td></tr>
