@@ -39,10 +39,12 @@ class database:
 		self.checkTables()
 
 	def tickAction(self):
+		
 		#holds dataID's of the container which are scheduled for backup now
 		actionList=[]	
-	    
-		#1. get all dataContainer without any log entry
+
+
+	    #1. get all dataContainer without any log entry
 		sql="SELECT dataID FROM dataContainer WHERE dataID NOT IN ( SELECT dataID from log WHERE NOT status = 'unfinished')"	
 		self.cursor.execute(sql)
 		rows = self.cursor.fetchall()
@@ -82,8 +84,21 @@ class database:
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
 		for row in dataContainerTuple:
-		    actionList.append( str(row[0]) );	
-		
+		    actionList.append( str(row[0]) );
+			
+			
+		#it is possible to schedule a backup directly by writing its dataID to /var/lib/datenfresser/immediate
+		#no error checking so far ( if id is valid etc. )
+		fname = "/var/lib/datenfresser/immediate"
+		if os.path.isfile( fname ):
+			f = open ( fname )
+			ids = f.readlines()
+			f.close()
+			
+			for element in ids:
+				# the string contains a "\n" , so we're converting to int before to get rid of that..
+				actionList.append( int(element) )
+			os.remove( fname )
 		#print actionList
 		
 		return actionList;	
