@@ -68,13 +68,17 @@ def archiveFolder( container , method , compress ):
 	    log( tar_cmd , "verbose" )
 	    subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
 	
+	if method == "hardlinks":
+		# see http://www.mikerubel.org/computers/rsync_snapshots/
+	    cmd = "cp -al " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
+	    log( cmd , "verbose" )
+	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()    
+	 
 	if method == "btrfs snapshot":
 	    cmd = "btrfsctl -s " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
-
 	    log( cmd , "verbose" )
-	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()	    
-	 
-
+	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait() 
+		
 def getDirectorySize(directory):
     #taken from http://roopindersingh.com/2008/04/22/calculating-directory-sizes-in-python/
     class TotalSize:
@@ -122,8 +126,9 @@ def performBackup( dataID ):
 			checkDirs( container )
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
 			
+			returnValue = 0
+			id  = 0
 			
-			id , returnValue = 0
 			id = data.startJob( "rsync" , int(dataID))
 			
 			returnValue = executeCommand( rsync_cmd )

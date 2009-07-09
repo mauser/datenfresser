@@ -57,7 +57,7 @@ class database:
 
 		#2. get all entries where schedule="daily" and timestamp - today > (24*60*60)
 		today=time.time()
-		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'daily' AND " + str(today) + " - log.end_timestamp > 86400 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID" 
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'daily' AND " + str(today) + " - log.end_timestamp > 86400 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID AND NOT log.status = 'aborted' " 
 		self.cursor.execute(sql)
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
@@ -113,6 +113,10 @@ class database:
 	def finishJob( self , dataID , logID , status ):
 		
 		timestamp = time.time()		
+
+		if status == "aborted":
+			# half an hour penalty for a aborted job
+			timestamp = timestamp + 30*60*60
 
 		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s' " % { 'time' : timestamp , 'status': status , 'id': logID}
 		self.cursor.execute(sql)
