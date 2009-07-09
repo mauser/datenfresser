@@ -70,9 +70,9 @@ def archiveFolder( container , method , compress ):
 	
 	if method == "hardlinks":
 		# see http://www.mikerubel.org/computers/rsync_snapshots/
-	    cmd = "cp -al " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
-	    log( cmd , "verbose" )
-	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()    
+		cmd = "cp -al "   + localPath + "cur/" + " " + localPath + "snapshots/" + container.name + "_" + dateString
+		log( cmd , "verbose" )
+		subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()    
 	 
 	if method == "btrfs snapshot":
 	    cmd = "btrfsctl -s " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
@@ -117,7 +117,7 @@ def checkDirs( container ):
 def performBackup( dataID ):
 	c = config()
 	debug = c.getDebug()	
-	
+	print dataID
 	data = database()
 	container = data.getDataContainer( dataID )[0]
 	if( container.type == "rsync" ):
@@ -132,13 +132,14 @@ def performBackup( dataID ):
 			id = data.startJob( "rsync" , int(dataID))
 			
 			returnValue = executeCommand( rsync_cmd )
+			print returnValue
 			
 			if debug == 1: 
 				log( rsync_cmd )
 				log( "return: " + str(returnValue ) )
 				
 			
-			if returnValue == "0":
+			if int(returnValue) == 0:
 				data.finishJob(int(dataID), int(id), "finished")
 				
 				#start to archive the backup, if necessary
