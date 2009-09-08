@@ -132,6 +132,7 @@ class database:
 		if status == "aborted":
 			# half an hour penalty for a aborted job
 			#timestamp = timestamp + 30*60
+			pass
 
 		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s' " % { 'time' : timestamp , 'status': status , 'id': logID}
 		self.cursor.execute(sql)
