@@ -27,15 +27,16 @@ print "Welcome to the datenfresser installer.This is free software,you can distr
 CONFIG_FILENAME = "/etc/datenfresser.conf"
 CONFIG_TEMPLATE = "./datenfresser.conf.tmpl"
 
-USERNAME  = "datenfresser"
 
 
 if os.path.isfile( CONFIG_FILENAME ):
 	c = config()
 	DEFAULT_MAINVOLUME = c.getMainVolume()
+	USERNAME = c.getUsername()	
 else:
 	DEFAULT_MAINVOLUME = "/var/datenfresser"
-
+	USERNAME  = "datenfresser"
+	
 
 def getpwnam(name,pwfile='/etc/passwd'):
 	f = open(pwfile);
@@ -107,10 +108,11 @@ else:
 
 
 try:
-        pwd_entry=getpwnam( USERNAME )
+	if sys.platform != "darwin":
+        	pwd_entry=getpwnam( USERNAME )
 
-        if pwd_entry[6] != "":
-                print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." % USERNAME
+        	if pwd_entry[6] != "":
+                	print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." % USERNAME
 
 
 except KeyError:
@@ -149,7 +151,10 @@ if not os.path.isdir( DATA_PATH ):
 
 #database dir
 if not os.path.isdir ( "/var/lib/datenfresser" ):
-	os.mkdir( "/var/lib/datenfresser" ) 
+	os.mkdir( "/var/lib/datenfresser" )
+
+if sys.platform == "darwin" and not os.path.isdir( "/System/Library/StartupItems/datenfresser" ):
+	os.mkdir( "/System/Library/StartupItems/datenfresser" ) 
 
 
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
@@ -170,7 +175,7 @@ shutil.copyfile("./web/cgi-root/webcore.py",LIB_PATH + "/web/cgi-root/webcore.py
 shutil.copytree("./web/cgi-root/images/", LIB_PATH + "/web/cgi-root/images")
 
 #init.d skript
-shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
+shutil.copyfile("./datenfresser.sh","/System/Library/StartupItems/datenfresser/datenfresser")
 
 #our executable
 shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
@@ -178,7 +183,12 @@ shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
 
 #adjust permissions
 os.system("chmod +x /usr/sbin/datenfresser")
-os.system("chmod +x /etc/init.d/datenfresser")
+
+if sys.platform == "darwin":
+	os.system("chmod +x /System/Library/StartupItems/datenfresser/datenfresser")
+else:
+	os.system("chmod +x /etc/init.d/datenfresser")
+
 os.system("chmod +x " + LIB_PATH + "/web/cgi-root/*.py")
 
 #os.system("chown -R " + user + " " + volume)
