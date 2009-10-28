@@ -180,6 +180,20 @@ def main():
 	auto_shutdown = c.getAutomaticShutdown()
 	start_delay = c.getStartDelay()
 	debug = c.getDebug()	
+
+	pidFileName = "/var/lib/datenfresser/datenfresser.pid"
+	
+   	if os.path.isfile( pidFileName ):	
+		pidFile = open( pidFileName )
+		pid = int( pidFile.readline() )
+		try:
+			os.getpgid( pid )
+			print "Another instance of datenfresser is already running. Quitting now.."
+			sys.exit( 0 )
+		except OSError, e:
+			pass
+
+
 	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
 	# disable automatic shutdown at startup
 
@@ -198,7 +212,9 @@ def main():
 		print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
 		sys.exit(1) 
 
-
+	pidFile = open( pidFileName , "w" )
+	pidFile.write( str( os.getpid() ) ) 
+	pidFile.close()
 	if webserver == "True":
 	    #start our own webserver to serve the webinterface
 	    web = datenfresser_webserver( webserver_port )

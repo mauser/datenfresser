@@ -26,13 +26,16 @@ class config:
 		self.__sync_dir=config.get("main","sync_dir")
 		self.__start_delay=config.get("main","start_delay")
 		self.__debug=config.get("main","debug")
-		
+		self.__username=config.get("main","username")	
 		
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
 
 	def getDebug( self ):
 		return self.__debug
+
+	def getUsername( self ):
+		return self.__username
 
 	def getStartDelay( self ):
 		return self.__start_delay
