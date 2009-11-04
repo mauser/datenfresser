@@ -39,6 +39,8 @@ if form.has_key("id"):
 		print "<td>" + log.type +  "</td>";
 		print "<td>" + datetime.fromtimestamp( float(startTimestamp) ).ctime() + "</td>";
 		print "<td>" + datetime.fromtimestamp( float(endTimestamp) ).ctime() + "</td>";
-		print "<td>" + log.status + "</td>";
+		print "<td>" + log.status "</td>";
 
 		print "</tr>";
+
+	

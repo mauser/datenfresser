@@ -23,13 +23,14 @@ class job:
 	    
 	    
 class logEntry:
-    def __init__( self, logID, type, dataID , startTimestamp , endTimestamp ,  status ):
+    def __init__( self, logID, type, dataID , startTimestamp , endTimestamp ,  status, errorMessage ):
 	    self.logID = logID
 	    self.dataID = dataID
 	    self.type = type
 	    self.startTimestamp = startTimestamp
 	    self.endTimestamp = endTimestamp
 	    self.status = status
+	    self.errorMessage = errorMessage
 	    
 class metaData:
 	''' This class contains data which belongs do datacontainers but is not stored in the configuration file'''

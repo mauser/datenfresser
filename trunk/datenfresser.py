@@ -22,6 +22,9 @@ import select
 from time import time
 from time import sleep
 from time import gmtime
+from subprocess import Popen
+from subprocess import PIPE
+
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
@@ -30,6 +33,7 @@ from config import config
 from db import database
 from webserver import datenfresser_webserver
 
+
 c = config()
 MAINVOLUME = c.getMainVolume()
 
@@ -37,11 +41,17 @@ MAINVOLUME = c.getMainVolume()
 def executeCommand( command ):
 	#excute command 
 	#return returnValue: 0 if everything went ok, 1 in case that something went wrong..
-	x = os.system( command )
+	#x = os.system( command )
+		
+	p = Popen( command.split(" "), bufsize=128, stdin=PIPE,stdout=PIPE,stderr=PIPE,close_fds=True)	
+	(child_stdout, child_stdin,child_stderr) = (p.stdout, p.stdin,p.stderr)
+	x = p.wait()
+	errorMessage = child_stderr.readlines()
+		
 	
 	# convert "wait"-style exitcode to normal, shell-like exitcode
 	exitcode = (x >> 8) & 0xFF
-	return exitcode
+	return exitcode , errorMessage 
 
 
 def log( string , level="normal" ):
@@ -131,7 +141,7 @@ def performBackup( dataID ):
 			
 			id = data.startJob( "rsync" , int(dataID))
 			
-			returnValue = executeCommand( rsync_cmd )
+			returnValue, errorMessage = executeCommand( rsync_cmd )
 			print returnValue
 			
 			if debug == 1: 
@@ -140,7 +150,7 @@ def performBackup( dataID ):
 				
 			
 			if int(returnValue) == 0:
-				data.finishJob(int(dataID), int(id), "finished")
+				data.finishJob(int(dataID), int(id), "finished", errorMessage)
 				
 				#start to archive the backup, if necessary
 				archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
@@ -150,7 +160,7 @@ def performBackup( dataID ):
 					data.finishJob( int(dataID),int(id), "finished")
 			else:
 				#Oh, the backup was not successful. Maybe we should try again later?
-				data.finishJob(int(dataID), int(id), "aborted")
+				data.finishJob(int(dataID), int(id), "aborted", errorMessage)
 
 
 				
@@ -215,6 +225,7 @@ def main():
 	pidFile = open( pidFileName , "w" )
 	pidFile.write( str( os.getpid() ) ) 
 	pidFile.close()
+
 	if webserver == "True":
 	    #start our own webserver to serve the webinterface
 	    web = datenfresser_webserver( webserver_port )

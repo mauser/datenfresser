@@ -120,12 +120,12 @@ class database:
 	def startJob(self, typ , dataId ):
 		# create a log entry with status "running"
 		timestamp = str( int(time.time()) )
-		sql = "INSERT INTO log VALUES ( NULL,'%(typ)s','%(data)i','%(time)s','','running')" % {'typ': typ, 'data' : dataId , 'time' : timestamp }
+		sql = "INSERT INTO log VALUES ( NULL,'%(typ)s','%(data)i','%(time)s','','running','')" % {'typ': typ, 'data' : dataId , 'time' : timestamp }
 		ret = self.cursor.execute(sql)
 		self.db.commit()
 		return self.cursor.lastrowid
 
-	def finishJob( self , dataID , logID , status ):
+	def finishJob( self , dataID , logID , status, errorMessage ):
 		
 		timestamp = time.time()		
 
@@ -134,8 +134,14 @@ class database:
 			#timestamp = timestamp + 30*60
 			pass
 
-		sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s' WHERE logID ='%(id)s' " % { 'time' : timestamp , 'status': status , 'id': logID}
-		self.cursor.execute(sql)
+		#sql = "UPDATE log SET status='%(status)s', end_timestamp='%(time)s', errorMessage='%(err)s' WHERE logID ='%(id)s' " % { 'err': errorMessage, 'time' : timestamp , 'status': status , 'id': logID}
+		#print sql
+		#print errorMessage
+		#self.cursor.execute(sql)
+
+		self.cursor.execute( """UPDATE log SET status=?, end_timestamp=?, err_msg=? WHERE logID =?""",  (status,timestamp,''.join( errorMessage ),logID)) 
+		
+
 		
 		
 		sql = "UPDATE dataContainer SET lastJobID = '%(id)s' WHERE dataID ='%(did)s' " % { 'did': dataID , 'id': logID}
@@ -183,7 +189,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT)"
+			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT,err_msg TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
@@ -260,7 +266,7 @@ class database:
 		self.cursor.execute(sql)
 		logList = []
 		for c in self.cursor.fetchall():
-			tmp = logEntry( c[0],c[1],c[2],c[3],c[4],c[5], );
+			tmp = logEntry( c[0],c[1],c[2],c[3],c[4],c[5],c[6] );
 			logList.append( tmp )
 			
 		return logList
