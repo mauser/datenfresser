@@ -43,20 +43,24 @@ def executeCommand( command ):
 	#return returnValue: 0 if everything went ok, 1 in case that something went wrong..
 	#x = os.system( command )
 		
-	p = Popen( command.split(" "), bufsize=128, stdin=PIPE,stdout=PIPE,stderr=PIPE,close_fds=True)	
-	(child_stdout, child_stdin,child_stderr) = (p.stdout, p.stdin,p.stderr)
+	p = Popen( command.split(" "), bufsize=4024 ,stderr=PIPE,close_fds=True)	
+	(child_stderr) = ( p.stderr)
+	errorMessage =  child_stderr.readlines()
 	x = p.wait()
-	errorMessage = child_stderr.readlines()
+	errorMessage =  child_stderr.readlines()
 		
 	
-	# convert "wait"-style exitcode to normal, shell-like exitcode
+	#convert "wait"-style exitcode to normal, shell-like exitcode
 	exitcode = (x >> 8) & 0xFF
 	return exitcode , errorMessage 
 
 
 def log( string , level="normal" ):
-	#print string
-	pass
+	print string
+
+	logfile = open("/var/log/datenfresser.log" , "w")
+	logfile.write( string  )
+	logfile.close()	
 	
 def archiveFolder( container , method , compress ):
 	localPath = MAINVOLUME + "/" + container.localPath	
@@ -80,7 +84,14 @@ def archiveFolder( container , method , compress ):
 	
 	if method == "hardlinks":
 		# see http://www.mikerubel.org/computers/rsync_snapshots/
-		cmd = "cp -al "   + localPath + "cur/" + " " + localPath + "snapshots/" + container.name + "_" + dateString
+
+		if sys.platform == "darwin":
+			#"gcp" comes with the coreutils package from macports..
+			cp_command = "gcp"
+		else:
+			cp_command = "cp"
+ 
+		cmd = cp_command + " -al "   + localPath + "cur/" + " " + localPath + "snapshots/" + container.name + "_" + dateString
 		log( cmd , "verbose" )
 		subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()    
 	 
@@ -135,18 +146,16 @@ def performBackup( dataID ):
 		
 			checkDirs( container )
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
-			
 			returnValue = 0
 			id  = 0
 			
+			log( rsync_cmd )
 			id = data.startJob( "rsync" , int(dataID))
 			
 			returnValue, errorMessage = executeCommand( rsync_cmd )
 			print returnValue
 			
-			if debug == 1: 
-				log( rsync_cmd )
-				log( "return: " + str(returnValue ) )
+			log( "return: " + str(returnValue ) )
 				
 			
 			if int(returnValue) == 0:
@@ -157,7 +166,7 @@ def performBackup( dataID ):
 				if archive != "disabled":
 					id = data.startJob( "archive" , int(dataID))
 					archiveFolder( container , method , compress )
-					data.finishJob( int(dataID),int(id), "finished")
+					data.finishJob( int(dataID),int(id), "finished","")
 			else:
 				#Oh, the backup was not successful. Maybe we should try again later?
 				data.finishJob(int(dataID), int(id), "aborted", errorMessage)
