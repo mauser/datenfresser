@@ -61,7 +61,7 @@ def executeCommand( command ):
 def log( string , level="normal" ):
 	print string
 
-	logfile = open("/var/log/datenfresser.log" , "w")
+	logfile = open("/var/log/datenfresser.log" , "a")
 	logfile.write( string  )
 	logfile.close()	
 	
@@ -222,6 +222,9 @@ def shutdown():
 	subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()
 
 def main():
+
+	log("starting!!!")
+
 	c = config()
 	webserver = c.getWebserverEnabled()
 	webserver_port =  c.getWebserverPort()
@@ -233,13 +236,15 @@ def main():
 	
    	if os.path.isfile( pidFileName ):	
 		pidFile = open( pidFileName )
-		pid = int( pidFile.readline() )
-		try:
-			os.getpgid( pid )
-			print "Another instance of datenfresser is already running. Quitting now.."
-			sys.exit( 0 )
-		except OSError, e:
-			pass
+		tmp = pidFile.readline() 
+		if len(tmp) == 0:
+			pid = int( pidFile.readline() )
+			try:
+				os.getpgid( pid )
+				print "Another instance of datenfresser is already running. Quitting now.."
+				sys.exit( 0 )
+			except OSError, e:
+				pass
 
 
 	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
