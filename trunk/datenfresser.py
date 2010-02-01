@@ -55,6 +55,9 @@ def executeCommand( command ):
 	return exitcode , errorMessage 
 
 
+
+
+
 def log( string , level="normal" ):
 	print string
 
@@ -62,8 +65,13 @@ def log( string , level="normal" ):
 	logfile.write( string  )
 	logfile.close()	
 	
+
+
+
 def archiveFolder( container , method , compress ):
 	localPath = MAINVOLUME + "/" + container.localPath	
+
+	log("archive folder " + localPath + " with " + method )
 
 	#be sure that the path ends with a "/"
 	if localPath[-1] != "/": 
@@ -99,9 +107,16 @@ def archiveFolder( container , method , compress ):
 	    cmd = "btrfsctl -s " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
 	    log( cmd , "verbose" )
 	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait() 
-		
+	
+
+
+
+
+
+
 def getDirectorySize(directory):
     #taken from http://roopindersingh.com/2008/04/22/calculating-directory-sizes-in-python/
+    # returns the size of a directory ( in kilobytes a 1024 bits )
     class TotalSize:
         def __init__(self):
             self.total = 0
@@ -114,7 +129,10 @@ def getDirectorySize(directory):
 
     totalSize = TotalSize()
     os.path.walk(directory, visit, totalSize)
-    return totalSize.total	   
+    return totalSize.total / 1024	   
+
+
+
 
 
 def checkDirs( container ):
@@ -135,6 +153,10 @@ def checkDirs( container ):
 	#holds btrfs snapshots
 	if not os.path.isdir( localPath + "snapshots/"):   os.mkdir( localPath + "snapshots/" )
 
+
+
+
+
 def performBackup( dataID ):
 	c = config()
 	debug = c.getDebug()	
@@ -148,15 +170,22 @@ def performBackup( dataID ):
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
 			returnValue = 0
 			id  = 0
-			
+			#get directory size before backup
+			start_size = getDirectorySize(  MAINVOLUME + "/" + container.localPath + "/cur/" )
 			log( rsync_cmd )
 			id = data.startJob( "rsync" , int(dataID))
 			
 			returnValue, errorMessage = executeCommand( rsync_cmd )
-			print returnValue
+			#print returnValue
 			
-			log( "return: " + str(returnValue ) )
-				
+
+			log( "backup command returned: " + str(returnValue ))
+			#get directory size after backup
+			final_size = getDirectorySize(  MAINVOLUME + "/" + container.localPath + "/cur/" )
+			transferred_data = final_size - start_size
+			
+			log( "transferred " + str(transferred_data) + "kb")
+
 			
 			if int(returnValue) == 0:
 				data.finishJob(int(dataID), int(id), "finished", errorMessage)
