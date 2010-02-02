@@ -182,23 +182,23 @@ def performBackup( dataID ):
 			log( "backup command returned: " + str(returnValue ))
 			#get directory size after backup
 			final_size = getDirectorySize(  MAINVOLUME + "/" + container.localPath + "/cur/" )
-			transferred_data = final_size - start_size
+			transferredSize = final_size - start_size
 			
-			log( "transferred " + str(transferred_data) + "kb")
+			log( "transferred " + str(transferredSize) + "kb")
 
 			
 			if int(returnValue) == 0:
-				data.finishJob(int(dataID), int(id), "finished", errorMessage)
+				data.finishJob(int(dataID), int(id), "finished", errorMessage, transferredSize)
 				
 				#start to archive the backup, if necessary
 				archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
 				if archive != "disabled":
 					id = data.startJob( "archive" , int(dataID))
 					archiveFolder( container , method , compress )
-					data.finishJob( int(dataID),int(id), "finished","")
+					data.finishJob( int(dataID),int(id), "finished","", 0)
 			else:
 				#Oh, the backup was not successful. Maybe we should try again later?
-				data.finishJob(int(dataID), int(id), "aborted", errorMessage)
+				data.finishJob( int(dataID), int(id), "aborted", errorMessage, transferredSize )
 
 
 				
@@ -257,13 +257,13 @@ def main():
 			auto_shutdown = 0
 
 
-	try: 
-		pid = os.fork() 
-		if pid > 0:
-		    return
-	except OSError, e: 
-		print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
-		sys.exit(1) 
+	#try: 
+	#	pid = os.fork() 
+	#	if pid > 0:
+	#	    return
+	#except OSError, e: 
+	#	print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
+	#	sys.exit(1) 
 
 	pidFile = open( pidFileName , "w" )
 	pidFile.write( str( os.getpid() ) ) 
