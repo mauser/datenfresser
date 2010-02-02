@@ -43,16 +43,19 @@ def executeCommand( command ):
 	#return returnValue: 0 if everything went ok, 1 in case that something went wrong..
 	#x = os.system( command )
 		
-	p = Popen( command.split(" "), bufsize=4024 ,stderr=PIPE,close_fds=True)	
+	p = Popen( command.split(" "), bufsize=4024 ,stderr=PIPE,stdout=PIPE,close_fds=True)	
 	(child_stderr) = ( p.stderr)
+	(child_stdout) = ( p.stdout)
+
+	output = child_stdout.readlines()
 	errorMessage =  child_stderr.readlines()
 	x = p.wait()
-	errorMessage =  child_stderr.readlines()
-		
+	errorMessage =  errorMessage + child_stderr.readlines()
+	output = output + child_stdout.readlines()
 	
 	#convert "wait"-style exitcode to normal, shell-like exitcode
 	exitcode = (x >> 8) & 0xFF
-	return exitcode , errorMessage 
+	return exitcode , errorMessage , output
 
 
 
@@ -163,6 +166,7 @@ def performBackup( dataID ):
 	print dataID
 	data = database()
 	container = data.getDataContainer( dataID )[0]
+	
 	if( container.type == "rsync" ):
 		if container.options == "":
 		
@@ -175,11 +179,14 @@ def performBackup( dataID ):
 			log( rsync_cmd )
 			id = data.startJob( "rsync" , int(dataID))
 			
-			returnValue, errorMessage = executeCommand( rsync_cmd )
-			#print returnValue
+			returnValue, errorMessage, output = executeCommand( rsync_cmd )
 			
 
+			if len(errorMessage) == 0:
+				errorMessage = output
+
 			log( "backup command returned: " + str(returnValue ))
+
 			#get directory size after backup
 			final_size = getDirectorySize(  MAINVOLUME + "/" + container.localPath + "/cur/" )
 			transferredSize = final_size - start_size
