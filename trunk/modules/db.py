@@ -79,7 +79,7 @@ class database:
 
 		#4. get all entries where schedule="monthly" and timestamp - today > (4*7*24*60*60)
 		today=time.time()
-		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'hourly' AND " + str(today) + " - log.end_timestamp > 2419200 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID" 
+		sql="SELECT dataContainer.dataID FROM 'dataContainer','log' WHERE schedule = 'monthly' AND " + str(today) + " - log.end_timestamp > 2419200 AND dataContainer.dataID = log.dataID AND dataContainer.lastJobID = log.logID" 
 		self.cursor.execute(sql)
 		dataContainerTuple=self.cursor.fetchall()
 		#print dataContainerTuple
