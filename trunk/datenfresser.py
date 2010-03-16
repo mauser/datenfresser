@@ -182,8 +182,8 @@ def performBackup( dataID ):
 			returnValue, errorMessage, output = executeCommand( rsync_cmd )
 			
 
-			if len(errorMessage) == 0:
-				errorMessage = output
+			#if len(errorMessage) == 0:
+			#	errorMessage = output
 
 			log( "backup command returned: " + str(returnValue ))
 
@@ -195,17 +195,17 @@ def performBackup( dataID ):
 
 			
 			if int(returnValue) == 0:
-				data.finishJob(int(dataID), int(id), "finished", errorMessage, transferredSize)
+				data.finishJob(int(dataID), int(id), "finished", errorMessage, output, transferredSize)
 				
 				#start to archive the backup, if necessary
 				archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
 				if archive != "disabled":
 					id = data.startJob( "archive" , int(dataID))
 					archiveFolder( container , method , compress )
-					data.finishJob( int(dataID),int(id), "finished","", 0)
+					data.finishJob( int(dataID),int(id), "finished","","", 0)
 			else:
 				#Oh, the backup was not successful. Maybe we should try again later?
-				data.finishJob( int(dataID), int(id), "aborted", errorMessage, transferredSize )
+				data.finishJob( int(dataID), int(id), "aborted", errorMessage, output, transferredSize )
 
 
 				

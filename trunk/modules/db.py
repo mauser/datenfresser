@@ -120,12 +120,12 @@ class database:
 	def startJob(self, typ , dataId ):
 		# create a log entry with status "running"
 		timestamp = str( int(time.time()) )
-		sql = "INSERT INTO log VALUES ( NULL,'%(typ)s','%(data)i','%(time)s','','running','','')" % {'typ': typ, 'data' : dataId , 'time' : timestamp }
+		sql = "INSERT INTO log VALUES ( NULL,'%(typ)s','%(data)i','%(time)s','','running','','','')" % {'typ': typ, 'data' : dataId , 'time' : timestamp }
 		ret = self.cursor.execute(sql)
 		self.db.commit()
 		return self.cursor.lastrowid
 
-	def finishJob( self , dataID , logID , status, errorMessage, transferredSize ):
+	def finishJob( self , dataID , logID , status, errorMessage, stdOut  , transferredSize ):
 		
 		timestamp = time.time()		
 
@@ -139,7 +139,7 @@ class database:
 		#print errorMessage
 		#self.cursor.execute(sql)
 
-		self.cursor.execute( """UPDATE log SET status=?, end_timestamp=?, err_msg=?, transferredData=? WHERE logID =?""",  (status,timestamp,''.join( errorMessage ),str(transferredSize),logID)) 
+		self.cursor.execute( """UPDATE log SET status=?, end_timestamp=?, err_msg=?, std_out=?, transferredData=? WHERE logID =?""",  (status,timestamp,''.join( errorMessage ), ''.join( stdOut),  str(transferredSize),logID)) 
 		
 
 		
@@ -189,7 +189,7 @@ class database:
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT,err_msg TEXT, transferredData TEXT)"
+			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT,err_msg TEXT, std_out TEXT, transferredData TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
