@@ -41,7 +41,6 @@ MAINVOLUME = c.getMainVolume()
 def executeCommand( command ):
 	#excute command 
 	#return returnValue: 0 if everything went ok, 1 in case that something went wrong..
-	#x = os.system( command )
 		
 	p = Popen( command.split(" "), bufsize=4024 ,stderr=PIPE,stdout=PIPE,close_fds=True)	
 	(child_stderr) = ( p.stderr)
