@@ -19,6 +19,7 @@ import sys
 import subprocess
 import select
 
+from datetime import datetime
 from time import time
 from time import sleep
 from time import gmtime
@@ -63,8 +64,10 @@ def executeCommand( command ):
 def log( string , level="normal" ):
 	print string
 
+	today = datetime.today()
+
 	logfile = open("/var/log/datenfresser.log" , "a")
-	logfile.write( string + "\n"  )
+	logfile.write(today.isoformat() + "\t" + string + "\n"  )
 	logfile.close()	
 	
 
