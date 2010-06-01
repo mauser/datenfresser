@@ -162,12 +162,11 @@ def checkDirs( container ):
 def performBackup( dataID ):
 	c = config()
 	debug = c.getDebug()	
-	print dataID
 	data = database()
 	container = data.getDataContainer( dataID )[0]
-	
+
 	if( container.type == "rsync" ):
-		if container.options == "":
+		if container.options == "" or container.options == None:
 		
 			checkDirs( container )
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
