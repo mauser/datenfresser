@@ -64,7 +64,7 @@ def log( string , level="normal" ):
 	print string
 
 	logfile = open("/var/log/datenfresser.log" , "a")
-	logfile.write( string  )
+	logfile.write( string + "\n"  )
 	logfile.close()	
 	
 
