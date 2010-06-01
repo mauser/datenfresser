@@ -1,17 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#
-# datenfresser is a backup software written by Sebastian Moors under GPL
-# You can configure datenfresser with /etc/datenfresser.conf .
+############################################################################
+# datenfresser is a backup daemon written by Sebastian Moors		   #	
+# It is licensed under the GPL v2.  					   #
+############################################################################
 
 
-#Todo: backup archiving (when? (weekly, daily,startup),how long archived?)
+# You can configure datenfresser with /etc/datenfresser.conf .            
 
 # directory structure:
 # $backupdir/container/          : represents a backup entity
-# $backupdir/container/cur       : current data
-# $backupdir/container/archived  : contains compressed versioned of "cur"
+# $backupdir/container/cur       : holds current data
+# $backupdir/container/archived  : contains compressed or somehow archived versioned of "cur"
 
 
 import os
