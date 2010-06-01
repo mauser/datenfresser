@@ -266,14 +266,6 @@ def main():
 			auto_shutdown = 0
 
 
-	#try: 
-	#	pid = os.fork() 
-	#	if pid > 0:
-	#	    return
-	#except OSError, e: 
-	#	print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
-	#	sys.exit(1) 
-
 	pidFile = open( pidFileName , "w" )
 	pidFile.write( str( os.getpid() ) ) 
 	pidFile.close()
