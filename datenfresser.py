@@ -34,7 +34,7 @@ sys.path.append("/usr/lib/datenfresser")
 from config import config
 from db import database
 from webserver import datenfresser_webserver
-from monitor import datenfresser_monitor
+from monitor import datenfresserMonitorServer
 
 
 c = config()
@@ -292,10 +292,10 @@ def main():
 	if int(start_delay) > 0:
 		sleep( float ( start_delay ) )
 
-	if monitor == "True":
+	if monitor == "True" or monitor == "true":
 	    #start our own monitor to serve the webinterface
-	    monitor = datenfresser_monitor( monitor_port )
-	    monitor.startServer()
+	    monitorServer =datenfresserMonitorServer ( monitor_port )
+	    monitorServer.startServer()
     	else:
 		while 1:
 			checkSyncDirs()

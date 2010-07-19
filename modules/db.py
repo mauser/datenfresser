@@ -261,10 +261,10 @@ class database:
 		pass
 
 	def getLogs( self , minID):
-		sql = "SELECT * from logs WHERE logID > " + str(minID)
+		sql = "SELECT * from log WHERE logID > " + str(minID)
 		self.cursor.execute(sql)
 		
-		joblist = []
+		logList = []
 
 		for c in self.cursor.fetchall():
 			tmpDict = {}	
@@ -279,9 +279,9 @@ class database:
 			tmpDict["std_out"] = c[7]
 			tmpDict["transferredData"] = c[8]
 
-			jobList.append( tmpDict )
+			logList.append( tmpDict )
 			
-		return jobList
+		return logList
 		
 
 	def get_running_jobs(self):
