@@ -192,6 +192,18 @@ class database:
 			sql="CREATE TABLE 'log' (logID INTEGER PRIMARY KEY, type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT,err_msg TEXT, std_out TEXT, transferredData TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
+		
+		#table monitor-log
+		# the table that holds the log entries of all hosts	
+		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='monitorLog'"
+        	self.cursor.execute(sql)
+        	row = self.cursor.fetchone()
+
+        	if not row:
+			sql="CREATE TABLE 'monitorLog' (metaLogID INTEGER PRIMARY KEY, host TEXT , remoteLogID INTEGER,  type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT,err_msg TEXT, std_out TEXT, transferredData TEXT)"
+			self.cursor.execute(sql)
+			self.db.commit()
+
 
 		#table groups 
 		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='groups'"
@@ -248,6 +260,29 @@ class database:
 	def addFile( self , path ):
 		pass
 
+	def getLogs( self , minID):
+		sql = "SELECT * from logs WHERE logID > " + str(minID)
+		self.cursor.execute(sql)
+		
+		joblist = []
+
+		for c in self.cursor.fetchall():
+			tmpDict = {}	
+
+			tmpDict["logID"] = c[0]
+			tmpDict["type"] = c[1]
+			tmpDict["dataID"] = c[2]
+			tmpDict["start_timestamp"] = c[3]
+			tmpDict["end_timestamp"] = c[4]
+			tmpDict["status"] = c[5]
+			tmpDict["err_msg"] = c[6]
+			tmpDict["std_out"] = c[7]
+			tmpDict["transferredData"] = c[8]
+
+			jobList.append( tmpDict )
+			
+		return jobList
+		
 
 	def get_running_jobs(self):
 		

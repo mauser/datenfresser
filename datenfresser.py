@@ -34,6 +34,7 @@ sys.path.append("/usr/lib/datenfresser")
 from config import config
 from db import database
 from webserver import datenfresser_webserver
+from monitor import datenfresser_monitor
 
 
 c = config()
@@ -235,8 +236,14 @@ def main():
 	log("starting!!!")
 
 	c = config()
+	
 	webserver = c.getWebserverEnabled()
 	webserver_port =  c.getWebserverPort()
+	
+	monitor = c.getMonitorEnabled()
+	monitor_port =  c.getMonitorPort()
+	
+	
 	auto_shutdown = c.getAutomaticShutdown()
 	start_delay = c.getStartDelay()
 	debug = c.getDebug()	
@@ -278,23 +285,28 @@ def main():
 	d = database()
 	d.cleanupZombieJobs()
 
+	
 	#current time
 	cur_time = time()
 
 	if int(start_delay) > 0:
 		sleep( float ( start_delay ) )
 
-	#main loop
-	while 1:
-		checkSyncDirs()
-		for id in d.tickAction():
-			performBackup( id )
+	if monitor == "True":
+	    #start our own monitor to serve the webinterface
+	    monitor = datenfresser_monitor( monitor_port )
+	    monitor.startServer()
+    	else:
+		while 1:
+			checkSyncDirs()
+			for id in d.tickAction():
+				performBackup( id )
 		
-		#wait till we look for new ready-to-run jobs
-		sleep( float( c.getPollInterval() ) )
+			#wait till we look for new ready-to-run jobs
+			sleep( float( c.getPollInterval() ) )
 		
-		if int(auto_shutdown) > 0 and  (int(cur_time) + int (auto_shutdown)) - time() < 0:
-			shutdown()
+			if int(auto_shutdown) > 0 and  (int(cur_time) + int (auto_shutdown)) - time() < 0:
+				shutdown()
 		
 	
 if __name__ == "__main__":

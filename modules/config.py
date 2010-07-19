@@ -30,6 +30,9 @@ class config:
 		
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
+		
+		self.__monitor = config.get("monitor","monitor_enabled")
+		self.__monitor_port = config.get("monitor","monitor_port")
 
 	def getDebug( self ):
 		return self.__debug
@@ -51,6 +54,13 @@ class config:
 		
 	def getWebserverPort( self ):
 		return self.__webserver_port
+	
+	def getMonitorEnabled( self ):
+		return self.__monitor
+		
+	def getMonitorPort( self ):
+		return self.__monitor_port
+		
 		
 	def getPollInterval( self ):
 		return self.__poll_interval

@@ -166,6 +166,7 @@ shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
 shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
 shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
 shutil.copyfile("./modules/webserver.py",LIB_PATH + "/modules/webserver.py")
+shutil.copyfile("./modules/monitor.py",LIB_PATH + "/modules/monitor.py")
 
 
 shutil.copyfile("./web/index.html",LIB_PATH + "/web/index.html")
