@@ -248,19 +248,6 @@ def main():
 	start_delay = c.getStartDelay()
 	debug = c.getDebug()	
 
-	pidFileName = "/var/lib/datenfresser/datenfresser.pid"
-	
-   	if os.path.isfile( pidFileName ):	
-		pidFile = open( pidFileName )
-		tmp = pidFile.readline() 
-		if len(tmp) == 0:
-			pid = int( pidFile.readline() )
-			try:
-				os.getpgid( pid )
-				print "Another instance of datenfresser is already running. Quitting now.."
-				sys.exit( 0 )
-			except OSError, e:
-				pass
 
 
 	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
@@ -273,9 +260,6 @@ def main():
 			auto_shutdown = 0
 
 
-	pidFile = open( pidFileName , "w" )
-	pidFile.write( str( os.getpid() ) ) 
-	pidFile.close()
 
 	if webserver == "True":
 	    #start our own webserver to serve the webinterface
@@ -297,7 +281,26 @@ def main():
 	    monitorServer =datenfresserMonitorServer ( monitor_port )
 	    monitorServer.startServer()
     	else:
+		pidFileName = "/var/lib/datenfresser/datenfresser.pid"
+		if os.path.isfile( pidFileName ):	
+			pidFile = open( pidFileName )
+			tmp = pidFile.readline() 
+			if len(tmp) == 0:
+				pid = int( pidFile.readline() )
+				try:
+					os.getpgid( pid )
+					print "Another instance of datenfresser is already running. Quitting now.."
+					sys.exit( 0 )
+				except OSError, e:
+					pass
+		
+		pidFile = open( pidFileName , "w" )
+		pidFile.write( str( os.getpid() ) ) 
+		pidFile.close()
+	
 		while 1:
+
+	
 			checkSyncDirs()
 			for id in d.tickAction():
 				performBackup( id )
