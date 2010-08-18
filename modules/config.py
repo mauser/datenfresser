@@ -31,8 +31,16 @@ class config:
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
 		
-		self.__monitor = config.get("monitor","monitor_enabled")
-		self.__monitor_port = config.get("monitor","monitor_port")
+		try:
+			self.__monitor = config.get("monitor","monitor_enabled")
+		except ConfigParser.NoSectionError:
+			self.__monitor = "false"
+
+		try:
+			self.__monitor_port = config.get("monitor","monitor_port")
+		except ConfigParser.NoSectionError:
+			self.__monitor_port = 0  
+
 
 	def getDebug( self ):
 		return self.__debug

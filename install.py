@@ -158,9 +158,10 @@ if not os.path.isdir( DATA_PATH ):
 if not os.path.isdir ( "/var/lib/datenfresser" ):
 	os.mkdir( "/var/lib/datenfresser" )
 
-if sys.platform == "darwin" and not os.path.isdir( "/System/Library/StartupItems/datenfresser" ):
-	os.mkdir( "/System/Library/StartupItems/datenfresser" ) 
-
+if sys.platform == "darwin":
+	if not os.path.isdir( "/System/Library/StartupItems/datenfresser" ): 
+		os.mkdir( "/System/Library/StartupItems/datenfresser" ) 
+	shutil.copyfile("./datenfresser.sh","/System/Library/StartupItems/datenfresser/datenfresser")
 
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
 shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
@@ -181,7 +182,6 @@ shutil.copyfile("./web/cgi-root/webcore.py",LIB_PATH + "/web/cgi-root/webcore.py
 shutil.copytree("./web/cgi-root/images/", LIB_PATH + "/web/cgi-root/images")
 
 #init.d skript
-shutil.copyfile("./datenfresser.sh","/System/Library/StartupItems/datenfresser/datenfresser")
 
 #our executable
 shutil.copyfile("./datenfresser.py","/usr/sbin/datenfresser")
