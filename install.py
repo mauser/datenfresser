@@ -17,6 +17,7 @@ from os.path import join
 
 import os
 import time
+import getopt
 
 sys.path.append("./modules")
 
@@ -99,11 +100,29 @@ def createConfig( USERNAME , mainVolume_preset ):
 
 user = "" 
 volume = ""
+overwrite = False
+
+try:
+	opts, args = getopt.getopt(sys.argv[1:], "ho", ["help", "overwrite"])
+except getopt.GetoptError, err:
+	print str(err) 
+	#usage()
+	sys.exit(2)
+
+for o, a in opts:
+        if o == "-o":
+            overwrite = True
+        elif o in ("-h", "--help"):
+            #usage()
+            sys.exit()
+
+
 
 if os.path.isfile(CONFIG_FILENAME):
-	print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
-	if raw_input()=="y": 
-		(user , volume) = createConfig(USERNAME,"/var/datenfresser")
+	if overwrite == False:
+		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
+		if raw_input()=="y": 
+			(user , volume) = createConfig(USERNAME,"/var/datenfresser")
 else:
 	( user,volume) = createConfig(USERNAME,"/var/datenfresser")
 
