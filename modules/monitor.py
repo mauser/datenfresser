@@ -20,8 +20,9 @@ class datenfresserMonitorServer:
 
     def startServer( self ):
 	#TODO: move log to datenfresserCommon	
-	#print "Starting datenfresser webserver on port %s" % self.__listen_port
-	print self.dataBase.getLogs(0);	
+	#print "Starting datenfresser monitoring server on port %s" % self.__listen_port
+	for logEntry in self.dataBase.getLogs(0):
+		print logEntry['start_timestamp']
 
 class datenfresserMonitorClient:
 	

@@ -18,6 +18,52 @@ c = config()
 main_volume = c.getMainVolume()
 db_location = c.getDbLocation()
 
+class monitorLog:
+
+	host ="example.org"
+	start = 0
+	end = 0
+	dataId = 0
+	remoteId = 0
+	status = "no status available"
+	error = "no error information available"
+
+	def setHost(self, h):
+		self.host = h
+	def getHost(self):
+		return self.host
+
+	def getDataId():
+		return self.dataId
+	def setDataId(self, v):
+		self.dataId = v
+
+	def setStartTimestamp(self, t):
+		self.start = t
+	def getStartTimestamp(self):
+		return self.start
+
+	def setEndTimestamp(self, t):
+		self.end = t
+	def getEndTimestamp(self):
+		return self.end
+	
+	def setStatus(self, s):
+		self.status = s
+	def getStatus(self):
+		return self.status
+
+	def setError(self, e):
+		self.error = e
+	def getError(self):
+		return self.error
+
+	def setRemoteLogId(self, id):
+		self.remoteId = id
+	def getRemoteLogId(self):
+		return id
+
+
 class database:
 
 	def __init__(self):
@@ -282,7 +328,21 @@ class database:
 			logList.append( tmpDict )
 			
 		return logList
-		
+	
+	def insertMonitorLog( self, hostName, monitorLog ):
+		#metaLogID INTEGER PRIMARY KEY, 
+		#host TEXT , 
+		#remoteLogID INTEGER,  
+		#type TEXT, 
+		#dataID INTEGER,
+		#start_timestamp TEXT, 
+		#end_timestamp TEXT, status TEXT,err_msg TEXT, std_out TEXT, transferredData TEXT)"
+
+		t = "dummy"
+		sql = "INSERT INTO monitorLog VALUES (NULL, '%(hostName)s', '%(rid)s', \
+				'rsync', '0', '%(start)s' , '%(end)s' , '%(status)s', \
+				'%(error)s','%(std)s','%(data)s')"  %{ 'hostName': hostName, 'rid' : monitorLog.getRemoteLogId(), 'start' : monitorLog.getStartTimestamp(), 'end': monitorLog.getEndTimestamp(), 'status' : monitorLog.getStatus(), 'error' : monitorLog.getError(), 'std':t, 'data':t  }
+		self.cursor.execute(sql)
 
 	def get_running_jobs(self):
 		

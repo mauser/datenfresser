@@ -33,6 +33,7 @@ sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
+from db import monitorLog
 from webserver import datenfresser_webserver
 from monitor import datenfresserMonitorServer
 
@@ -279,6 +280,8 @@ def main():
 	if monitor == "True" or monitor == "true":
 	    #start our own monitor to serve the webinterface
 	    monitorServer =datenfresserMonitorServer ( monitor_port )
+	    m = monitorLog()
+	    d.insertMonitorLog( "r2d2", m )
 	    monitorServer.startServer()
     	else:
 		pidFileName = "/var/lib/datenfresser/datenfresser.pid"
