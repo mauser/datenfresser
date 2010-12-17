@@ -35,11 +35,25 @@ class config:
 			self.__monitor = config.get("monitor","monitor_enabled")
 		except ConfigParser.NoSectionError:
 			self.__monitor = "false"
+			self.__monitor_port = 0 
+			self.__monitor_user = "nobody"
+			self.__monitor_password = "secret"
+			return
 
 		try:
 			self.__monitor_port = config.get("monitor","monitor_port")
-		except ConfigParser.NoSectionError:
-			self.__monitor_port = 0  
+		except ConfigParser.NoOptionError:
+			self.__monitor_port = 0 
+
+		try:
+			self.__monitor_user = config.get("monitor","monitor_user")
+		except ConfigParser.NoOptionError:
+			self.__monitor_user = "nobody"
+		
+		try:
+			self.__monitor_password = config.get("monitor","monitor_password")
+		except ConfigParser.NoOptionError:
+			self.__monitor_password = "secret"
 
 
 	def getDebug( self ):
@@ -65,6 +79,12 @@ class config:
 	
 	def getMonitorEnabled( self ):
 		return self.__monitor
+
+	def getMonitorUser( self ):
+		return self.__monitor_user
+
+	def getMonitorPassword( self ):
+		return self.__monitor_password
 		
 	def getMonitorPort( self ):
 		return self.__monitor_port

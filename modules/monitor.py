@@ -20,6 +20,8 @@ class datenfresserMonitorServer:
     def __init__(self,port):
 	    self.port = port
 	    self.dataBase = database()
+	    self.config = config()
+	    
 	    self.startServer()
 
     def startServer( self ):
@@ -56,13 +58,12 @@ class datenfresserMonitorServer:
 				user = parts[1].strip()
 				password = parts[2].strip()
 
-				if user == "mauser" and password == "test":
+				if user == self.config.getMonitorUser() and password == self.config.getMonitorPassword():
 					state[ ipPortTuple ] = "ok"
 				else:
 					print "wrong credentials"
-					print user
-					print password
-					
+					sock.close()
+					clients.remove(sock)	
 	
 			    	print "[%s] %s" % (ip, message)
 				print state
