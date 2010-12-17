@@ -14,11 +14,6 @@ import socket
 import select
 
 
-
-
-
-
-
 class datenfresserMonitorServer:
 
     #the monitor is a server which gathers the logs of datenfresser client instances 
@@ -32,8 +27,7 @@ class datenfresserMonitorServer:
 	#print "Starting datenfresser monitoring server on port %s" % self.__listen_port
 	
 	#or logEntry in self.dataBase.getLogs(0):
-	#server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-	
+	server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	server.bind(("", 50000)) 
 	server.listen(1)
 
