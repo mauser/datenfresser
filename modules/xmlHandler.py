@@ -35,9 +35,8 @@ class xmlHandler:
 		root.appendChild( self.createNode( doc , "status" , monitorLog.getStatus() ))
 		
 		doc.appendChild(root)
-		print doc.toxml()	
+		return doc.toxml()	
 
-		return "<xml><host>example.com</host><rid>1</rid><type>rsync</type><did>2</did><start>start</start></xml>"
 
 	def parseXml( self, xmlDocument ):
 		return monitorLog()

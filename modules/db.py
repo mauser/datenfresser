@@ -344,6 +344,13 @@ class database:
 				'%(error)s','%(std)s','%(data)s')"  %{ 'hostName': hostName, 'rid' : monitorLog.getRemoteLogId(), 'start' : monitorLog.getStartTimestamp(), 'end': monitorLog.getEndTimestamp(), 'status' : monitorLog.getStatus(), 'error' : monitorLog.getError(), 'std':t, 'data':t  }
 		self.cursor.execute(sql)
 
+
+	def getAllLogs(self, lastId):
+		results = []
+		sql = ""
+
+
+
 	def get_running_jobs(self):
 		
 		jobList = []
