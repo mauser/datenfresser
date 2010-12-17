@@ -33,7 +33,7 @@ class monitorLog:
 	def getHost(self):
 		return self.host
 
-	def getDataId():
+	def getDataId(self):
 		return self.dataId
 	def setDataId(self, v):
 		self.dataId = v
@@ -58,10 +58,10 @@ class monitorLog:
 	def getError(self):
 		return self.error
 
-	def setRemoteLogId(self, id):
-		self.remoteId = id
+	def setRemoteLogId(self, i):
+		self.remoteId = i
 	def getRemoteLogId(self):
-		return id
+		return self.remoteId
 
 
 class database:

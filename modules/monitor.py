@@ -123,10 +123,12 @@ class datenfresserMonitorClient:
 	
 	def __init__(self):
 
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-		s.connect(("localhost", 8090))
+		#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+		#s.connect(("localhost", 8090))
 		c = config()
 		self.xml = xmlHandler()
+		self.xml.logEntryToXml( monitorLog() )
+		return
 
 		try: 
 			s.send("auth " + c.getMonitorUser() + " " +  c.getMonitorPassword() )
