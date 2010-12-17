@@ -11,7 +11,16 @@ sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
+from xmlHandler import xmlHandler
 
+
+class stateContainer:
+	#holds all the state which is related to a client request
+	def __init__( self ):
+		#current authentication status
+		self.authState = "unauthenticated"
+		#number of data packets (a 1024 byte) which will be sent
+		self.length = 0
 
 class datenfresserMonitorServer:
 
@@ -58,7 +67,9 @@ class datenfresserMonitorServer:
 				password = parts[2].strip()
 
 				if user == self.config.getMonitorUser() and password == self.config.getMonitorPassword():
-					state[ ipPortTuple ] = "authenticated"
+					newState = stateContainer()
+					newState.authState = "authenticated"
+					state[ ipPortTuple ] = newState
 				else:
 					print "wrong credentials"
 					sock.close()
@@ -67,7 +78,7 @@ class datenfresserMonitorServer:
 			    	print "[%s] %s" % (ip, message)
 				print state
 			else: 
-				if ipPortTuple in state.keys() and state[ ipPortTuple ] == "authenticated":
+				if ipPortTuple in state.keys() and state[ ipPortTuple ].authState == "authenticated":
 					print "authenticated!"
 				else:
 					print "not authenticated"
@@ -98,12 +109,14 @@ class datenfresserMonitorClient:
 	def __init__(self):
 
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-		s.connect(("smoors.de", 50000))
+		s.connect(("localhost", 8090))
+
+		self.xml = xmlHandler()
 
 		try: 
 		    while True: 
-			nachricht = raw_input("Enter a message: ") 
-			s.send(nachricht) 
+			message = raw_input("Enter a message: ") 
+			s.send(message) 
 		finally: 
 		    s.close()
 	

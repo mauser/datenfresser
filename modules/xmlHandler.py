@@ -6,10 +6,12 @@ import select
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
-from config import config
 from db import database
 
-class XmlHandler:
+class xmlHandler:
+
+	def __init__(self):
+		pass
 	
 	def logEntryToXml( self, monitorLog ):
 		return "<xml><host>example.com</host></xml>"
