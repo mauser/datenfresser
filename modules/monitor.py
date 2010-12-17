@@ -21,6 +21,8 @@ class stateContainer:
 		self.authState = "unauthenticated"
 		#number of data packets (a 1024 byte) which will be sent
 		self.length = 0
+		#data which already arrived
+		self.data = ""
 
 class datenfresserMonitorServer:
 
@@ -78,6 +80,7 @@ class datenfresserMonitorServer:
 			    	print "[%s] %s" % (ip, message)
 				print state
 			else: 
+
 				if ipPortTuple in state.keys() and state[ ipPortTuple ].authState == "authenticated":
 					print "authenticated!"
 				else:
@@ -87,14 +90,20 @@ class datenfresserMonitorServer:
 			    		clients.remove(sock)
 				
 				
-				if message[0:3] == "add":
-			    		print "Adding was requested"
+				if message[0:4] == "data":
+			    		print "Adding data was requested"
+					parts = message.split(" ")
+					state[ ipPortTuple ].data += parts[1].rstrip()
+					print state[ ipPortTuple ].data
 					
 
 				
 				if message[0:4] == "exit":
-			    		print "#Connection to %s closed" % ip 
-			    		sock.close() 
+			    		print "#Connection to %s closed" % ip
+
+			    		
+					sock.close() 
+					state.remote(ipPortTuple) 
 			    		clients.remove(sock)
 
 	finally: 
