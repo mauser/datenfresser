@@ -3,15 +3,14 @@
 
 import sys
 import os
+import socket 
+import select
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
-
-import socket 
-import select
 
 
 class datenfresserMonitorServer:
@@ -59,7 +58,7 @@ class datenfresserMonitorServer:
 				password = parts[2].strip()
 
 				if user == self.config.getMonitorUser() and password == self.config.getMonitorPassword():
-					state[ ipPortTuple ] = "ok"
+					state[ ipPortTuple ] = "authenticated"
 				else:
 					print "wrong credentials"
 					sock.close()
@@ -68,7 +67,7 @@ class datenfresserMonitorServer:
 			    	print "[%s] %s" % (ip, message)
 				print state
 			else: 
-				if ipPortTuple in state.keys() and state[ ipPortTuple ] == "ok":
+				if ipPortTuple in state.keys() and state[ ipPortTuple ] == "authenticated":
 					print "authenticated!"
 				else:
 					print "not authenticated"
@@ -87,10 +86,6 @@ class datenfresserMonitorServer:
 			    		sock.close() 
 			    		clients.remove(sock)
 
-
-
-
-
 	finally: 
 	    for c in clients: 
 		c.close() 
@@ -101,9 +96,6 @@ class datenfresserMonitorServer:
 class datenfresserMonitorClient:
 	
 	def __init__(self):
-
-		print "the monitor is running.."
-		import socket
 
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 		s.connect(("smoors.de", 50000))
