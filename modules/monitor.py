@@ -11,6 +11,7 @@ sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
+from db import monitorLog
 from xmlHandler import xmlHandler
 
 
@@ -31,6 +32,7 @@ class datenfresserMonitorServer:
 	    self.port = port
 	    self.dataBase = database()
 	    self.config = config()
+	    self.xmlHandler = xmlHandler()
 	    
 	    self.startServer()
 
@@ -56,7 +58,8 @@ class datenfresserMonitorServer:
 			clients.append(client) 
 			print "#Client %s connected" % addr[0] 
 		    else: 
-			message = sock.recv(1024) 
+			message = sock.recv(1024)
+			#if len(message) == 0: break
 			ip = sock.getpeername()[0]
 			ipPortTuple = sock.getpeername()
 			
@@ -95,15 +98,18 @@ class datenfresserMonitorServer:
 					parts = message.split(" ")
 					state[ ipPortTuple ].data += parts[1].rstrip()
 					print state[ ipPortTuple ].data
-					
+
+
+				if message[0:6] == "commit":
+			    		print "Committing your data"
+					self.xmlHandler.parseXml( state[ ipPortTuple ].data )	
 
 				
 				if message[0:4] == "exit":
 			    		print "#Connection to %s closed" % ip
 
-			    		
 					sock.close() 
-					state.remote(ipPortTuple) 
+					del state[ipPortTuple] 
 			    		clients.remove(sock)
 
 	finally: 
@@ -119,13 +125,17 @@ class datenfresserMonitorClient:
 
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 		s.connect(("localhost", 8090))
-
+		c = config()
 		self.xml = xmlHandler()
 
 		try: 
-		    while True: 
-			message = raw_input("Enter a message: ") 
-			s.send(message) 
+			s.send("auth " + c.getMonitorUser() + " " +  c.getMonitorPassword() )
+			s.send("data " + self.xml.logEntryToXml( monitorLog() ))
+			s.send("commit")
+			s.send("exit")
 		finally: 
 		    s.close()
-	
+
+
+if __name__ == '__main__':
+	d = datenfresserMonitorClient()

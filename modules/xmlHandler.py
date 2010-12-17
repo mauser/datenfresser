@@ -7,6 +7,7 @@ sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
 from db import database
+from db import monitorLog
 
 class xmlHandler:
 
@@ -15,4 +16,7 @@ class xmlHandler:
 	
 	def logEntryToXml( self, monitorLog ):
 		return "<xml><host>example.com</host></xml>"
+
+	def parseXml( self, xmlDocument ):
+		return monitorLog()
 
