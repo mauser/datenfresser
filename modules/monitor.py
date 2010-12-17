@@ -38,7 +38,7 @@ class datenfresserMonitorServer:
 		read, write, oob = select.select([server] + clients, [], [])
 
 		for sock in read: 
-		    if sock is server: 
+		    if sock in server: 
 			client, addr = server.accept() 
 			clients.append(client) 
 			print "#Client %s connected" % addr[0] 
