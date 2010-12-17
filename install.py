@@ -28,7 +28,8 @@ print "Welcome to the datenfresser installer.This is free software,you can distr
 CONFIG_FILENAME = "/etc/datenfresser.conf"
 CONFIG_TEMPLATE = "./datenfresser.conf.tmpl"
 
-
+#no debug output by default
+verbose = False
 
 if os.path.isfile( CONFIG_FILENAME ):
 	c = config()
@@ -39,7 +40,11 @@ else:
 	USERNAME  = "datenfresser"
 	
 
+def debugPrint( string ):
+	if verbose: print string
+
 def getpwnam(name,pwfile='/etc/passwd'):
+	debugPrint( "starting to parse " + pwfile)
 	f = open(pwfile);
 	while 1:
 		line = f.readline()
@@ -103,13 +108,15 @@ volume = ""
 overwrite = False
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "ho", ["help", "overwrite"])
+	opts, args = getopt.getopt(sys.argv[1:], "hov", ["help", "overwrite, verbose"])
 except getopt.GetoptError, err:
 	print str(err) 
 	#usage()
 	sys.exit(2)
 
 for o, a in opts:
+        if o == "-v":
+	    verbose = True
         if o == "-o":
             overwrite = True
         elif o in ("-h", "--help"):
@@ -130,22 +137,23 @@ else:
 #check if user backupUser exists
 ###################################################################
 
-
+debugPrint( "Checking if user already exists.. " )
 try:
 	if sys.platform != "darwin":
         	pwd_entry=getpwnam( USERNAME )
-
         	if pwd_entry[6] != "":
                 	print "WARNING: There is an shell entry for user %s in /etc/passwd. This may be a security problem." % USERNAME
 
 
 except KeyError:
 
+	debugPrint( "Calling useradd " + USERNAME ) 	
         ShellObj = os.popen('/usr/sbin/useradd %s' % USERNAME )
         ShellObj.close()
 
         try:
                 pwd_entry=getpwnam( USERNAME )
+		debugPrint("Adding user was successful")
 
         except KeyError:
                 print "Failed to create user '%s'.Aborting." % USERNAME
