@@ -22,6 +22,7 @@ import getopt
 sys.path.append("./modules")
 
 from config import config
+from socket import gethostname 
 
 print "Welcome to the datenfresser installer.This is free software,you can distribute it under the terms of the GPL\n";
 
@@ -42,6 +43,7 @@ else:
 
 def debugPrint( string ):
 	if verbose: print string
+
 
 def getpwnam(name,pwfile='/etc/passwd'):
 	debugPrint( "starting to parse " + pwfile)
@@ -82,6 +84,7 @@ def createConfig( USERNAME , mainVolume_preset ):
 	output.write("sync_dir=\n")
 	output.write("start_delay=0\n")
 	output.write("debug=0\n")
+	output.write("hostname=" + gethostname() + "\n")
 	
 	output.write("\n#seconds after datenfresser checks if a new job is ready to run\n")
 	output.write("poll_interval=60" "\n")

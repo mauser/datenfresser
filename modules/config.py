@@ -26,6 +26,7 @@ class config:
 		self.__start_delay=config.get("main","start_delay")
 		self.__debug=config.get("main","debug")
 		self.__username=config.get("main","username")	
+		self.__hostname=config.get("main","hostname")	
 		
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
@@ -61,6 +62,10 @@ class config:
 
 	def getUsername( self ):
 		return self.__username
+	
+	def getHostname( self ):
+		return self.__hostname
+
 
 	def getStartDelay( self ):
 		return self.__start_delay

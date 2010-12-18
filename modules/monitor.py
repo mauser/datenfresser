@@ -154,7 +154,7 @@ class datenfresserMonitorClient:
 
 			for i in range(0, 1):
 				print i
-				data = self.xml.logEntryToXml( "shinyThing", logs[i] )
+				data = self.xml.logEntryToXml( c.getHostname(), logs[i] )
 				print len(data)
 				s.send("data " + data)
 				s.recv(1024)

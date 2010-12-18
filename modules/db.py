@@ -27,6 +27,12 @@ class monitorLog:
 	remoteId = 0
 	status = "no status available"
 	error = "no error information available"
+	transfered = 0
+
+	def setTransferredData(self, v):
+		self.transfered = v
+	def getTranserredData(self):
+		return self.transfered
 
 	def setHost(self, h):
 		self.host = h
