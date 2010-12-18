@@ -57,17 +57,18 @@ class xmlHandler:
 
 		dom = parseString( xmlDocument.strip() )
 		m = monitorLog()
-
-		for node in dom.getElementsByTagName('host'):
-			text = getText(node.childNodes)	
-			if text == "host": m.setHost( text )
-			if text == "rid": m.setRemoteLogId( text )
-			if text == "dataId": m.setDataId( text )
-			if text == "start_timestamp": m.setStartTimestamp( text )
-			if text == "end_timestamp": m.setEndTimestamp( text )
-			if text == "error": m.setError( text )
-			if text == "std_out": m.setStatus( text )
-			if text == "transferredData": m.setTransferredData( text )
+		
+		for tag in ['host','rid','dataId','start_timestamp','end_timestamp','error','std_out','transferredData']:
+			for node in dom.getElementsByTagName(tag):
+				text = getText(node.childNodes)	
+				if tag == "host": m.setHost( text )
+				if tag == "rid": m.setRemoteLogId( text )
+				if tag == "dataId": m.setDataId( text )
+				if tag == "start_timestamp": m.setStartTimestamp( text )
+				if tag == "end_timestamp": m.setEndTimestamp( text )
+				if tag == "error": m.setError( text )
+				if tag == "std_out": m.setStatus( text )
+				if tag == "transferredData": m.setTransferredData( text )
 
 
 		return m

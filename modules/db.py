@@ -335,7 +335,7 @@ class database:
 			
 		return logList
 	
-	def insertMonitorLog( self, hostName, monitorLog ):
+	def insertMonitorLog( self, monitorLog ):
 		#metaLogID INTEGER PRIMARY KEY, 
 		#host TEXT , 
 		#remoteLogID INTEGER,  
@@ -344,11 +344,11 @@ class database:
 		#start_timestamp TEXT, 
 		#end_timestamp TEXT, status TEXT,err_msg TEXT, std_out TEXT, transferredData TEXT)"
 
-		t = "dummy"
 		sql = "INSERT INTO monitorLog VALUES (NULL, '%(hostName)s', '%(rid)s', \
 				'rsync', '0', '%(start)s' , '%(end)s' , '%(status)s', \
-				'%(error)s','%(std)s','%(data)s')"  %{ 'hostName': hostName, 'rid' : monitorLog.getRemoteLogId(), 'start' : monitorLog.getStartTimestamp(), 'end': monitorLog.getEndTimestamp(), 'status' : monitorLog.getStatus(), 'error' : monitorLog.getError(), 'std':t, 'data':t  }
+				'%(error)s','%(std)s','%(data)s')"  %{ 'hostName': monitorLog.getHost(), 'rid' : monitorLog.getRemoteLogId(), 'start' : monitorLog.getStartTimestamp(), 'end': monitorLog.getEndTimestamp(), 'status' : monitorLog.getStatus(), 'error' : monitorLog.getError(), 'std': monitorLog.getStatus(), 'data': monitorLog.getTranserredData()  }
 		self.cursor.execute(sql)
+		self.db.commit()
 
 
 	def getAllLogs(self, lastId):
@@ -359,14 +359,14 @@ class database:
 	def getLastRemoteLogID(self, host):
 		#used at the monitoring server to determine which the highest already transferred logid is
 		#(logid is called remoteLogId on the monitoring server)
-		sql = "SELECT remoteLogID from monitorLog WHERE host = '%(hostName)s'" % { 'hostName' : host }
+		sql = "SELECT remoteLogID from monitorLog WHERE host = '%(hostName)s' ORDER BY remoteLogID desc LIMIT 1" % { 'hostName' : host }
 		self.cursor.execute(sql)
 		result = self.cursor.fetchone()
 
 		if result == None: 
 			return -1
 		else:
-			return result
+			return result[0]
 
 
 
