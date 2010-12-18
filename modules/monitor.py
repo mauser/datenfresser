@@ -85,6 +85,8 @@ class datenfresserMonitorServer:
 				sock.send("auth ok")
 			else: 
 
+				result = "ok"
+
 				if ipPortTuple in state.keys() and state[ ipPortTuple ].authState == "authenticated":
 					print "authenticated!"
 				else:
@@ -94,9 +96,9 @@ class datenfresserMonitorServer:
 			    		#clients.remove(sock)
 				
 				if message[0:4] == "data":
-			    		print "Adding data was requested"
 					parts = message.split(" ")
-					state[ ipPortTuple ].data += parts[1].rstrip()
+			    		print "Adding data was requested"
+					state[ ipPortTuple ].data += message[4:].rstrip()
 					print state[ ipPortTuple ].data
 
 
@@ -108,9 +110,10 @@ class datenfresserMonitorServer:
 					parts = message.split(" ")
 					host = parts[1].strip()
 			    		print "Getting last id for host " + host
-					print "Last id is: " + str( self.database.getLastRemoteLogID( host ) )
+					result = str(self.database.getLastRemoteLogID( host )) 
+					print result
 				
-				sock.send("ok")
+				sock.send( result )
 				
 				if message[0:4] == "exit":
 			    		print "#Connection to %s closed" % ip
@@ -133,8 +136,8 @@ class datenfresserMonitorClient:
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 		s.connect(("localhost", 8090))
 		c = config()
-		#self.xml = xmlHandler()
-		#self.xml.logEntryToXml( monitorLog() )
+		d = database()
+		self.xml = xmlHandler()
 		#return
 
 		try: 
@@ -143,7 +146,22 @@ class datenfresserMonitorClient:
 			#s.send("data " + self.xml.logEntryToXml( monitorLog() ))
 			#s.send("commit")
 			s.send("getLastID shinyThing")
-			print s.recv(1024)
+			lastId = int( s.recv(1024) )
+			print lastId
+			
+			logs = d.getLogs( lastId)
+			print len(logs)
+
+			for i in range(0, 1):
+				print i
+				data = self.xml.logEntryToXml( "shinyThing", logs[i] )
+				print len(data)
+				s.send("data " + data)
+				s.recv(1024)
+				s.send("commit")
+				s.recv(1024)
+
+
 			s.send("exit")
 			print s.recv(1024)
 		finally: 
