@@ -19,6 +19,7 @@ import os
 import sys
 import subprocess
 import select
+import getopt
 
 from datetime import datetime
 from time import time
@@ -32,6 +33,7 @@ sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
 from config import config
+from config import CliArguments
 from db import database
 from db import monitorLog
 from webserver import datenfresser_webserver
@@ -232,7 +234,7 @@ def shutdown():
 	cmd = "shutdown -h now"
 	subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()
 
-def main():
+def main( cliArguments ):
 
 	log("starting!!!")
 
@@ -242,6 +244,7 @@ def main():
 	webserver_port =  c.getWebserverPort()
 	
 	monitor = c.getMonitorEnabled()
+	if cliArguments.monitor: monitor = True
 	monitor_port =  c.getMonitorPort()
 	
 	
@@ -316,5 +319,25 @@ def main():
 		
 	
 if __name__ == "__main__":
-	main()
+
+
+	cliArguments = CliArguments()
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "hmv", ["help", "monitor", "verbose"])
+	except getopt.GetoptError, err:
+		print str(err) 
+		#usage()
+		sys.exit(2)
+
+	for o, a in opts:
+		if o == "-v":
+		    cliArguments.verbose = True
+		if o == "-m":
+		    cliArguments.monitor = True
+		elif o in ("-h", "--help"):
+		    #usage()
+		    sys.exit()
+
+	main( cliArguments )
 	sys.exit(0)

@@ -11,8 +11,7 @@ class config:
 
 	def __init__(self):
 		"""Class for Configuration Managment"""
-		
-
+	
 		self.__username = ""
 		self.__main_volume = ""
 
@@ -35,6 +34,7 @@ class config:
 			self.__monitor = config.get("monitor","monitor_enabled")
 		except ConfigParser.NoSectionError:
 			self.__monitor = "false"
+			if monitor: self.__monitor = True
 			self.__monitor_port = 0 
 			self.__monitor_user = "nobody"
 			self.__monitor_password = "secret"
@@ -43,7 +43,7 @@ class config:
 		try:
 			self.__monitor_port = config.get("monitor","monitor_port")
 		except ConfigParser.NoOptionError:
-			self.__monitor_port = 0 
+			self.__monitor_port = 6666 
 
 		try:
 			self.__monitor_user = config.get("monitor","monitor_user")
@@ -98,6 +98,12 @@ class config:
 		
 	def getSyncDir( self ):
 		return self.__sync_dir
+
+
+class CliArguments:
+	def __init__( self ):
+		self.monitor = False
+		self.verbose = False
 
 
 

@@ -349,6 +349,13 @@ class database:
 		results = []
 		sql = ""
 
+	
+	def getLastRemoteLogged(self, host):
+		#used at the monitoring server to determine which the highest already transferred logid is
+		#(logid is called remoteLogId on the monitoring server)
+		sql = "SELECT remoteLogID from monitorLog WHERE hostName = '%(hostName)s'" % { 'hostName' : host }
+		self.cursor.execute(sql)
+
 
 
 	def get_running_jobs(self):

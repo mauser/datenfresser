@@ -108,7 +108,7 @@ volume = ""
 overwrite = False
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hov", ["help", "overwrite, verbose"])
+	opts, args = getopt.getopt(sys.argv[1:], "hov", ["help", "overwrite", "verbose"])
 except getopt.GetoptError, err:
 	print str(err) 
 	#usage()

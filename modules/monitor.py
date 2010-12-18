@@ -104,6 +104,12 @@ class datenfresserMonitorServer:
 			    		print "Committing your data"
 					self.xmlHandler.parseXml( state[ ipPortTuple ].data )	
 
+				if message[0:8] == "getLastID":
+					parts = message.split(" ")
+					host = parts[1].strip()
+			    		print "Getting last id for host " + host 
+					self.xmlHandler.parseXml( state[ ipPortTuple ].data )	
+
 				
 				if message[0:4] == "exit":
 			    		print "#Connection to %s closed" % ip
