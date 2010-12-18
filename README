@@ -1,0 +1,11 @@
+== Installation == 
+
+Step 1: Fetch the latest version from github:  git://github.com/mauser/datenfresser.git
+Step 2: cd datenfresser && sudo ./install.py
+
+The installer needs root permissions to create a new user and 
+create the configuration file.
+
+== Configuration ==
+
+The configuration file is located at /etc/datenfresser.conf.
