@@ -64,30 +64,52 @@ class datenfresserMonitorServer:
 			clients.append(client) 
 			print "#Client %s connected" % addr[0] 
 		    else:
-			result = "ok"
+			result = "default ok"
 			while 1:
-				print "before recv"
-				message = sock.recv(1024)
-				
-				if len(message) == 0: 
-					reply( sock, result )
-					break
-			
-			
 				ip = sock.getpeername()[0]
 				ipPortTuple = sock.getpeername()
 				
-				#check if this is a part of a chunked transfer
-				if ipPortTuple in state.keys() and  state[ ipPortTuple ].state == "recv":
-					state[ ipPortTuple ].length -= 1024
-					state[ ipPortTuple ].data  += message
-					if state[ ipPortTuple ].length  <= 0:
-						print "end of receive"
-						state[ ipPortTuple ].state = ""
-						self.reply(sock, "recv ok")
-						break
-					continue
+				if ipPortTuple in state.keys():
+					print "before recv; waiting for " + str(state[ ipPortTuple ].length) + " bytes "
+				else:
+					print "before recv"
 
+				#receive outstanding data
+				message = sock.recv(1024)
+			
+				if ipPortTuple in state.keys() and state[ ipPortTuple ].length == 0:
+					print "message: " + message
+				
+
+				if len(message) == 0: 
+					print "first exit"
+					self.reply( sock, "first exit" )
+					break
+			
+		
+				#check if this is a part of a chunked transfer
+				lastChunk = False
+				if ipPortTuple in state.keys() and  state[ ipPortTuple ].state == "recv":
+					state[ ipPortTuple ].length -= len(message)
+					state[ ipPortTuple ].data  += message
+					if state[ ipPortTuple ].length  <= 0: 
+						#this was the last chunk, handle the event later
+						lastChunk = True
+					else:
+						#omit a reply and recv the other chunks..
+						continue
+				
+				#check if this was the last chunk
+				if lastChunk:
+					print "end of receive for"
+					print ipPortTuple
+					state[ ipPortTuple ].state = ""
+					state[ ipPortTuple ].length = 0
+					self.reply(sock, "recv ok")
+					break
+
+				print "after if for " 
+				print ipPortTuple
 
 
 				#every client has to authenticate itself at the
@@ -126,24 +148,28 @@ class datenfresserMonitorServer:
 						#store the size of the whole data
 						state[ ipPortTuple ].length = int(parts[1])
 
-						#we have already received 1024 byte
-						state[ ipPortTuple ].length -= 1024
+				
+						#calculate the payload size
+						startOfData = find( message, parts[1])
+						startOfData = startOfData + len(parts[1])
+						payload = message[startOfData:]
+						payloadSize = len(payload)
+
+						#we have already received the first chunk 
+						state[ ipPortTuple ].length -= payloadSize 
 						
 						#if we're receiving multiple packates, change state of this recv. thread 
 						if state[ ipPortTuple ].length > 0:
 							state[ ipPortTuple ].state = "recv"
 							
-
-						startOfData = find( message, parts[1])
-						startOfData = startOfData + len(parts[1])
-						state[ ipPortTuple ].data = message[startOfData:]
-						print message[startOfData:]
+						state[ ipPortTuple ].data = payload						
 						print "received first chunk"
 
 
 
 					if message[0:6] == "commit":
 						print "Committing your data"
+						#print state[ ipPortTuple ].data 
 						m = self.xmlHandler.parseXml( state[ ipPortTuple ].data )	
 						self.database.insertMonitorLog( m )
 						result = "commit ok"
@@ -152,8 +178,7 @@ class datenfresserMonitorServer:
 						parts = message.split(" ")
 						host = parts[1].strip()
 						print "Getting last id for host " + host
-						result = str(self.database.getLastRemoteLogID( host )) 
-						print result
+						result = str(self.database.getLastRemoteLogID( host ))
 					
 					
 					if message[0:4] == "exit":
@@ -165,7 +190,7 @@ class datenfresserMonitorServer:
 						clients.remove(sock)
 						break
 					
-				if len(message) == 0 or len(message) < 1024 and result != "exit":
+				if len(message) == 0 or len(message) < 1024 and result != "exit" and result != "recv ok":
 					self.reply( sock, result )
 					break
 
@@ -194,20 +219,16 @@ class datenfresserMonitorClient:
 			#s.send("commit")
 			s.send("getLastID " + c.getHostname())
 			lastId = int( s.recv(1024) )
-			print lastId
-			
 			logs = d.getLogs( lastId)
-			print len(logs)
 
-			for i in range(0, 1):
+			for i in range(0, len(logs)):
 				print i
 				data = self.xml.logEntryToXml( c.getHostname(), logs[i] )
-				print len(data)
-				print sys.getsizeof(data)
-				print "Send data, #bytes: " + str( s.sendall("data " + str(sys.getsizeof(data)) + " " + data ))
-				print s.recv(1024)
+				print "Size of data: " + str(len(data))
+				print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
+				print "Answer to data:" +  s.recv(1024)
 				s.send("commit")
-				print s.recv(1024)
+				print "Answer to commit: " + s.recv(1024)
 
 
 			s.send("exit")
