@@ -30,7 +30,7 @@ class datenfresserMonitorServer:
     #the monitor is a server which gathers the logs of datenfresser client instances 
     def __init__(self,port):
 	    self.port = port
-	    self.dataBase = database()
+	    self.database = database()
 	    self.config = config()
 	    self.xmlHandler = xmlHandler()
 	    
@@ -82,6 +82,7 @@ class datenfresserMonitorServer:
 	
 			    	print "[%s] %s" % (ip, message)
 				print state
+				sock.send("auth ok")
 			else: 
 
 				if ipPortTuple in state.keys() and state[ ipPortTuple ].authState == "authenticated":
@@ -89,9 +90,8 @@ class datenfresserMonitorServer:
 				else:
 					print "not authenticated"
 			    		print "#Connection to %s closed" % ip 
-			    		sock.close() 
-			    		clients.remove(sock)
-				
+			    		#sock.close() 
+			    		#clients.remove(sock)
 				
 				if message[0:4] == "data":
 			    		print "Adding data was requested"
@@ -104,16 +104,17 @@ class datenfresserMonitorServer:
 			    		print "Committing your data"
 					self.xmlHandler.parseXml( state[ ipPortTuple ].data )	
 
-				if message[0:8] == "getLastID":
+				if message[0:9] == "getLastID":
 					parts = message.split(" ")
 					host = parts[1].strip()
-			    		print "Getting last id for host " + host 
-					self.xmlHandler.parseXml( state[ ipPortTuple ].data )	
-
+			    		print "Getting last id for host " + host
+					print "Last id is: " + str( self.database.getLastRemoteLogID( host ) )
+				
+				sock.send("ok")
 				
 				if message[0:4] == "exit":
 			    		print "#Connection to %s closed" % ip
-
+					sock.send("bye")
 					sock.close() 
 					del state[ipPortTuple] 
 			    		clients.remove(sock)
@@ -129,18 +130,22 @@ class datenfresserMonitorClient:
 	
 	def __init__(self):
 
-		#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-		#s.connect(("localhost", 8090))
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+		s.connect(("localhost", 8090))
 		c = config()
-		self.xml = xmlHandler()
-		self.xml.logEntryToXml( monitorLog() )
-		return
+		#self.xml = xmlHandler()
+		#self.xml.logEntryToXml( monitorLog() )
+		#return
 
 		try: 
 			s.send("auth " + c.getMonitorUser() + " " +  c.getMonitorPassword() )
-			s.send("data " + self.xml.logEntryToXml( monitorLog() ))
-			s.send("commit")
+			print s.recv(1024)
+			#s.send("data " + self.xml.logEntryToXml( monitorLog() ))
+			#s.send("commit")
+			s.send("getLastID shinyThing")
+			print s.recv(1024)
 			s.send("exit")
+			print s.recv(1024)
 		finally: 
 		    s.close()
 

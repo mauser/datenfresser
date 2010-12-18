@@ -244,7 +244,7 @@ def main( cliArguments ):
 	webserver_port =  c.getWebserverPort()
 	
 	monitor = c.getMonitorEnabled()
-	if cliArguments.monitor: monitor = True
+	if cliArguments.monitor: monitor = "True"
 	monitor_port =  c.getMonitorPort()
 	
 	

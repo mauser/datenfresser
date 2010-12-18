@@ -350,11 +350,17 @@ class database:
 		sql = ""
 
 	
-	def getLastRemoteLogged(self, host):
+	def getLastRemoteLogID(self, host):
 		#used at the monitoring server to determine which the highest already transferred logid is
 		#(logid is called remoteLogId on the monitoring server)
-		sql = "SELECT remoteLogID from monitorLog WHERE hostName = '%(hostName)s'" % { 'hostName' : host }
+		sql = "SELECT remoteLogID from monitorLog WHERE host = '%(hostName)s'" % { 'hostName' : host }
 		self.cursor.execute(sql)
+		result = self.cursor.fetchone()
+
+		if result == None: 
+			return -1
+		else:
+			return result
 
 
 
