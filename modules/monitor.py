@@ -27,6 +27,8 @@ class stateContainer:
 		self.data = ""
 		#state = "recv" for chunked transfer to bypass sends
 		self.state = ""
+		#hostname
+		self.hostname = "example.org"
 
 class datenfresserMonitorServer:
 
@@ -64,7 +66,7 @@ class datenfresserMonitorServer:
 			clients.append(client) 
 			print "#Client %s connected" % addr[0] 
 		    else:
-			result = "default ok"
+			result = "ok"
 			while 1:
 				ip = sock.getpeername()[0]
 				ipPortTuple = sock.getpeername()
@@ -139,7 +141,14 @@ class datenfresserMonitorServer:
 						print "#Connection to %s closed" % ip 
 						#sock.close() 
 						#clients.remove(sock)
-					
+				
+					if message[0:4] == "host":
+						#announce the clients host name
+						parts = message.split(" ")
+						state[ ipPortTuple ].hostname = parts[1]
+
+
+
 					if message[0:4] == "data":
 						#format: 'data sizeof(x) 01100011....'
 						print "Adding data was requested"
@@ -214,6 +223,8 @@ class datenfresserMonitorClient:
 
 		try: 
 			s.send("auth " + c.getMonitorUser() + " " +  c.getMonitorPassword() )
+			print s.recv(1024)
+			s.send("host " + c.getHostname() )
 			print s.recv(1024)
 			#s.send("data " + self.xml.logEntryToXml( monitorLog() ))
 			#s.send("commit")
