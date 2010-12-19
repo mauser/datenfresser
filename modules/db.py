@@ -254,7 +254,19 @@ class database:
         	if not row:
 			sql="CREATE TABLE 'monitorLog' (metaLogID INTEGER PRIMARY KEY, host TEXT , remoteLogID INTEGER,  type TEXT, dataID INTEGER,start_timestamp TEXT, end_timestamp TEXT, status TEXT,err_msg TEXT, std_out TEXT, transferredData TEXT)"
 			self.cursor.execute(sql)
+		
+		
+		#table remoteDataContainer
+		# this table is used by the monitoringServer to store the dataContainer tables of all clients
+		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='remoteDataContainer'"
+        	self.cursor.execute(sql)
+        	row = self.cursor.fetchone()
+
+        	if not row:
+			sql="CREATE TABLE 'remoteDataContainer' (rdataID INTEGER PRIMARY KEY,dataID INTEGER, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT,archive_method TEXT, compress TEXT,archive_ttl TEXT,pre_command TEXT,post_command TEXT, checksum TEXT)"
+			self.cursor.execute(sql)
 			self.db.commit()
+
 
 
 		#table groups 

@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import hashlib
+
 class dataContainer:
 	''' a dataContainer represents the entrys in the main configuration file'''
 	def __init__(self , dataID, name, comment, localPath, remotePath, dataType, options , schedule, group):
@@ -14,6 +16,13 @@ class dataContainer:
 		self.lastBackup = 0
 		self.comment = comment
 		self.dataID = dataID
+		self.updateChecksum()
+
+
+	def updateChecksum(self):
+		algo = hashlib.sha1()
+		algo.update( self.name + self.localPath + self.remotePath + self.dataType + self.schedule + self.group + self.options + self.comment )
+		self.checksum = algo.digest 
 		
 class job:
     def __init__( self, dataID , startTimestamp , name ):
