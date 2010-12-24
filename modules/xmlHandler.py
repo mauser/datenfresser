@@ -33,12 +33,26 @@ class xmlHandler:
 		node = document.createElement( nodeName )
 		node.appendChild(document.createTextNode( str(string) ))
 		return node
+
+	def dataContainerToXml(self, host, dataContainer):
+		doc = dom.Document()
+		root = dom.Element("dataContainer")
+
+		root.appendChild( self.createNode( doc , "host" , host ))
+		root.appendChild( self.createNode( doc , "name" , dataContainer.name ))
+		root.appendChild( self.createNode( doc , "comment" , dataContainer.comment ))
+		
+		doc.appendChild(root)
+		return doc.toxml()	
+
+	
+
 	
 	def logEntryToXml( self, host, logEntry ):
 		#converts a log entry of the client to its xml representation 
 
 		doc = dom.Document()
-		root = dom.Element("datenfresser")
+		root = dom.Element("monitorLogEntry")
 	
 		root.appendChild( self.createNode( doc , "host" , host ))
 		root.appendChild( self.createNode( doc , "rid" , logEntry['logID'] ))
