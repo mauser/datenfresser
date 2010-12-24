@@ -346,7 +346,19 @@ class database:
 			logList.append( tmpDict )
 			
 		return logList
-	
+
+
+	def checkForRemoteContainer(self, host, id , checksum):
+		sql = "SELECT * FROM remoteDataContainer where host = '%(host)s' AND dataID = '%(id)s' AND checksum = '%(checksum)s'"
+		result = self.cursor.fetchall()
+		if len(result) > 0:
+			return True
+		else:
+			return False
+
+
+
+
 	def insertMonitorLog( self, monitorLog ):
 		#metaLogID INTEGER PRIMARY KEY, 
 		#host TEXT , 

@@ -146,6 +146,33 @@ class datenfresserMonitorServer:
 						#announce the clients host name
 						parts = message.split(" ")
 						state[ ipPortTuple ].hostname = parts[1]
+					
+					if message[0:11] == "checkDataID":
+						#checkDataID id checksum
+						#used to check if a data container with this id already exists
+						parts = message.split(" ")
+						id = parts[1]
+						checksum = parts[2]
+
+						if self.database.checkForRemoteContainer( id, state[ ipPortTuple ].hostname , checksum ):
+							result = "dataID known"
+						else:
+							result = "dataID unknown"
+
+					if message[0:17] == "pushDataContainer":
+						#checkDataID id checksum
+						#used to check if a data container with this id already exists
+						parts = message.split(" ")
+						id = parts[1]
+						checksum = parts[2]
+
+						if self.database.checkForRemoteContainer( id, state[ ipPortTuple ].hostname , checksum ):
+							result = "dataID known"
+						else:
+							result = "dataID unknown"
+
+
+
 
 
 
@@ -226,20 +253,25 @@ class datenfresserMonitorClient:
 			print s.recv(1024)
 			s.send("host " + c.getHostname() )
 			print s.recv(1024)
+			
+			s.send("checkDataID 0 0")
+			print "data:" +  str( s.recv(1024) )
+			
+			
 			#s.send("data " + self.xml.logEntryToXml( monitorLog() ))
 			#s.send("commit")
-			s.send("getLastID " + c.getHostname())
-			lastId = int( s.recv(1024) )
-			logs = d.getLogs( lastId)
+			#s.send("getLastID " + c.getHostname())
+			#lastId = int( s.recv(1024) )
+			#logs = d.getLogs( lastId)
 
-			for i in range(0, len(logs)):
-				print i
-				data = self.xml.logEntryToXml( c.getHostname(), logs[i] )
-				print "Size of data: " + str(len(data))
-				print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
-				print "Answer to data:" +  s.recv(1024)
-				s.send("commit")
-				print "Answer to commit: " + s.recv(1024)
+			#for i in range(0, len(logs)):
+			#	print i
+			#	data = self.xml.logEntryToXml( c.getHostname(), logs[i] )
+			#	print "Size of data: " + str(len(data))
+			#	print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
+			#	print "Answer to data:" +  s.recv(1024)
+			#	s.send("commit")
+			#	print "Answer to commit: " + s.recv(1024)
 
 
 			s.send("exit")

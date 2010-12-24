@@ -38,9 +38,12 @@ class xmlHandler:
 		doc = dom.Document()
 		root = dom.Element("dataContainer")
 
+		dataContainer.updateChecksum()
+
 		root.appendChild( self.createNode( doc , "host" , host ))
 		root.appendChild( self.createNode( doc , "name" , dataContainer.name ))
 		root.appendChild( self.createNode( doc , "comment" , dataContainer.comment ))
+		root.appendChild( self.createNode( doc , "hash" , dataContainer.checksum ))
 		
 		doc.appendChild(root)
 		return doc.toxml()	
