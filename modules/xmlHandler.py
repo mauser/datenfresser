@@ -45,8 +45,17 @@ class xmlHandler:
 		root.appendChild( self.createNode( doc , "name" , dataContainer.name ))
 		root.appendChild( self.createNode( doc , "comment" , dataContainer.comment ))
 		root.appendChild( self.createNode( doc , "checksum" , dataContainer.checksum ))
+		root.appendChild( self.createNode( doc , "archive" , dataContainer.archive))
+		root.appendChild( self.createNode( doc , "archive_method" , dataContainer.archive_method ))
+		root.appendChild( self.createNode( doc , "archive_ttl" , dataContainer.archive_ttl))
+		root.appendChild( self.createNode( doc , "dataID" , dataContainer.dataID ))
+		root.appendChild( self.createNode( doc , "compress" , dataContainer.compress ))
+		root.appendChild( self.createNode( doc , "options" , dataContainer.options ))
+		root.appendChild( self.createNode( doc , "schedule" , dataContainer.schedule ))
+		root.appendChild( self.createNode( doc , "remotePath" , dataContainer.remotePath ))
 		
 		doc.appendChild(root)
+		print doc.toxml()
 		return doc.toxml()	
 
 	
@@ -77,7 +86,7 @@ class xmlHandler:
 	
 		#decide if this is #dataContainer or #monitorLogEntry
 		monitorLogs = dom.getElementsByTagName("monitorLogEntry")
-		dataContainer = dom.getElementsByTagName("dataContainer")
+		container = dom.getElementsByTagName("dataContainer")
 
 		if len(monitorLogs) == 1:
 			m = monitorLog()
@@ -95,15 +104,24 @@ class xmlHandler:
 
 
 			return m
-		else:
-			m = dataContainer()
-			for tag in ['host','name','comment','checksum']:
+
+		if len(container) == 1:
+			m = dataContainer('default')
+			for tag in ['host','name','comment','checksum','archive','archive_method','archive_ttl','options','compress','schedule','dataID','remotePath']:
 				for node in dom.getElementsByTagName(tag):
-					text = getText(node.childNodes)	
-					if tag == "host": m.setHost( text )
-					if tag == "name": m.setRemoteLogId( text )
-					if tag == "comment": m.setDataId( text )
-					if tag == "checksum": m.setStartTimestamp( text )
+					text = getText(node.childNodes)
+					if tag == "dataID": m.dataID = text
+					if tag == "host": m.host = text 
+					if tag == "name": m.name = text 
+					if tag == "comment": m.comment = text 
+					if tag == "checksum": m.checksum = text
+					if tag == "archive": m.archive = text
+					if tag == "archive_method": m.archive_method = text
+					if tag == "archive_ttl": m.archive_ttl = text
+					if tag == "options": m.options = text
+					if tag == "compress": m.compress = text
+					if tag == "schedule": m.schedule = text
+					if tag == "remotePath": m.remotePath = text
 
 
 			return m

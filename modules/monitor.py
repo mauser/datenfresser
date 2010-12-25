@@ -151,7 +151,7 @@ class datenfresserMonitorServer:
 						id = parts[1]
 						checksum = parts[2]
 
-						if self.database.checkForRemoteContainer( id, state[ ipPortTuple ].hostname , checksum ):
+						if self.database.checkForRemoteContainer( state[ ipPortTuple ].hostname, id , checksum ):
 							result = "dataID known"
 						else:
 							result = "dataID unknown"
@@ -203,8 +203,13 @@ class datenfresserMonitorServer:
 					if message[0:6] == "commit":
 						print "Committing your data"
 						#print state[ ipPortTuple ].data 
-						m = self.xmlHandler.parseXml( state[ ipPortTuple ].data )	
-						self.database.insertMonitorLog( m )
+						m = self.xmlHandler.parseXml( state[ ipPortTuple ].data )
+
+						if m.classname == "monitorLog":
+							self.database.insertMonitorLog( m )
+						if m.classname == "dataContainer":
+							self.database.addRemoteDataContainer( state[ ipPortTuple ].hostname , m)
+						
 						result = "commit ok"
 
 					if message[0:9] == "getLastID":
@@ -262,7 +267,18 @@ class datenfresserMonitorClient:
 				request = "checkDataID " + str(container.dataID) + " " + container.checksum
 				print request
 				s.send(request) 
-				print "reply:" +  str( s.recv(1024) )
+				reply = str( s.recv(1024) )
+				print reply
+				if reply == "dataID unknown":
+					print "id not known"
+					data = self.xml.dataContainerToXml( c.getHostname(), container )
+					print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
+
+					print "Answer to data:" +  s.recv(1024)
+					s.send("commit")
+					print "Answer to commit: " + s.recv(1024)
+
+
 			
 			
 			#s.send("data " + self.xml.logEntryToXml( monitorLog() ))

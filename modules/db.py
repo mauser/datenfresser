@@ -29,6 +29,8 @@ class monitorLog:
 	error = "no error information available"
 	transfered = 0
 
+	classname = "monitorLog"
+
 	def setTransferredData(self, v):
 		self.transfered = v
 	def getTranserredData(self):
@@ -258,12 +260,13 @@ class database:
 		
 		#table remoteDataContainer
 		# this table is used by the monitoringServer to store the dataContainer tables of all clients
+		# just a normal dataContainer table + remoteDataID + checksum + host
 		sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='remoteDataContainer'"
         	self.cursor.execute(sql)
         	row = self.cursor.fetchone()
 
         	if not row:
-			sql="CREATE TABLE 'remoteDataContainer' (rdataID INTEGER PRIMARY KEY,dataID INTEGER, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT,archive_method TEXT, compress TEXT,archive_ttl TEXT,pre_command TEXT,post_command TEXT, checksum TEXT)"
+			sql="CREATE TABLE 'remoteDataContainer' (rdataID INTEGER PRIMARY KEY,dataID INTEGER, name Text, comment Text, localPath TEXT, remotePath TEXT,type TEXT, options TEXT, schedule TEXT,groupID INTEGER,lastJobID INTEGER, archive TEXT,archive_method TEXT, compress TEXT,archive_ttl TEXT,pre_command TEXT,post_command TEXT, checksum TEXT, host TEXT)"
 			self.cursor.execute(sql)
 			self.db.commit()
 
@@ -349,7 +352,9 @@ class database:
 
 
 	def checkForRemoteContainer(self, host, id , checksum):
-		sql = "SELECT * FROM remoteDataContainer where host = '%(host)s' AND dataID = '%(id)s' AND checksum = '%(checksum)s'"
+		sql = "SELECT * FROM remoteDataContainer where host = '%(host)s' AND dataID = '%(id)s' AND checksum = '%(checksum)s'" % { 'id':id, 'host': host, 'checksum': checksum }
+		print sql
+		self.cursor.execute(sql)
 		result = self.cursor.fetchall()
 		if len(result) > 0:
 			return True
@@ -428,52 +433,62 @@ class database:
 		dataContainerList = []
 		for c in self.cursor.fetchall():
 			tmp = dataContainer(c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8]);
+			tmp.archive = c[9]
+			tmp.archive_method = c[10]
+			tmp.archive_ttl = c[11]
+			
 			if dataId !="": return [ tmp ]
 			dataContainerList.append( tmp )
 			
 		return dataContainerList
 
 						
-					
+	def addRemoteDataContainer(self, host, c):
+		self.addDataContainer( c.name, c.comment, c.remotePath, c.type, c.options, c.schedule, c.group, c.volume, c.archive, c.archive_method, c.compress, c.archive_ttl, c.pre_command, c.post_command, host, c.checksum, c.dataID)
+
 	
- 	def addDataContainer(self,name,comment,path,type,options,schedule,group, volume, archive,archive_method, compress, archive_ttl, pre_command, post_command):
+ 	def addDataContainer(self,name,comment,path,type,options,schedule,group, volume, archive,archive_method, compress, archive_ttl, pre_command, post_command, host="", checksum = "" , dataID = ""):
 	    
-		if type == "": type = "rsync"
-		if schedule == "": schedule = "weekly"
-	    
-		if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
-			schedule="weekly"
+		if host == "":
+			if type == "": type = "rsync"
+			if schedule == "": schedule = "weekly"
+		    
+			if schedule!="weekly" and schedule!="daily" and schedule!="monthly":
+				schedule="weekly"
 
 
-		sql="SELECT * FROM dataContainer WHERE localPath='%s'" % name
-		self.cursor.execute(sql)
-		if self.cursor.fetchone():
-			print "dataContainer %s exists already" % name
-			return -1
-		
-		
-		gid=0;
-		if group != "":
-			sql="SELECT groupID FROM groups WHERE name='%s'" % group
+			sql="SELECT * FROM dataContainer WHERE localPath='%s'" % name
 			self.cursor.execute(sql)
-			gid=self.cursor.fetchone()
+			if self.cursor.fetchone():
+				print "dataContainer %s exists already" % name
+				return -1
+			
+			
+			gid=0;
+			if group != "":
+				sql="SELECT groupID FROM groups WHERE name='%s'" % group
+				self.cursor.execute(sql)
+				gid=self.cursor.fetchone()
 
-			if gid != None:
-				gid=gid[0][0]
-			else:
-				gid=0;
+				if gid != None:
+					gid=gid[0][0]
+				else:
+					gid=0;
 
-		localPath = main_volume + "/" + name + "/";
-	
-		sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(name)s', '%(remotePath)s','%(type)s','%(options)s','%(schedule)s','%(group)s', NULL ,'%(archive)s','%(archive_method)s','%(compress)s','%(archive_ttl)s','%(pre_command)s','%(post_command)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid, 'archive': archive, 'archive_method': archive_method,'compress': compress, 'archive_ttl': archive_ttl, 'pre_command': pre_command, 'post_command': post_command }
-		#print sql
-		self.cursor.execute(sql)
-		self.db.commit()
+			localPath = main_volume + "/" + name + "/";
 
-		#if not os.path.isdir(name):
-		#	os.mkdir(name);
 
-		#Check if theres no dataContainer named "name" in rootContainer
+			sql="INSERT INTO dataContainer VALUES (NULL,'%(name)s','%(comment)s','%(name)s', '%(remotePath)s','%(type)s','%(options)s','%(schedule)s','%(group)s', NULL ,'%(archive)s','%(archive_method)s','%(compress)s','%(archive_ttl)s','%(pre_command)s','%(post_command)s')"  %{ 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid, 'archive': archive, 'archive_method': archive_method,'compress': compress, 'archive_ttl': archive_ttl, 'pre_command': pre_command, 'post_command': post_command }
+			self.cursor.execute(sql)
+			self.db.commit()
+		else:
+			localPath = "undefined"
+			gid = 0
+			sql="INSERT INTO remoteDataContainer VALUES (NULL,'%(dataID)s','%(name)s','%(comment)s','%(name)s', '%(remotePath)s','%(type)s','%(options)s','%(schedule)s','%(group)s', NULL ,'%(archive)s','%(archive_method)s','%(compress)s','%(archive_ttl)s','%(pre_command)s','%(post_command)s', '%(checksum)s', '%(host)s' )"  %{ 'dataID': dataID, 'name': name, 'comment': comment, 'localPath': localPath, 'remotePath': path, "type": type, 'options':options,'schedule': schedule,'group':gid, 'archive': archive, 'archive_method': archive_method,'compress': compress, 'archive_ttl': archive_ttl, 'pre_command': pre_command, 'post_command': post_command, 'host': host, 'checksum': checksum }
+			self.cursor.execute(sql)
+			self.db.commit()
+
+
 		return
 		
 	def deleteContainer( self, dataID ):	

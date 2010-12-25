@@ -5,7 +5,7 @@ import hashlib
 
 class dataContainer:
 	''' a dataContainer represents the entrys in the main configuration file'''
-	def __init__(self , dataID, name, comment, localPath, remotePath, dataType, options , schedule, group):
+	def __init__(self , dataID=0, name="", comment="", localPath="", remotePath="", dataType="rsync", options="" , schedule="", group=""):
 		self.name =  name
 		self.localPath = localPath
 		self.remotePath = remotePath
@@ -16,6 +16,17 @@ class dataContainer:
 		self.lastBackup = 0
 		self.comment = comment
 		self.dataID = dataID
+		self.archive = ""
+		self.archive_ttl = ""
+		self.archive_method = ""
+		self.compress = ""
+		self.volume = ""
+
+		#not used at the moment
+		self.pre_command = ""
+		self.post_command = ""
+
+		self.classname = "dataContainer"
 
 
 	def updateChecksum(self):
@@ -23,7 +34,9 @@ class dataContainer:
 		string =  self.name + self.localPath + self.remotePath  + self.schedule + self.options + self.comment 
 		algo.update(string)
 		self.checksum = algo.hexdigest()
-		print self.checksum	
+		print self.checksum
+
+
 class job:
     def __init__( self, dataID , startTimestamp , name ):
 	    self.name = name
