@@ -102,7 +102,6 @@ class xmlHandler:
 					if tag == "std_out": m.setStatus( text )
 					if tag == "transferredData": m.setTransferredData( text )
 
-
 			return m
 
 		if len(container) == 1:

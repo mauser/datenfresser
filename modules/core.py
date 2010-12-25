@@ -34,7 +34,6 @@ class dataContainer:
 		string =  self.name + self.localPath + self.remotePath  + self.schedule + self.options + self.comment 
 		algo.update(string)
 		self.checksum = algo.hexdigest()
-		print self.checksum
 
 
 class job:

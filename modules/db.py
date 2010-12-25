@@ -324,9 +324,6 @@ class database:
 			self.cursor.execute(sql)
 			self.db.commit()
 
-	def addFile( self , path ):
-		pass
-
 	def getLogs( self , minID):
 		sql = "SELECT * from log WHERE logID > " + str(minID)
 		self.cursor.execute(sql)
@@ -353,7 +350,6 @@ class database:
 
 	def checkForRemoteContainer(self, host, id , checksum):
 		sql = "SELECT * FROM remoteDataContainer where host = '%(host)s' AND dataID = '%(id)s' AND checksum = '%(checksum)s'" % { 'id':id, 'host': host, 'checksum': checksum }
-		print sql
 		self.cursor.execute(sql)
 		result = self.cursor.fetchall()
 		if len(result) > 0:
@@ -372,17 +368,36 @@ class database:
 		#dataID INTEGER,
 		#start_timestamp TEXT, 
 		#end_timestamp TEXT, status TEXT,err_msg TEXT, std_out TEXT, transferredData TEXT)"
-
+		print "dataId:" + monitorLog.getDataId()
 		sql = "INSERT INTO monitorLog VALUES (NULL, '%(hostName)s', '%(rid)s', \
-				'rsync', '0', '%(start)s' , '%(end)s' , '%(status)s', \
-				'%(error)s','%(std)s','%(data)s')"  %{ 'hostName': monitorLog.getHost(), 'rid' : monitorLog.getRemoteLogId(), 'start' : monitorLog.getStartTimestamp(), 'end': monitorLog.getEndTimestamp(), 'status' : monitorLog.getStatus(), 'error' : monitorLog.getError(), 'std': monitorLog.getStatus(), 'data': monitorLog.getTranserredData()  }
+				'rsync', '%(dataId)s', '%(start)s' , '%(end)s' , '%(status)s', \
+				'%(error)s','%(std)s','%(data)s')"  %{ 'hostName': monitorLog.getHost(), 'rid' : monitorLog.getRemoteLogId(), 'start' : monitorLog.getStartTimestamp(), 'end': monitorLog.getEndTimestamp(), 'status' : monitorLog.getStatus(), 'error' : monitorLog.getError(), 'std': monitorLog.getStatus(), 'data': monitorLog.getTranserredData(), 'dataId': monitorLog.getDataId()  }
 		self.cursor.execute(sql)
 		self.db.commit()
 
 
-	def getAllLogs(self, lastId):
+	def getMonitorLogs(self, host, id):
 		results = []
-		sql = ""
+		
+		if host =="":
+			nameCondition=""
+		else:
+			nameCondition=" WHERE dataId='" + str(id) + "' AND host='" + host + "'"
+			
+
+		sql = "SELECT * FROM monitorLog" + nameCondition + " ORDER BY end_timestamp DESC"
+		self.cursor.execute(sql)
+		rows = self.cursor.fetchall()
+		for row in rows:
+			m = monitorLog()
+			m.setHost( row[1] )
+			m.setRemoteLogId( row[2] )
+			m.setStartTimestamp( row[5] )
+			m.setEndTimestamp( row[6] )
+			results.append(m)
+
+		return results
+
 
 	
 	def getLastRemoteLogID(self, host):
@@ -437,6 +452,29 @@ class database:
 			tmp.archive_method = c[10]
 			tmp.archive_ttl = c[11]
 			
+			if dataId !="": return [ tmp ]
+			dataContainerList.append( tmp )
+			
+		return dataContainerList
+	
+	def getRemoteDataContainer(self,dataId):
+
+		if dataId=="":
+			nameCondition=""
+		else:
+			nameCondition=" WHERE dataId='%s'" % dataId
+			
+		sql="SELECT * FROM remoteDataContainer" + nameCondition
+		self.cursor.execute(sql)
+		dataContainerList = []
+		for c in self.cursor.fetchall():
+			tmp = dataContainer(c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8],c[9]);
+			tmp.archive = c[10]
+			tmp.archive_method = c[11]
+			tmp.archive_ttl = c[12]
+			#
+			tmp.host = c[18]
+
 			if dataId !="": return [ tmp ]
 			dataContainerList.append( tmp )
 			

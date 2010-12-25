@@ -211,6 +211,7 @@ shutil.copyfile("./web/cgi-root/show_container.py",LIB_PATH + "/web/cgi-root/sho
 shutil.copyfile("./web/cgi-root/show_logs.py",LIB_PATH + "/web/cgi-root/show_logs.py")
 shutil.copyfile("./web/cgi-root/delete_container.py",LIB_PATH + "/web/cgi-root/delete_container.py")
 shutil.copyfile("./web/cgi-root/webcore.py",LIB_PATH + "/web/cgi-root/webcore.py")
+shutil.copyfile("./web/cgi-root/monitor.py",LIB_PATH + "/web/cgi-root/monitor.py")
 
 shutil.copytree("./web/cgi-root/images/", LIB_PATH + "/web/cgi-root/images")
 

@@ -265,7 +265,6 @@ class datenfresserMonitorClient:
 				#ask server if container is already known to the server
 				container.updateChecksum()
 				request = "checkDataID " + str(container.dataID) + " " + container.checksum
-				print request
 				s.send(request) 
 				reply = str( s.recv(1024) )
 				print reply
@@ -281,20 +280,18 @@ class datenfresserMonitorClient:
 
 			
 			
-			#s.send("data " + self.xml.logEntryToXml( monitorLog() ))
-			#s.send("commit")
-			#s.send("getLastID " + c.getHostname())
-			#lastId = int( s.recv(1024) )
-			#logs = d.getLogs( lastId)
+			s.send("getLastID " + c.getHostname())
+			lastId = int( s.recv(1024) )
+			print "received lastId" + str(lastId)
+			logs = d.getLogs( lastId)
 
-			#for i in range(0, len(logs)):
-			#	print i
-			#	data = self.xml.logEntryToXml( c.getHostname(), logs[i] )
-			#	print "Size of data: " + str(len(data))
-			#	print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
-			#	print "Answer to data:" +  s.recv(1024)
-			#	s.send("commit")
-			#	print "Answer to commit: " + s.recv(1024)
+			for i in range(0, len(logs)):
+				data = self.xml.logEntryToXml( c.getHostname(), logs[i] )
+				print "Size of data: " + str(len(data))
+				print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
+				print "Answer to data:" +  s.recv(1024)
+				s.send("commit")
+				print "Answer to commit: " + s.recv(1024)
 
 
 			s.send("exit")
