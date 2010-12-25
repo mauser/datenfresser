@@ -12,6 +12,7 @@ sys.path.append("/usr/lib/datenfresser")
 
 from db import database
 from db import monitorLog
+from core import dataContainer
 
 def getText(nodelist):
     rc = []
@@ -43,7 +44,7 @@ class xmlHandler:
 		root.appendChild( self.createNode( doc , "host" , host ))
 		root.appendChild( self.createNode( doc , "name" , dataContainer.name ))
 		root.appendChild( self.createNode( doc , "comment" , dataContainer.comment ))
-		root.appendChild( self.createNode( doc , "hash" , dataContainer.checksum ))
+		root.appendChild( self.createNode( doc , "checksum" , dataContainer.checksum ))
 		
 		doc.appendChild(root)
 		return doc.toxml()	
@@ -73,20 +74,39 @@ class xmlHandler:
 	def parseXml( self, xmlDocument ):
 
 		dom = parseString( xmlDocument.strip() )
-		m = monitorLog()
-		
-		for tag in ['host','rid','dataId','start_timestamp','end_timestamp','error','std_out','transferredData']:
-			for node in dom.getElementsByTagName(tag):
-				text = getText(node.childNodes)	
-				if tag == "host": m.setHost( text )
-				if tag == "rid": m.setRemoteLogId( text )
-				if tag == "dataId": m.setDataId( text )
-				if tag == "start_timestamp": m.setStartTimestamp( text )
-				if tag == "end_timestamp": m.setEndTimestamp( text )
-				if tag == "error": m.setError( text )
-				if tag == "std_out": m.setStatus( text )
-				if tag == "transferredData": m.setTransferredData( text )
+	
+		#decide if this is #dataContainer or #monitorLogEntry
+		monitorLogs = dom.getElementsByTagName("monitorLogEntry")
+		dataContainer = dom.getElementsByTagName("dataContainer")
+
+		if len(monitorLogs) == 1:
+			m = monitorLog()
+			for tag in ['host','rid','dataId','start_timestamp','end_timestamp','error','std_out','transferredData']:
+				for node in dom.getElementsByTagName(tag):
+					text = getText(node.childNodes)	
+					if tag == "host": m.setHost( text )
+					if tag == "rid": m.setRemoteLogId( text )
+					if tag == "dataId": m.setDataId( text )
+					if tag == "start_timestamp": m.setStartTimestamp( text )
+					if tag == "end_timestamp": m.setEndTimestamp( text )
+					if tag == "error": m.setError( text )
+					if tag == "std_out": m.setStatus( text )
+					if tag == "transferredData": m.setTransferredData( text )
 
 
-		return m
+			return m
+		else:
+			m = dataContainer()
+			for tag in ['host','name','comment','checksum']:
+				for node in dom.getElementsByTagName(tag):
+					text = getText(node.childNodes)	
+					if tag == "host": m.setHost( text )
+					if tag == "name": m.setRemoteLogId( text )
+					if tag == "comment": m.setDataId( text )
+					if tag == "checksum": m.setStartTimestamp( text )
+
+
+			return m
+
+
 

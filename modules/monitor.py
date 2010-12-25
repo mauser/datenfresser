@@ -84,8 +84,7 @@ class datenfresserMonitorServer:
 				
 
 				if len(message) == 0: 
-					print "first exit"
-					self.reply( sock, "first exit" )
+					self.reply( sock, "zero length" )
 					break
 			
 		
@@ -110,8 +109,6 @@ class datenfresserMonitorServer:
 					self.reply(sock, "recv ok")
 					break
 
-				print "after if for " 
-				print ipPortTuple
 
 
 				#every client has to authenticate itself at the
@@ -249,13 +246,23 @@ class datenfresserMonitorClient:
 		#return
 
 		try: 
+			#authenticate the client
 			s.send("auth " + c.getMonitorUser() + " " +  c.getMonitorPassword() )
 			print s.recv(1024)
+
+			#announce our hostname
 			s.send("host " + c.getHostname() )
 			print s.recv(1024)
-			
-			s.send("checkDataID 0 0")
-			print "data:" +  str( s.recv(1024) )
+		
+			#check if all dataContainer are enlisted at the server
+			containerList = d.getDataContainer("")
+			for container in containerList:
+				#ask server if container is already known to the server
+				container.updateChecksum()
+				request = "checkDataID " + str(container.dataID) + " " + container.checksum
+				print request
+				s.send(request) 
+				print "reply:" +  str( s.recv(1024) )
 			
 			
 			#s.send("data " + self.xml.logEntryToXml( monitorLog() ))
