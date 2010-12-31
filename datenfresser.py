@@ -38,7 +38,7 @@ from db import database
 from db import monitorLog
 from webserver import datenfresser_webserver
 from monitor import datenfresserMonitorServer
-
+from core import log
 
 c = config()
 MAINVOLUME = c.getMainVolume()
@@ -62,19 +62,6 @@ def executeCommand( command ):
 	exitcode = (x >> 8) & 0xFF
 	return exitcode , errorMessage , output
 
-
-
-
-
-def log( string , level="normal" ):
-	print string
-
-	today = datetime.today()
-
-	logfile = open("/var/log/datenfresser.log" , "a")
-	logfile.write(today.isoformat() + "\t" + string + "\n"  )
-	logfile.close()	
-	
 
 
 

@@ -2,6 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
+from datetime import datetime
+
+def log( string , level="normal" ):
+	print string
+
+	today = datetime.today()
+
+	logfile = open("/var/log/datenfresser.log" , "a")
+	logfile.write(today.isoformat() + "\t" + string + "\n"  )
+	logfile.close()
+
 
 class dataContainer:
 	''' a dataContainer represents the entrys in the main configuration file'''
