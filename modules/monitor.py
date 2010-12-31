@@ -102,8 +102,6 @@ class datenfresserMonitorServer:
 				
 				#check if this was the last chunk
 				if lastChunk:
-					print "end of receive for"
-					print ipPortTuple
 					state[ ipPortTuple ].state = ""
 					state[ ipPortTuple ].length = 0
 					self.reply(sock, "recv ok")
@@ -196,7 +194,6 @@ class datenfresserMonitorServer:
 							state[ ipPortTuple ].state = "recv"
 							
 						state[ ipPortTuple ].data = payload						
-						print "received first chunk"
 
 
 
