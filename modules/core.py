@@ -13,6 +13,59 @@ def log( string , level="normal" ):
 	logfile.write(today.isoformat() + "\t" + string + "\n"  )
 	logfile.close()
 
+class monitorLog:
+
+	host ="example.org"
+	start = 0
+	end = 0
+	dataId = 0
+	remoteId = 0
+	status = "no status available"
+	error = "no error information available"
+	transfered = 0
+
+	classname = "monitorLog"
+
+	def setTransferredData(self, v):
+		self.transfered = v
+	def getTranserredData(self):
+		return self.transfered
+
+	def setHost(self, h):
+		self.host = h
+	def getHost(self):
+		return self.host
+
+	def getDataId(self):
+		return self.dataId
+	def setDataId(self, v):
+		self.dataId = v
+
+	def setStartTimestamp(self, t):
+		self.start = t
+	def getStartTimestamp(self):
+		return self.start
+
+	def setEndTimestamp(self, t):
+		self.end = t
+	def getEndTimestamp(self):
+		return self.end
+	
+	def setStatus(self, s):
+		self.status = s
+	def getStatus(self):
+		return self.status
+
+	def setError(self, e):
+		self.error = e
+	def getError(self):
+		return self.error
+
+	def setRemoteLogId(self, i):
+		self.remoteId = i
+	def getRemoteLogId(self):
+		return self.remoteId
+
 
 class dataContainer:
 	''' a dataContainer represents the entrys in the main configuration file'''

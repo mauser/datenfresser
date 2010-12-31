@@ -12,7 +12,7 @@ sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
-from db import monitorLog
+from core import monitorLog
 from xmlHandler import xmlHandler
 
 

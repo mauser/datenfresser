@@ -21,7 +21,6 @@ import subprocess
 import select
 import getopt
 
-from datetime import datetime
 from time import time
 from time import sleep
 from time import gmtime
