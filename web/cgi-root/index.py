@@ -38,3 +38,4 @@ for container in c:
 	print "<a href='show_logs.py?id="+ str(container.dataID) + "'><img src='images/history.png' width='20' height='20' border='0'></a>"
 	print "<a href='delete_container.py?id="+ str(container.dataID) + "'><img src='images/warning.png' width='20' height='20' border='0'></a></td>"
 	print "</tr></div>"
+print "</table>"

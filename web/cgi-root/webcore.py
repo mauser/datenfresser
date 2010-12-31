@@ -7,7 +7,7 @@ class datenfresser_web:
 	    	print "<html><head><title>Datenfresser</title><link rel='stylesheet' type='text/css' href='datenfresser.css'></head><body>" ;
 		print " <div id='banner'><img src='images/small.png'><div id='banner_text'>"
 		print "<a href='index.py'>Show container</a>&nbsp;"
-		print "<a href='show_logs.py'>Show logs</a>&nbsp;"
+		#print "<a href='show_logs.py'>Show logs</a>&nbsp;"
 
 
 		#print "<a href='add_container.py'>Add container</a>&nbsp;"
