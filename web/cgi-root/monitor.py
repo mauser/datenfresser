@@ -43,12 +43,16 @@ for container in containerList:
 
 for host in uniq(hosts):
 	print "<h4>" + host + "</h4>"
+	print "<div style='display: none;'>"
 	for container in hostContainer[host]:
-		print "<h5>" + container.name + "</h5>"
+		print "<table>"
+		print "<tr><td><b>" + container.name + "</b></td></tr>"
 		logs =  data.getMonitorLogs( host, container.dataID )
 		for log in logs:
 			a = datetime.datetime.fromtimestamp( float(log.getStartTimestamp()) ) 
-			print "<h6>" + a.ctime() + "</h6>"
+			print "<tr><td>" + a.ctime() + "</td></tr>"
+		print "</table><br /><br />"
+	print "</div>"
 
 
 #if form.has_key("id"): 
