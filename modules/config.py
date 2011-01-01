@@ -32,29 +32,57 @@ class config:
 		self.__webserver_port = config.get("webserver","webserver_port")
 		
 		try:
-			self.__monitor = config.get("monitor","monitor_enabled")
+			self.__monitorClientEnabled = config.get("monitoring","monitorClient_enabled")
 		except ConfigParser.NoSectionError:
-			self.__monitor = "false"
-			if monitor: self.__monitor = True
-			self.__monitor_port = 0 
-			self.__monitor_user = "nobody"
-			self.__monitor_password = "secret"
-			return
+			self.__monitorClientEnabled = "false"
+			self.__remoteMonitorPort = 0 
+			self.__remoteMonitorUser = ""
+			self.__remoteMonitorPassword = ""
 
-		try:
-			self.__monitor_port = config.get("monitor","monitor_port")
-		except ConfigParser.NoOptionError:
-			self.__monitor_port = 6666 
-
-		try:
-			self.__monitor_user = config.get("monitor","monitor_user")
-		except ConfigParser.NoOptionError:
-			self.__monitor_user = "nobody"
 		
 		try:
-			self.__monitor_password = config.get("monitor","monitor_password")
+			self.__monitorServerEnabled = config.get("monitoring","monitorServer_enabled")
+		except ConfigParser.NoSectionError:
+			self.__monitorServerEnabled = "false"
+			self.__localMonitorPort = 0 
+			self.__localMonitorUser = ""
+			self.__localMonitorPassword = ""
+
+		try:
+			self.__localMonitorPort = config.get("monitoring","localMonitorPort")
 		except ConfigParser.NoOptionError:
-			self.__monitor_password = "secret"
+			self.__localMonitorPort = 0 
+
+		try:
+			self.__localMonitorUser = config.get("monitoring","localMonitorUser")
+		except ConfigParser.NoOptionError:
+			self.__localMonitorUser = ""
+		
+		try:
+			self.__localMonitorPassword = config.get("monitoring","localMonitorPassword")
+		except ConfigParser.NoOptionError:
+			self.__localMonitorPassword = ""
+
+		try:
+			self.__remoteMonitorServer = config.get("monitoring","remoteMonitorServer")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorServer = ""
+
+		try:
+			self.__remoteMonitorPort = config.get("monitoring","remoteMonitorPort")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorPort = 0 
+
+		try:
+			self.__remoteMonitorUser = config.get("monitoring","remoteMonitorUser")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorUser = ""
+		
+		try:
+			self.__remoteMonitorPassword = config.get("monitoring","remoteMonitorPassword")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorPassword = ""
+
 
 
 	def getDebug( self ):
@@ -81,18 +109,40 @@ class config:
 		
 	def getWebserverPort( self ):
 		return self.__webserver_port
-	
-	def getMonitorEnabled( self ):
-		return self.__monitor
 
-	def getMonitorUser( self ):
-		return self.__monitor_user
 
-	def getMonitorPassword( self ):
-		return self.__monitor_password
+
+	def getMonitorServerEnabled( self ):
+		return self.__monitorServerEnabled
+
+	def getRemoteMonitorUser( self ):
+		return self.__remoteMonitorUser
+
+	def detRemoteMonitorServer(self):
+		return self.__remoteMonitorServer
+
+	def getRemoteMonitorPassword( self ):
+		return self.__remoteMonitorPassword
 		
-	def getMonitorPort( self ):
-		return self.__monitor_port
+	def getRemoteMonitorPort( self ):
+		return self.__remoteMonitorPort
+
+
+	def getMonitorClientEnabled( self ):
+		return self.__monitorClientEnabled
+
+	def getLocalMonitorUser( self ):
+		return self.__localMonitorUser
+
+	def getLocalMonitorPassword( self ):
+		return self.__localMonitorPassword
+		
+	def getLocalMonitorPort( self ):
+		return self.__localMonitorPort
+
+
+
+
 		
 		
 	def getPollInterval( self ):

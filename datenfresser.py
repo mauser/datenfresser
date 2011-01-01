@@ -199,6 +199,15 @@ def performBackup( dataID ):
 				#Oh, the backup was not successful. Maybe we should try again later?
 				data.finishJob( int(dataID), int(id), "aborted", errorMessage, output, transferredSize )
 
+	#push changes to the monitoring server
+	monitorClient = datenfresserMonitorClient()
+	try:
+		monitorClient.sync()
+	except Exception, e:
+		log("Exception during monitor sync: " + str(e) )
+
+
+
 
 				
 				
@@ -229,9 +238,8 @@ def main( cliArguments ):
 	webserver = c.getWebserverEnabled()
 	webserver_port =  c.getWebserverPort()
 	
-	monitor = c.getMonitorEnabled()
+	monitor = c.getMonitorServerEnabled()
 	if cliArguments.monitor: monitor = "True"
-	monitor_port =  c.getMonitorPort()
 	
 	
 	auto_shutdown = c.getAutomaticShutdown()
@@ -268,9 +276,7 @@ def main( cliArguments ):
 
 	if monitor == "True" or monitor == "true":
 	    #start our own monitor to serve the webinterface
-	    monitorServer =datenfresserMonitorServer ( monitor_port )
-	    m = monitorLog()
-	    d.insertMonitorLog( "r2d2", m )
+	    monitorServer = datenfresserMonitorServer ()
 	    monitorServer.startServer()
     	else:
 		pidFileName = "/var/lib/datenfresser/datenfresser.pid"
