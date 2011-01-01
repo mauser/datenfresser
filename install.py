@@ -135,12 +135,17 @@ for o, a in opts:
             sys.exit()
 
 
-
+c =config()
 if os.path.isfile(CONFIG_FILENAME):
 	if overwrite == False:
 		print "File %s already exists. Do you want to overwrite it? y/n" % CONFIG_FILENAME
 		if raw_input()=="y": 
 			(user , volume) = createConfig(USERNAME,"/var/datenfresser")
+		else:
+			user = c.getUsername()
+	else:
+			user = c.getUsername()
+
 else:
 	( user,volume) = createConfig(USERNAME,"/var/datenfresser")
 
@@ -202,7 +207,7 @@ if sys.platform == "darwin":
 	shutil.copyfile("./datenfresser.sh","/System/Library/StartupItems/datenfresser/datenfresser")
 
 if sys.platform == "linux2":
-	shutil.copyfile("./datenfresser.sh","/etc/init.d")
+	shutil.copyfile("./datenfresser.sh","/etc/init.d/datenfresser")
 
 
 
@@ -245,6 +250,8 @@ os.system("chmod +x " + LIB_PATH + "/web/cgi-root/*.py")
 
 #os.system("chown -R " + user + " " + volume)
 os.system("chown -R " + user + " " + "/var/lib/datenfresser")
+os.system("touch /var/log/datenfresser.log")
+os.system("chown -R " + user + " " + "/var/log/datenfresser.log")
 
 print "Configuration successful"
 

@@ -231,7 +231,8 @@ def shutdown():
 
 def main( cliArguments ):
 
-	log("starting!!!")
+	log("Starting datenfresser server")
+
 
 	c = config()
 	
