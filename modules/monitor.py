@@ -243,9 +243,9 @@ class datenfresserMonitorClient:
 	
 	def sync(self):
 
+		c = config()
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 		s.connect(( c.getRemoteMonitorServer() , c.getRemoteMonitorPort()))
-		c = config()
 		d = database()
 		self.xml = xmlHandler()
 		#return
