@@ -37,6 +37,7 @@ from db import database
 from db import monitorLog
 from webserver import datenfresser_webserver
 from monitor import datenfresserMonitorServer
+from monitor import datenfresserMonitorClient
 from core import log
 
 c = config()

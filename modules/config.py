@@ -118,7 +118,7 @@ class config:
 	def getRemoteMonitorUser( self ):
 		return self.__remoteMonitorUser
 
-	def detRemoteMonitorServer(self):
+	def getRemoteMonitorServer(self):
 		return self.__remoteMonitorServer
 
 	def getRemoteMonitorPassword( self ):
