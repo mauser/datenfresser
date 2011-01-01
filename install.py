@@ -93,10 +93,18 @@ def createConfig( USERNAME , mainVolume_preset ):
 	output.write("webserver_enabled=False\n")
 	output.write("webserver_port=8080\n")
 	
-	output.write("[monitor]\n")
-	output.write("monitor_enabled=False\n")
-	output.write("monitor_port=8090\n")
+	output.write("[monitoring]\n")
+	output.write("monitorServer_enabled=False\n")
+	output.write("localMonitorPort=8090\n")
+	output.write("localMonitorUser=\n")
+	output.write("localMonitorPassword=\n\n")
+	
+	output.write("monitorClient_enabled=False\n")
+	output.write("remoteMonitorServer=\n")
+	output.write("remoteMonitorPort=8090\n")
 
+	output.write("remoteMonitorUser=\n")
+	output.write("remoteMonitorPassword=\n")
 
 	output.close()
 	return ( backupUser , mainVolume )

@@ -33,8 +33,8 @@ class stateContainer:
 class datenfresserMonitorServer:
 
     #the monitor is a server which gathers the logs of datenfresser client instances 
-    def __init__(self,port):
-	    self.port = port
+    def __init__(self):
+	    self.port = c.getLocalMonitorPort()
 	    self.database = database()
 	    self.config = config()
 	    self.xmlHandler = xmlHandler()
@@ -116,7 +116,7 @@ class datenfresserMonitorServer:
 					user = parts[1].strip()
 					password = parts[2].strip()
 
-					if user == self.config.getMonitorUser() and password == self.config.getMonitorPassword():
+					if user == self.config.getLocalMonitorUser() and password == self.config.getLocalMonitorPassword():
 						newState = stateContainer()
 						newState.authState = "authenticated"
 						state[ ipPortTuple ] = newState
@@ -234,14 +234,17 @@ class datenfresserMonitorServer:
 		c.close() 
 	    server.close()
 
-	#print logEntry['start_timestamp']
+
+
+
+
 
 class datenfresserMonitorClient:
 	
-	def __init__(self):
+	def sync(self):
 
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-		s.connect(("localhost", 8090))
+		s.connect(( c.getRemoteMonitorServer() , c.getRemoteMonitorPort()))
 		c = config()
 		d = database()
 		self.xml = xmlHandler()
@@ -249,7 +252,7 @@ class datenfresserMonitorClient:
 
 		try: 
 			#authenticate the client
-			s.send("auth " + c.getMonitorUser() + " " +  c.getMonitorPassword() )
+			s.send("auth " + c.getRemoteMonitorUser() + " " +  c.getRemoteMonitorPassword() )
 			print s.recv(1024)
 
 			#announce our hostname
@@ -297,5 +300,3 @@ class datenfresserMonitorClient:
 		    s.close()
 
 
-if __name__ == '__main__':
-	d = datenfresserMonitorClient()
