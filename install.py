@@ -201,6 +201,10 @@ if sys.platform == "darwin":
 		os.mkdir( "/System/Library/StartupItems/datenfresser" ) 
 	shutil.copyfile("./datenfresser.sh","/System/Library/StartupItems/datenfresser/datenfresser")
 
+if sys.platform == "linux2":
+	shutil.copyfile("./datenfresser.sh","/etc/init.d")
+
+
 
 
 shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
