@@ -38,7 +38,7 @@ from db import monitorLog
 from webserver import datenfresser_webserver
 from monitor import datenfresserMonitorServer
 from monitor import datenfresserMonitorClient
-from core import log
+from core import *
 
 c = config()
 MAINVOLUME = c.getMainVolume()
@@ -234,6 +234,8 @@ def main( cliArguments ):
 
 	log("Starting datenfresser server")
 
+	if cliArguments.daemon == True:
+		createDaemon()	
 
 	c = config()
 	
@@ -318,13 +320,15 @@ if __name__ == "__main__":
 	cliArguments = CliArguments()
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hmv", ["help", "monitor", "verbose"])
+		opts, args = getopt.getopt(sys.argv[1:], "hmvd", ["help", "monitor", "verbose","daemon"])
 	except getopt.GetoptError, err:
 		print str(err) 
 		#usage()
 		sys.exit(2)
 
 	for o, a in opts:
+		if o == "-d":
+		    cliArguments.daemon = True
 		if o == "-v":
 		    cliArguments.verbose = True
 		if o == "-m":

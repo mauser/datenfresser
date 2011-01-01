@@ -159,7 +159,7 @@ class CliArguments:
 	def __init__( self ):
 		self.monitor = False
 		self.verbose = False
-
+		self.daemon = False
 
 
 
