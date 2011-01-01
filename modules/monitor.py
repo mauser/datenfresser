@@ -34,9 +34,9 @@ class datenfresserMonitorServer:
 
     #the monitor is a server which gathers the logs of datenfresser client instances 
     def __init__(self):
-	    self.port = c.getLocalMonitorPort()
 	    self.database = database()
 	    self.config = config()
+	    self.port = self.config.getLocalMonitorPort()
 	    self.xmlHandler = xmlHandler()
 	    
 	    self.startServer()

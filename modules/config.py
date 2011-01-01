@@ -32,56 +32,54 @@ class config:
 		self.__webserver_port = config.get("webserver","webserver_port")
 		
 		try:
-			self.__monitorClientEnabled = config.get("monitor","monitorClient_enabled")
+			self.__monitorClientEnabled = config.get("monitoring","monitorClient_enabled")
 		except ConfigParser.NoSectionError:
 			self.__monitorClientEnabled = "false"
-			if monitor: self.__monitor = True
 			self.__remoteMonitorPort = 0 
 			self.__remoteMonitorUser = ""
 			self.__remoteMonitorPassword = ""
 
 		
 		try:
-			self.__monitorServerEnabled = config.get("monitor","monitorServer_enabled")
+			self.__monitorServerEnabled = config.get("monitoring","monitorServer_enabled")
 		except ConfigParser.NoSectionError:
 			self.__monitorServerEnabled = "false"
-			if monitor: self.__monitor = True
 			self.__localMonitorPort = 0 
 			self.__localMonitorUser = ""
 			self.__localMonitorPassword = ""
 
 		try:
-			self.__localMonitorPort = config.get("monitor","localMonitorPort")
+			self.__localMonitorPort = config.get("monitoring","localMonitorPort")
 		except ConfigParser.NoOptionError:
 			self.__localMonitorPort = 0 
 
 		try:
-			self.__localMonitorUser = config.get("monitor","localMonitorUser")
+			self.__localMonitorUser = config.get("monitoring","localMonitorUser")
 		except ConfigParser.NoOptionError:
 			self.__localMonitorUser = ""
 		
 		try:
-			self.__localMonitorPassword = config.get("monitor","localMonitorPassword")
+			self.__localMonitorPassword = config.get("monitoring","localMonitorPassword")
 		except ConfigParser.NoOptionError:
 			self.__localMonitorPassword = ""
 
 		try:
-			self.__remoteMonitorServer = config.get("monitor","remoteMonitorServer")
+			self.__remoteMonitorServer = config.get("monitoring","remoteMonitorServer")
 		except ConfigParser.NoOptionError:
 			self.__remoteMonitorServer = ""
 
 		try:
-			self.__remoteMonitorPort = config.get("monitor","remoteMonitorPort")
+			self.__remoteMonitorPort = config.get("monitoring","remoteMonitorPort")
 		except ConfigParser.NoOptionError:
 			self.__remoteMonitorPort = 0 
 
 		try:
-			self.__remoteMonitorUser = config.get("monitor","remoteMonitorUser")
+			self.__remoteMonitorUser = config.get("monitoring","remoteMonitorUser")
 		except ConfigParser.NoOptionError:
 			self.__remoteMonitorUser = ""
 		
 		try:
-			self.__remoteMonitorPassword = config.get("monitor","remoteMonitorPassword")
+			self.__remoteMonitorPassword = config.get("monitoring","remoteMonitorPassword")
 		except ConfigParser.NoOptionError:
 			self.__remoteMonitorPassword = ""
 

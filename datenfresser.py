@@ -238,9 +238,8 @@ def main( cliArguments ):
 	webserver = c.getWebserverEnabled()
 	webserver_port =  c.getWebserverPort()
 	
-	monitor = c.getMonitorEnabled()
+	monitor = c.getMonitorServerEnabled()
 	if cliArguments.monitor: monitor = "True"
-	monitor_port =  c.getMonitorPort()
 	
 	
 	auto_shutdown = c.getAutomaticShutdown()
