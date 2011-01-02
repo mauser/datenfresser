@@ -150,6 +150,13 @@ def checkDirs( container ):
 	#holds btrfs snapshots
 	if not os.path.isdir( localPath + "snapshots/"):   os.mkdir( localPath + "snapshots/" )
 
+def syncMonitorData():
+	#push changes to the monitoring server
+	monitorClient = datenfresserMonitorClient()
+	try:
+		monitorClient.sync()
+	except Exception, e:
+		log("Exception during monitor sync: " + str(e) )
 
 
 
@@ -200,12 +207,12 @@ def performBackup( dataID ):
 				#Oh, the backup was not successful. Maybe we should try again later?
 				data.finishJob( int(dataID), int(id), "aborted", errorMessage, output, transferredSize )
 
-	#push changes to the monitoring server
-	monitorClient = datenfresserMonitorClient()
-	try:
-		monitorClient.sync()
-	except Exception, e:
-		log("Exception during monitor sync: " + str(e) )
+	syncMonitorData()
+
+
+
+
+
 
 
 
@@ -277,6 +284,8 @@ def main( cliArguments ):
 
 	if int(start_delay) > 0:
 		sleep( float ( start_delay ) )
+
+	syncMonitorData()
 
 	if monitor == "True" or monitor == "true":
 	    #start our own monitor to serve the webinterface
