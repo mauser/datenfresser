@@ -33,5 +33,5 @@ if [  $1 == "start" ]; then
 fi
 
 if [ $1 == "stop" ]; then
-	start-stop-daemon  --stop -n $username
+	start-stop-daemon  --stop -n datenfresser
 fi
