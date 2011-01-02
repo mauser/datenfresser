@@ -40,10 +40,15 @@ for container in containerList:
 		hostContainer[container.host] = [ container ]
 
 
-
+i = 0
 for host in uniq(hosts):
-	print "<h4>" + host + "</h4>"
-	print "<div style='display: none;'>"
+	print "<h4><a href=\"javascript:toggleLayer('" + host + "');\" title='View all entries'>" + host + "</a></h4>"
+	
+	if i == 0:
+		print "<div id='" + host + "'>"
+	else:
+		print "<div style='display: none;' id='" + host + "'>"
+
 	for container in hostContainer[host]:
 		print "<table>"
 		print "<tr><td><b>" + container.name + "</b></td></tr>"
@@ -53,6 +58,7 @@ for host in uniq(hosts):
 			print "<tr><td>" + a.ctime() + "</td></tr>"
 		print "</table><br /><br />"
 	print "</div>"
+	i = i + 1
 
 
 #if form.has_key("id"): 

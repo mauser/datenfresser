@@ -44,9 +44,12 @@
 
 
 
-
 a { color: white;}
 a:visited { color: white;}
+
+h4 a { color: black;}
+h4 a:visited { color: black;}
+
 
 img {
 	vertical-align:text-top;
