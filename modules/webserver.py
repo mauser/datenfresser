@@ -269,6 +269,8 @@ class MyThreadingServer( SocketServer.ThreadingTCPServer ):
                     return False
             return True
 
+
+	return True
 #        ip = client_address[0].split('.')
 
 #        for mask in self.AllowIPs:
