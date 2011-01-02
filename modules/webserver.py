@@ -9,6 +9,10 @@ import os, sys, socket, webbrowser
 import urllib
 import select
 
+sys.path.append("/usr/lib/datenfresser/modules")
+sys.path.append("/usr/lib/datenfresser")
+from core import log
+
 
 class MyRequestHandler( CGIHTTPServer.CGIHTTPRequestHandler ):
 
@@ -297,6 +301,7 @@ class datenfresser_webserver:
 		    return
 	except OSError, e: 
 		print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror) 
+		log("Starting webserver failed: " + e)
 		sys.exit(1) 
 
 	print "Starting datenfresser webserver on port %s" % self.__listen_port
