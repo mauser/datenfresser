@@ -10,6 +10,9 @@ fi
 
 binfile=/usr/sbin/datenfresser
 
+#retrieve username from configfile
+username=$(grep "^username=" /etc/datenfresser.conf | sed -e 's/username=//g')
+
 if [ ! -x $binfile ]; then
 	echo "datenfresser binary not found"
 	exit 1
@@ -25,9 +28,10 @@ fi
 
 
 if [  $1 == "start" ]; then
-	start-stop-daemon -x $binfile  --start -c datenfresser
+	start-stop-daemon -x $binfile  --start -c $username -- -d
+
 fi
 
 if [ $1 == "stop" ]; then
-	start-stop-daemon  --stop -n datenfresser
+	start-stop-daemon  --stop -n $username
 fi
