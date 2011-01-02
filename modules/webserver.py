@@ -265,15 +265,15 @@ class MyThreadingServer( SocketServer.ThreadingTCPServer ):
                     return False
             return True
 
-        ip = client_address[0].split('.')
+#        ip = client_address[0].split('.')
 
-        for mask in self.AllowIPs:
-            if check_ip(mask):
-                return True
+#        for mask in self.AllowIPs:
+#            if check_ip(mask):
+#                return True
 
-        print "IP [%s] not allowed!" % client_address
+#        print "IP [%s] not allowed!" % client_address
 
-        return False
+#        return False
     
     
 
