@@ -98,6 +98,7 @@ class database:
 			f.close()
 			
 			for element in ids:
+				log("found immediate job with id:" + str(element))
 				# the string contains a "\n" , so we're converting to int before to get rid of that..
 				actionList.append( int(element) )
 			os.remove( fname )

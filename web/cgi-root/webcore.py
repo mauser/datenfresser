@@ -31,7 +31,7 @@ class datenfresser_web:
 		#print "<a href='show_logs.py'>Show logs</a>&nbsp;"
 
 
-		#print "<a href='add_container.py'>Add container</a>&nbsp;"
+		print "<a href='add_container.py'>Add container</a>&nbsp;"
 		print "<a href='monitor.py'>View monitoring status</a>&nbsp;"
 		
 		print "</div></div><div height='300'>&nbsp;<br /><br /><br /><br /><br /></div>";
