@@ -152,8 +152,8 @@ def checkDirs( container ):
 
 def syncMonitorData():
 	#push changes to the monitoring server
-	monitorClient = datenfresserMonitorClient()
 	try:
+		monitorClient = datenfresserMonitorClient()
 		monitorClient.sync()
 	except Exception, e:
 		log("Exception during monitor sync: " + str(e) )
@@ -162,6 +162,7 @@ def syncMonitorData():
 
 
 def performBackup( dataID ):
+        log("trying to perform backup for dataID " + str(dataID))
 	c = config()
 	debug = c.getDebug()	
 	data = database()
@@ -271,6 +272,7 @@ def main( cliArguments ):
 
 
 	if webserver == "True":
+	    log("Starting webserver on port" + str(webserver_port))
 	    #start our own webserver to serve the webinterface
 	    web = datenfresser_webserver( webserver_port )
 	    web.startServer()
@@ -310,7 +312,7 @@ def main( cliArguments ):
 		pidFile.close()
 	
 		while 1:
-
+			
 	
 			checkSyncDirs()
 			for id in d.tickAction():
