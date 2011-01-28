@@ -139,6 +139,7 @@ def checkDirs( container ):
 	if localPath[-1] != "/": 
 		localPath = localPath + "/"	
 
+	
 	if not os.path.isdir( localPath ):   os.mkdir( localPath )
 	
 	#stores current data ( retrieved with rsync )
@@ -162,7 +163,7 @@ def syncMonitorData():
 
 
 def performBackup( dataID ):
-        log("trying to perform backup for dataID " + str(dataID))
+        log("trying to perform backup for dataID " + str( dataID) )
 	c = config()
 	debug = c.getDebug()	
 	data = database()
@@ -170,8 +171,7 @@ def performBackup( dataID ):
 
 	if( container.type == "rsync" ):
 		if container.options == "" or container.options == None:
-		
-			checkDirs( container )
+			checkDirs( container )	
 			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
 			returnValue = 0
 			id  = 0
@@ -207,7 +207,6 @@ def performBackup( dataID ):
 			else:
 				#Oh, the backup was not successful. Maybe we should try again later?
 				data.finishJob( int(dataID), int(id), "aborted", errorMessage, output, transferredSize )
-
 	syncMonitorData()
 
 
