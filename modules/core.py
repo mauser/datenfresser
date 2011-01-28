@@ -255,7 +255,7 @@ class dataContainer:
 
 	def updateChecksum(self):
 		algo = hashlib.sha1()
-		string =  self.name + self.localPath + self.remotePath  + self.schedule + self.options + self.comment 
+		string =  str(self.name) + str(self.localPath) + str(self.remotePath)  + str(self.schedule) + str(self.options) + str(self.comment) 
 		algo.update(string)
 		self.checksum = algo.hexdigest()
 
