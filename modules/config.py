@@ -14,9 +14,12 @@ class config:
 	
 		self.__username = ""
 		self.__main_volume = ""
-
-		config = ConfigParser.ConfigParser()
-		config.readfp(open('/etc/datenfresser.conf'))
+		
+		try:
+			config = ConfigParser.ConfigParser()
+			config.readfp(open('/etc/datenfresser.conf'))
+		except Exception, e: 
+			return
 		
 		self.__main_volume = config.get("main","mainVolume")
 		self.__db_location = config.get("main","db_location")
