@@ -20,6 +20,7 @@ import sys
 import subprocess
 import select
 import getopt
+import traceback
 
 from time import time
 from time import sleep
@@ -156,6 +157,8 @@ def syncMonitorData():
 	try:
 		monitorClient.sync()
 	except Exception, e:
+		traceback.print_exc(file=sys.stdout)
+		log( str( sys.exc_info()[0] ) )
 		log("Exception during monitor sync: " + str(e) )
 
 
