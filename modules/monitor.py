@@ -199,7 +199,7 @@ class datenfresserMonitorServer:
 
 					if message[0:6] == "commit":
 						print "Committing your data"
-						#print state[ ipPortTuple ].data 
+						print "Data before commit: " + state[ ipPortTuple ].data 
 						m = self.xmlHandler.parseXml( state[ ipPortTuple ].data )
 
 						if m.classname == "monitorLog":
@@ -269,8 +269,8 @@ class datenfresserMonitorClient:
 				reply = str( s.recv(1024) )
 				print reply
 				if reply == "dataID unknown":
-					print "id not known"
 					data = self.xml.dataContainerToXml( c.getHostname(), container )
+					print "trying to send data: "  + data
 					print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
 
 					print "Answer to data:" +  s.recv(1024)
@@ -287,8 +287,13 @@ class datenfresserMonitorClient:
 
 			for i in range(0, len(logs)):
 				data = self.xml.logEntryToXml( c.getHostname(), logs[i] )
+				origSize = len(data)
+				dataPad = len(data) % 1024
+				dataPad = 1024 - dataPad
+				data = data.ljust( origSize + dataPad, " ")
+
 				print "Size of data: " + str(len(data))
-				print "Send data, #bytes: " + str( s.sendall("data " + str(len(data)) + " " + data ))
+				print "Send data, #bytes: " + str( s.sendall("data " + str(len(data))  + " " + data ))
 				print "Answer to data:" +  s.recv(1024)
 				s.send("commit")
 				print "Answer to commit: " + s.recv(1024)
