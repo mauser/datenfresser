@@ -113,7 +113,8 @@ class config:
 	def getWebserverPort( self ):
 		return self.__webserver_port
 
-
+	def getMonitorClientEnabled( self ):
+		return self.__monitorClientEnabled
 
 	def getMonitorServerEnabled( self ):
 		return self.__monitorServerEnabled
