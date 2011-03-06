@@ -153,7 +153,11 @@ def checkDirs( container ):
 	if not os.path.isdir( localPath + "snapshots/"):   os.mkdir( localPath + "snapshots/" )
 
 def syncMonitorData():
+	c = config()
+	if c.getMonitorClientEnabled() == "False":
+		return	
 	#push changes to the monitoring server
+	print "trying monitorSync " + str(c.getMonitorClientEnabled())
 	try:
 		monitorClient = datenfresserMonitorClient()
 		monitorClient.sync()
