@@ -300,6 +300,7 @@ def main( cliArguments ):
 	    monitorServer = datenfresserMonitorServer ()
 	    monitorServer.startServer()
     	else:
+		log("Not starting monitor")
 		pidFileName = "/var/lib/datenfresser/datenfresser.pid"
 		if os.path.isfile( pidFileName ):	
 			pidFile = open( pidFileName )
