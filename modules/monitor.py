@@ -6,6 +6,7 @@ import os
 import socket 
 import select
 from string import find
+from core import log
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")

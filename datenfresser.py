@@ -296,7 +296,8 @@ def main( cliArguments ):
 	syncMonitorData()
 
 	if monitor == "True" or monitor == "true":
-	    #start our own monitor to serve the webinterface
+	    #start our own monitor 
+	    log("Trying to start monitor service..")
 	    monitorServer = datenfresserMonitorServer ()
 	    monitorServer.startServer()
     	else:
