@@ -157,7 +157,7 @@ def syncMonitorData():
 	if c.getMonitorClientEnabled() == "False":
 		return	
 	#push changes to the monitoring server
-	print "trying monitorSync " + str(c.getMonitorClientEnabled())
+	log( "trying monitorSync " + str(c.getMonitorClientEnabled()))
 	try:
 		monitorClient = datenfresserMonitorClient()
 		monitorClient.sync()
@@ -308,7 +308,7 @@ def main( cliArguments ):
 				pid = int( pidFile.readline() )
 				try:
 					os.getpgid( pid )
-					print "Another instance of datenfresser is already running. Quitting now.."
+					log("Another instance of datenfresser is already running. Quitting now..")
 					sys.exit( 0 )
 				except OSError, e:
 					pass

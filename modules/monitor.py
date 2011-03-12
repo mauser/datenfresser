@@ -45,7 +45,7 @@ class datenfresserMonitorServer:
 	    mySocket.send(message)
 
     def startServer( self ):
-	print "Starting datenfresser monitoring server on port %s" % self.port
+	log( "Starting datenfresser monitoring server on port %s" % self.port )
 	
 	#or logEntry in self.dataBase.getLogs(0):
 	server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -64,7 +64,7 @@ class datenfresserMonitorServer:
 		    if sock is server: 
 			client, addr = server.accept() 
 			clients.append(client) 
-			print "#Client %s connected" % addr[0] 
+			log( "#Client %s connected" % addr[0] 
 		    else:
 			result = "ok"
 			while 1:
@@ -133,7 +133,7 @@ class datenfresserMonitorServer:
 						pass
 					else:
 						print "not authenticated"
-						print "#Connection to %s closed" % ip 
+						log( "#Connection to %s closed" % ip ) 
 						#sock.close() 
 						#clients.remove(sock)
 				
@@ -217,7 +217,7 @@ class datenfresserMonitorServer:
 					
 					
 					if message[0:4] == "exit":
-						print "#Connection to %s closed" % ip
+						log( "#Connection to %s closed" % ip )
 						result = "exit"
 						sock.send("bye")
 						sock.close() 
