@@ -271,15 +271,6 @@ class MyThreadingServer( SocketServer.ThreadingTCPServer ):
 
 
 	return True
-#        ip = client_address[0].split('.')
-
-#        for mask in self.AllowIPs:
-#            if check_ip(mask):
-#                return True
-
-#        print "IP [%s] not allowed!" % client_address
-
-#        return False
     
     
 
@@ -306,7 +297,6 @@ class datenfresser_webserver:
 		log("Starting webserver failed: " + e)
 		sys.exit(1) 
 
-	print "Starting datenfresser webserver on port %s" % self.__listen_port
 	httpd = MyThreadingServer( ("", self.__listen_port ), MyRequestHandler, self.AllowIPs )
 	httpd.serve_forever()
 

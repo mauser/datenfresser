@@ -278,7 +278,7 @@ def main( cliArguments ):
 
 
 	if webserver == "True":
-	    log("Starting webserver on port" + str(webserver_port))
+	    log("Starting builtin webserver on port " + str(webserver_port))
 	    #start our own webserver to serve the webinterface
 	    web = datenfresser_webserver( webserver_port )
 	    web.startServer()
