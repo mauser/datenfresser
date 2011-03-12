@@ -64,7 +64,7 @@ class datenfresserMonitorServer:
 		    if sock is server: 
 			client, addr = server.accept() 
 			clients.append(client) 
-			log( "#Client %s connected" % addr[0] 
+			log( "#Client %s connected" % addr[0] ) 
 		    else:
 			result = "ok"
 			while 1:
