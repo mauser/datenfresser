@@ -87,11 +87,20 @@ def createConfig( USERNAME , mainVolume_preset ):
 	output.write("hostname=" + gethostname() + "\n")
 	
 	output.write("\n#seconds after datenfresser checks if a new job is ready to run\n")
-	output.write("poll_interval=60" "\n")
+	output.write("poll_interval=60" "\n\n")
 	
 	output.write("[webserver]\n")
 	output.write("webserver_enabled=False\n")
-	output.write("webserver_port=8080\n")
+	output.write("webserver_port=8080\n\n")
+	
+	
+	output.write("[notification]\n")
+	output.write("notify_by_mail=False\n")
+	output.write("mail_recipient=\n")
+	output.write("smtp_port=25\n")
+	output.write("smtp_server=localhost\n")
+	output.write("smtp_user=\n")
+	output.write("smtp_password=\n\n")
 	
 	output.write("[monitoring]\n")
 	output.write("monitorServer_enabled=False\n")

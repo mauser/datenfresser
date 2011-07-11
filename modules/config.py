@@ -34,6 +34,10 @@ class config:
 		self.__webserver = config.get("webserver","webserver_enabled")
 		self.__webserver_port = config.get("webserver","webserver_port")
 		
+		#
+		# Config settings for the monitor server
+		#
+
 		try:
 			self.__monitorClientEnabled = config.get("monitoring","monitorClient_enabled")
 		except ConfigParser.NoSectionError:
@@ -42,7 +46,33 @@ class config:
 			self.__remoteMonitorUser = ""
 			self.__remoteMonitorPassword = ""
 
+		try:
+			self.__remoteMonitorServer = config.get("monitoring","remoteMonitorServer")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorServer = ""
+
+		try:
+			self.__remoteMonitorPort = config.get("monitoring","remoteMonitorPort")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorPort = 0 
+
+		try:
+			self.__remoteMonitorUser = config.get("monitoring","remoteMonitorUser")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorUser = ""
 		
+		try:
+			self.__remoteMonitorPassword = config.get("monitoring","remoteMonitorPassword")
+		except ConfigParser.NoOptionError:
+			self.__remoteMonitorPassword = ""
+
+
+
+
+		#
+		# Config settings for the monitor server
+		#
+
 		try:
 			self.__monitorServerEnabled = config.get("monitoring","monitorServer_enabled")
 		except ConfigParser.NoSectionError:
@@ -66,25 +96,48 @@ class config:
 		except ConfigParser.NoOptionError:
 			self.__localMonitorPassword = ""
 
-		try:
-			self.__remoteMonitorServer = config.get("monitoring","remoteMonitorServer")
-		except ConfigParser.NoOptionError:
-			self.__remoteMonitorServer = ""
+
+		#
+		# Config settings for notifications
+		#
 
 		try:
-			self.__remoteMonitorPort = config.get("monitoring","remoteMonitorPort")
-		except ConfigParser.NoOptionError:
-			self.__remoteMonitorPort = 0 
+			self.__mailNotificationEnabled = config.get("notification","notify_by_mail")
+		except ConfigParser.NoSectionError:
+			self.__mailNotificationEnabled = "false"
+			self.__smtpPort = 0 
+			self.__smtpServer = ""
+			self.__smtpPassword = ""
+			self.__smtpUser = ""
+			self.__mailRecipient = ""
+
 
 		try:
-			self.__remoteMonitorUser = config.get("monitoring","remoteMonitorUser")
+			self.__smtpPort = config.get("notification","smtp_port")
 		except ConfigParser.NoOptionError:
-			self.__remoteMonitorUser = ""
+			self.__smtpPort = 25
+
+		try:
+			self.__smtpServer = config.get("notification","smtp_server")
+		except ConfigParser.NoOptionError:
+			self.__smtpServer = "localhost" 
+
+		try:
+			self.__smtpPassword = config.get("notification","smtp_password")
+		except ConfigParser.NoOptionError:
+			self.__smtpPassword = ""
 		
 		try:
-			self.__remoteMonitorPassword = config.get("monitoring","remoteMonitorPassword")
+			self.__smtpUser = config.get("notification","smtp_user")
 		except ConfigParser.NoOptionError:
-			self.__remoteMonitorPassword = ""
+			self.__smtpUser = ""
+
+		try:
+			self.__mailRecipient = config.get("notification","mail_recipient")
+		except ConfigParser.NoOptionError:
+			self.__mailRecipient = ""
+
+
 
 
 
@@ -144,10 +197,23 @@ class config:
 	def getLocalMonitorPort( self ):
 		return self.__localMonitorPort
 
+	def getSmtpPort( self ):
+		return self.__smtpPort
 
+	def getSmtpUser( self ):
+		return self.__smtpUser
 
+	def getSmtpPassword( self ):
+		return self.__smtpPassword
 
-		
+	def getSmtpServer( self ):
+		return self.__smtpServer
+
+	def getNotifyByMailEnabled( self ):
+		return self.__mailNotificationEnabled
+	
+	def getMailRecipient( self ):
+		return self.__mailRecipient
 		
 	def getPollInterval( self ):
 		return self.__poll_interval

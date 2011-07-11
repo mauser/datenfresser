@@ -21,6 +21,7 @@ import subprocess
 import select
 import getopt
 import traceback
+import smtplib
 
 from time import time
 from time import sleep
@@ -152,10 +153,40 @@ def checkDirs( container ):
 	#holds btrfs snapshots
 	if not os.path.isdir( localPath + "snapshots/"):   os.mkdir( localPath + "snapshots/" )
 
+
+
+def sendMail( fromAdress, toAdress, body, user, password,  servername, port):
+	server = smtplib.SMTP( servername )
+	server.set_debuglevel(1)
+	server.login( user , password );
+	server.sendmail(fromAdress, toAdress, body)
+	server.quit()
+
+
+
+def notifyByMail( body ):
+
+	c = config()
+	if c.getNotifyByMailEnabled() == "False":
+		return	
+
+	from_addr = c.getSmtpUser() + "@" + c.getSmtpServer()
+	to_addr = c.getMailRecipient()
+	port = c.getSmtpPort()
+	server = c.getSmtpServer()
+	password = c.getSmtpPassword()
+
+	sendMail( from_addr, to_addr, body , from_addr, password, server , port);
+	
+	
+	
+
+
 def syncMonitorData():
 	c = config()
 	if c.getMonitorClientEnabled() == "False":
 		return	
+	
 	#push changes to the monitoring server
 	log( "trying monitorSync " + str(c.getMonitorClientEnabled()))
 	try:
@@ -211,9 +242,11 @@ def performBackup( dataID ):
 					id = data.startJob( "archive" , int(dataID))
 					archiveFolder( container , method , compress )
 					data.finishJob( int(dataID),int(id), "finished","","", 0)
+					notifyByMail("Job for dataID" + str(dataID) + " was succesful: " + str(output)) 
 			else:
 				#Oh, the backup was not successful. Maybe we should try again later?
 				data.finishJob( int(dataID), int(id), "aborted", errorMessage, output, transferredSize )
+				notifyByMail("Job for dataID" + str(dataID) + " was not succesful: " + str(error_message)) 
 	syncMonitorData()
 
 
