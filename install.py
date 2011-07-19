@@ -220,16 +220,14 @@ if sys.platform == "linux2":
 
 
 
+modules = ["db.py", "core.py", "config.py", "webserver.py","monitor.py", "xmlHandler.py", "backupOperations.py"]
+for module in modules: 
+	shutil.copyfile("./modules/" + module, LIB_PATH + "/modules/" + module)
 
-shutil.copyfile("./modules/db.py",LIB_PATH + "/modules/db.py")
-shutil.copyfile("./modules/core.py",LIB_PATH + "/modules/core.py")
-shutil.copyfile("./modules/config.py",LIB_PATH + "/modules/config.py")
-shutil.copyfile("./modules/webserver.py",LIB_PATH + "/modules/webserver.py")
-shutil.copyfile("./modules/monitor.py",LIB_PATH + "/modules/monitor.py")
-shutil.copyfile("./modules/xmlHandler.py",LIB_PATH + "/modules/xmlHandler.py")
 
 
 shutil.copyfile("./web/index.html",LIB_PATH + "/web/index.html")
+
 shutil.copyfile("./web/cgi-root/datenfresser.css",LIB_PATH + "/web/cgi-root/datenfresser.css")
 shutil.copyfile("./web/cgi-root/index.py",LIB_PATH + "/web/cgi-root/index.py")
 shutil.copyfile("./web/cgi-root/add_instantly.py",LIB_PATH + "/web/cgi-root/add_instantly.py")
