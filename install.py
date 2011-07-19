@@ -220,10 +220,9 @@ if sys.platform == "linux2":
 
 
 
-modules = ["db.py", "core.py", "config.py", "webserver.py","monitor.py", "xmlHandler.py", "backupOperations.py"]
-for module in modules: 
-	shutil.copyfile("./modules/" + module, LIB_PATH + "/modules/" + module)
 
+for module in os.listdir("./modules"): 
+	shutil.copyfile("./modules/" + module, LIB_PATH + "/modules/" + module)
 
 
 shutil.copyfile("./web/index.html",LIB_PATH + "/web/index.html")

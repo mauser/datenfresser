@@ -41,123 +41,21 @@ from webserver import datenfresser_webserver
 from monitor import datenfresserMonitorServer
 from monitor import datenfresserMonitorClient
 from core import *
+from helper import *
+from backupOperations import *
 
 c = config()
 MAINVOLUME = c.getMainVolume()
 
 
-def executeCommand( command ):
-	#excute command 
-	#return returnValue: 0 if everything went ok, 1 in case that something went wrong..
-		
-	p = Popen( command.split(" "), bufsize=4024 ,stderr=PIPE,stdout=PIPE,close_fds=True)	
-	(child_stderr) = ( p.stderr)
-	(child_stdout) = ( p.stdout)
-
-	output = child_stdout.readlines()
-	errorMessage =  child_stderr.readlines()
-	x = p.wait()
-	errorMessage =  errorMessage + child_stderr.readlines()
-	output = output + child_stdout.readlines()
-	
-	#convert "wait"-style exitcode to normal, shell-like exitcode
-	exitcode = (x >> 8) & 0xFF
-	return exitcode , errorMessage , output
-
-
-
-
-def archiveFolder( container , method , compress ):
-	localPath = MAINVOLUME + "/" + container.localPath	
-
-	log("archive folder " + localPath + " with " + method )
-
-	#be sure that the path ends with a "/"
-	if localPath[-1] != "/": 
-		localPath = localPath + "/"	
-
-	
-	dateTupel = gmtime(time())
-	dateString = str(dateTupel[0]) + "_" + str(dateTupel[1]) + "_" + str(dateTupel[2]) + "_" + str(dateTupel[3]) + "_" + str(dateTupel[4]) 
-
-	if method == "tar":
-	    if compress == "on":
-		tar_cmd = "tar -jcf " + localPath + "archived/" + container.name + "_" + dateString + ".tar.bz2 " + localPath + "cur/*"
-	    else:
-		tar_cmd = "tar -cf " + localPath + "archived/" + container.name + "_" + dateString + ".tar " + localPath + "cur/*"
-
-	    log( tar_cmd , "verbose" )
-	    subprocess.Popen(tar_cmd,shell=True, stdout=subprocess.PIPE).wait()
-	
-	if method == "hardlinks":
-		# see http://www.mikerubel.org/computers/rsync_snapshots/
-
-		if sys.platform == "darwin":
-			#"gcp" comes with the coreutils package from macports..
-			cp_command = "gcp"
-		else:
-			cp_command = "cp"
- 
-		cmd = cp_command + " -al "   + localPath + "cur/" + " " + localPath + "snapshots/" + container.name + "_" + dateString
-		log( cmd , "verbose" )
-		subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()    
-	 
-	if method == "btrfs snapshot":
-	    cmd = "btrfsctl -s " + localPath + "snapshots/" + container.name + "_" + dateString + " " + localPath + "cur/"
-	    log( cmd , "verbose" )
-	    subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait() 
-	
-
-
-
-
-
-
-def getDirectorySize(directory):
-    #taken from http://roopindersingh.com/2008/04/22/calculating-directory-sizes-in-python/
-    # returns the size of a directory ( in kilobytes a 1024 bits )
-    class TotalSize:
-        def __init__(self):
-            self.total = 0
-
-    def visit(totalSize, dirname, names):
-        for name in names:
-            absFilename = os.path.join(dirname, name)
-            if os.path.isfile(absFilename):
-                totalSize.total += os.path.getsize(absFilename)
-
-    totalSize = TotalSize()
-    os.path.walk(directory, visit, totalSize)
-    return totalSize.total / 1024	   
-
-
-
-
-
-def checkDirs( container ):
- 	localPath = MAINVOLUME + "/" + container.localPath	
-	
-	#be sure that the path ends with a "/"
-	if localPath[-1] != "/": 
-		localPath = localPath + "/"	
-
-	
-	if not os.path.isdir( localPath ):   os.mkdir( localPath )
-	
-	#stores current data ( retrieved with rsync )
-	if not os.path.isdir( localPath + "cur/" ):   os.mkdir( localPath + "cur/" )
-	
-	#holds archives 
-	if not os.path.isdir( localPath + "archived/"):   os.mkdir( localPath + "archived/" )
-	
-	#holds btrfs snapshots
-	if not os.path.isdir( localPath + "snapshots/"):   os.mkdir( localPath + "snapshots/" )
-
-
 
 def sendMail( fromAdress, toAdress, body, user, password,  servername, port):
+	c = config()
 	server = smtplib.SMTP( servername )
-	server.set_debuglevel(1)
+	
+	if c.getDebug():
+		server.set_debuglevel(1)
+	
 	server.login( user , password );
 	server.sendmail(fromAdress, toAdress, body)
 	server.quit()
@@ -177,102 +75,51 @@ def notifyByMail( body ):
 	password = c.getSmtpPassword()
 
 	sendMail( from_addr, to_addr, body , from_addr, password, server , port);
+
+
+def setupUdevListener():
 	
+	if sys.platform != "linux2" and sys.platform != "linux3":
+		log("Dbus is not supported on your platform.")
+		return
+
+	#code taken from http://stackoverflow.com/questions/5109879/usb-devices-udev-and-d-bus 
+
+	import gobject
+	from dbus.mainloop.glib import DBusGMainLoop
+
+	def device_added_callback(device):
+	    print 'Device %s was added' % (device)
+
+	def device_changed_callback(device):
+	    print 'Device %s was changed' % (device)
+
+	#must be done before connecting to DBus
+	DBusGMainLoop(set_as_default=True)
+
+	bus = dbus.SystemBus()
+
+	proxy = bus.get_object("org.freedesktop.UDisks", 
+			       "/org/freedesktop/UDisks")
+	iface = dbus.Interface(proxy, "org.freedesktop.UDisks")
+
+	devices = iface.get_dbus_method('EnumerateDevices')()
+
+	print '%s' % (devices)
+
+	#addes two signal listeners
+	iface.connect_to_signal('DeviceAdded', device_added_callback)
+	iface.connect_to_signal('DeviceChanged', device_changed_callback)
+
+	#start the main loop
+	mainloop = gobject.MainLoop()
+	mainloop.run()
+
 	
-	
-
-
-def syncMonitorData():
-	c = config()
-	if c.getMonitorClientEnabled() == "False":
-		return	
-	
-	#push changes to the monitoring server
-	log( "trying monitorSync " + str(c.getMonitorClientEnabled()))
-	try:
-		monitorClient = datenfresserMonitorClient()
-		monitorClient.sync()
-	except Exception, e:
-		traceback.print_exc(file=sys.stdout)
-		log( str( sys.exc_info()[0] ) )
-		log("Exception during monitor sync: " + str(e) )
-
-
-
-
-def performBackup( dataID ):
-        log("trying to perform backup for dataID " + str( dataID) )
-	c = config()
-	debug = c.getDebug()	
-	data = database()
-	container = data.getDataContainer( dataID )[0]
-
-	if( container.type == "rsync" ):
-		if container.options == "" or container.options == None:
-			checkDirs( container )	
-			rsync_cmd = "rsync -avz " + container.remotePath + " " + MAINVOLUME + "/" + container.localPath + "/cur/"
-			returnValue = 0
-			id  = 0
-			#get directory size before backup
-			start_size = getDirectorySize(  MAINVOLUME + "/" + container.localPath + "/cur/" )
-			log( rsync_cmd )
-			id = data.startJob( "rsync" , int(dataID))
-			
-			returnValue, errorMessage, output = executeCommand( rsync_cmd )
-			
-
-			#if len(errorMessage) == 0:
-			#	errorMessage = output
-
-			log( "backup command returned: " + str(returnValue ))
-
-			#get directory size after backup
-			final_size = getDirectorySize(  MAINVOLUME + "/" + container.localPath + "/cur/" )
-			transferredSize = final_size - start_size
-			
-			log( "transferred " + str(transferredSize) + "kb")
-
-			
-			if int(returnValue) == 0:
-				data.finishJob(int(dataID), int(id), "finished", errorMessage, output, transferredSize)
-				
-				#start to archive the backup, if necessary
-				archive , method , compress,ttl =  data.getArchiveInfo( int(dataID) )
-				if archive != "disabled":
-					id = data.startJob( "archive" , int(dataID))
-					archiveFolder( container , method , compress )
-					data.finishJob( int(dataID),int(id), "finished","","", 0)
-					notifyByMail("Job for dataID" + str(dataID) + " was succesful: " + str(output)) 
-			else:
-				#Oh, the backup was not successful. Maybe we should try again later?
-				data.finishJob( int(dataID), int(id), "aborted", errorMessage, output, transferredSize )
-				notifyByMail("Job for dataID" + str(dataID) + " was not succesful: " + str(error_message)) 
-	syncMonitorData()
-
-
-
-
-
-
-
 
 
 				
 				
-def checkSyncDirs():
-	c = config()
-	d = database()
-	container = d.getDataContainer("")	
-	
-	dir = c.getSyncDir()
-	if dir != "" and dir[-1] == "/": dir = dir[:-1]	
-
-	if dir != "" and os.path.isdir( dir ): 
-		for con in container:
-			if os.path.isdir( dir + "/" + con.name ) and con.name != "" and con.name !="." and os.listdir(dir + "/" + con.name) != [] :
-				dest_path = MAINVOLUME + "/" + con.name + "/cur/"
-				os.system("mv " + dir + "/" + con.name + "/* " +  dest_path )
-
 def shutdown():
 	cmd = "shutdown -h now"
 	subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()
