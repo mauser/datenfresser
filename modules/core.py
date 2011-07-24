@@ -3,7 +3,11 @@
 
 import os
 import hashlib
+
 from datetime import datetime
+from subprocess import Popen
+from subprocess import PIPE
+
 
 def log( string , level="normal" ):
 	print string
@@ -13,8 +17,6 @@ def log( string , level="normal" ):
 	logfile = open("/var/log/datenfresser.log" , "a")
 	logfile.write(today.isoformat() + "\t" + string + "\n"  )
 	logfile.close()
-
-
 
 
 def createDaemon():

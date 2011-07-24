@@ -1,9 +1,35 @@
+import sys
+import os
+
+from subprocess import Popen
+from subprocess import PIPE
+
+from time import time
+from time import sleep
+from time import gmtime
+
+sys.path.append("/usr/lib/datenfresser/modules")
+sys.path.append("/usr/lib/datenfresser")
+
+from core import *
+from config import config
+from config import CliArguments
+from db import database
+from db import monitorLog
+from webserver import datenfresser_webserver
+from monitor import datenfresserMonitorServer
+from monitor import datenfresserMonitorClient
+from helper import *
 #
 # checkDirs:  make sure that all needed directories are existing
 #
 
 def checkDirs( container ):
- 	localPath = MAINVOLUME + "/" + container.localPath	
+ 
+	c = config()
+	MAINVOLUME = c.getMainVolume()
+
+	localPath = MAINVOLUME + "/" + container.localPath	
 	
 	#be sure that the path ends with a "/"
 	if localPath[-1] != "/": 
@@ -27,7 +53,12 @@ def checkDirs( container ):
 #                creates a backup of a container with the given method.
 #
 
-def archiveFolder( container , method , compress ):
+def archiveFolder( container , method , compress ):	
+	
+	c = config()
+	MAINVOLUME = c.getMainVolume()
+
+
 	localPath = MAINVOLUME + "/" + container.localPath	
 
 	log("archive folder " + localPath + " with " + method )
@@ -73,6 +104,8 @@ def archiveFolder( container , method , compress ):
 def performBackup( dataID ):
         log("trying to perform backup for dataID " + str( dataID) )
 	c = config()
+	MAINVOLUME = c.getMainVolume()
+
 	debug = c.getDebug()	
 	data = database()
 	container = data.getDataContainer( dataID )[0]

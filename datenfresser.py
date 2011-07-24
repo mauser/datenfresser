@@ -22,13 +22,9 @@ import select
 import getopt
 import traceback
 import smtplib
+import signal
 
-from time import time
-from time import sleep
-from time import gmtime
-from subprocess import Popen
-from subprocess import PIPE
-
+from threading import Lock
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
@@ -44,78 +40,112 @@ from core import *
 from helper import *
 from backupOperations import *
 
-c = config()
-MAINVOLUME = c.getMainVolume()
+
+udevNotificationLock = Lock()
+udevNotificationList = [] 
+
+
+def pushUdevNotification( notification ):
+	print "enter push"
+	#udevNotificationLock.acquire()
+	udevNotificationList.append( notification )
+	#udevNotificationLock.release()
+	print "leave push"
+
+def getNextUdevNotification():
+	print "calling getNextUdev"
+	element = []
+	#udevNotificationLock.acquire()
+	if len(udevNotificationList) > 0:
+		element = udevNotificationList.pop( )
+	#udevNotificationLock.release()
+	print "after get"
+	return [element]
 
 
 
-def sendMail( fromAdress, toAdress, body, user, password,  servername, port):
-	c = config()
-	server = smtplib.SMTP( servername )
+
+
+class UdevListener():
 	
-	if c.getDebug():
-		server.set_debuglevel(1)
-	
-	server.login( user , password );
-	server.sendmail(fromAdress, toAdress, body)
-	server.quit()
+	def run(self):
+
+		main_pid = os.getpid()
+
+		pid = os.fork()
+		if pid > 0:
+			return
+		else:
+			print "dbus process has pid: " + str(os.getpid())	
+			#code taken from http://stackoverflow.com/questions/5109879/usb-devices-udev-and-d-bus 
+			import dbus
+			import gobject
+			from dbus.mainloop.glib import DBusGMainLoop
 
 
+			#ignore our own signal
+			signal.signal(signal.SIGUSR1, signal.SIG_IGN)
 
-def notifyByMail( body ):
+			def device_added_callback(device):
+			    print 'Device %s was added' % (device)
+			    print "sending to %s " % main_pid
+			    #os.kill( main_pid , signal.SIGUSR1 ) 
+			    #pushUdevNotification(device)
+			
+			    bus = dbus.SystemBus()
+			    ud_manager_obj = bus.get_object("org.freedesktop.UDisks", "/org/freedesktop/UDisks")
+			    ud_manager = dbus.Interface(ud_manager_obj, 'org.freedesktop.UDisks')
 
-	c = config()
-	if c.getNotifyByMailEnabled() == "False":
-		return	
+			    for dev in ud_manager.EnumerateDevices():
+				
+				device_obj = bus.get_object("org.freedesktop.UDisks", dev)
+				device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+				
+				interface = device_props.Get('org.freedesktop.UDisks.Device', "DriveConnectionInterface")
+				if interface == "usb" or interface == "firewire":
+					print "usb found"
+					device_file = device_props.Get('org.freedesktop.UDisks.Device', "DeviceFile")
+					device_file = device_file[device_file.rfind("/")+1:]
+					device = device[device.rfind("/")+1:]
+					if device == device_file:
+						
+						#let the udev mount it..
+						sleep(1)
+						print device_props.Get('org.freedesktop.UDisks.Device', "DeviceMountPaths")
 
-	from_addr = c.getSmtpUser() + "@" + c.getSmtpServer()
-	to_addr = c.getMailRecipient()
-	port = c.getSmtpPort()
-	server = c.getSmtpServer()
-	password = c.getSmtpPassword()
 
-	sendMail( from_addr, to_addr, body , from_addr, password, server , port);
+			def device_changed_callback(device):
+				pass
+				
+			#must be done before connecting to DBus
+			DBusGMainLoop(set_as_default=True)
+
+			bus = dbus.SystemBus()
+
+			proxy = bus.get_object("org.freedesktop.UDisks", 
+					       "/org/freedesktop/UDisks")
+			iface = dbus.Interface(proxy, "org.freedesktop.UDisks")
+
+			devices = iface.get_dbus_method('EnumerateDevices')()
+			
+			
 
 
-def setupUdevListener():
-	
-	if sys.platform != "linux2" and sys.platform != "linux3":
-		log("Dbus is not supported on your platform.")
-		return
+			#print '%s' % (devices)
 
-	#code taken from http://stackoverflow.com/questions/5109879/usb-devices-udev-and-d-bus 
+			#addes two signal listeners
+			iface.connect_to_signal('DeviceAdded', device_added_callback)
+			iface.connect_to_signal('DeviceChanged', device_changed_callback)
 
-	import gobject
-	from dbus.mainloop.glib import DBusGMainLoop
+			#start the main loop
+			mainloop = gobject.MainLoop()
+			mainloop.run()
+			
+		
+def handler(signum, frame):
+    	print 'Signal handler called with signal', signum
+	print os.getpid()
 
-	def device_added_callback(device):
-	    print 'Device %s was added' % (device)
-
-	def device_changed_callback(device):
-	    print 'Device %s was changed' % (device)
-
-	#must be done before connecting to DBus
-	DBusGMainLoop(set_as_default=True)
-
-	bus = dbus.SystemBus()
-
-	proxy = bus.get_object("org.freedesktop.UDisks", 
-			       "/org/freedesktop/UDisks")
-	iface = dbus.Interface(proxy, "org.freedesktop.UDisks")
-
-	devices = iface.get_dbus_method('EnumerateDevices')()
-
-	print '%s' % (devices)
-
-	#addes two signal listeners
-	iface.connect_to_signal('DeviceAdded', device_added_callback)
-	iface.connect_to_signal('DeviceChanged', device_changed_callback)
-
-	#start the main loop
-	mainloop = gobject.MainLoop()
-	mainloop.run()
-
-	
 
 
 				
@@ -125,7 +155,9 @@ def shutdown():
 	subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE).wait()
 
 def main( cliArguments ):
-
+	# Set the signal handler and a 5-second alarm
+	signal.signal(signal.SIGUSR1, handler)
+	
 	log("Starting datenfresser server")
 
 	if cliArguments.daemon == True:
@@ -138,13 +170,14 @@ def main( cliArguments ):
 	
 	monitor = c.getMonitorServerEnabled()
 	if cliArguments.monitor: monitor = "True"
-	
-	
+
+
 	auto_shutdown = c.getAutomaticShutdown()
 	start_delay = c.getStartDelay()
 	debug = c.getDebug()	
 
-
+	udev = UdevListener()
+	udev.run()
 
 	# if automatic shutdown is enabled, we ask the user to hit the "enter" key to 
 	# disable automatic shutdown at startup
@@ -175,6 +208,8 @@ def main( cliArguments ):
 
 	syncMonitorData()
 
+	print os.getpid()
+
 	if monitor == "True" or monitor == "true":
 	    #start our own monitor 
 	    log("Trying to start monitor service..")
@@ -199,17 +234,21 @@ def main( cliArguments ):
 		pidFile.write( str( os.getpid() ) ) 
 		pidFile.close()
 	
+
 		while 1:
-			
-	
-			checkSyncDirs()
+			print getNextUdevNotification()	
+			#checkSyncDirs()
 			for id in d.tickAction():
 				performBackup( id )
 		
+			print "before sleep"
 			#wait till we look for new ready-to-run jobs
-			sleep( float( c.getPollInterval() ) )
-		
+			#sleep( float( c.getPollInterval() ) )
+			sleep( 5 )
+			print "after sleep"
+
 			if int(auto_shutdown) > 0 and  (int(cur_time) + int (auto_shutdown)) - time() < 0:
+				print "shutdown"
 				shutdown()
 		
 	

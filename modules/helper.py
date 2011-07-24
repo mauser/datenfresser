@@ -1,12 +1,14 @@
-
+import os
 import sys
+
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
+from subprocess import Popen
+from subprocess import PIPE
 
-import os
 
 
 def executeCommand( command ):
@@ -75,5 +77,32 @@ def checkSyncDirs():
 			if os.path.isdir( dir + "/" + con.name ) and con.name != "" and con.name !="." and os.listdir(dir + "/" + con.name) != [] :
 				dest_path = MAINVOLUME + "/" + con.name + "/cur/"
 				os.system("mv " + dir + "/" + con.name + "/* " +  dest_path )
+
+def sendMail( fromAdress, toAdress, body, user, password,  servername, port):
+	c = config()
+	server = smtplib.SMTP( servername )
+	
+	if c.getDebug():
+		server.set_debuglevel(1)
+	
+	server.login( user , password );
+	server.sendmail(fromAdress, toAdress, body)
+	server.quit()
+
+
+
+def notifyByMail( body ):
+
+	c = config()
+	if c.getNotifyByMailEnabled() == "False":
+		return	
+
+	from_addr = c.getSmtpUser() + "@" + c.getSmtpServer()
+	to_addr = c.getMailRecipient()
+	port = c.getSmtpPort()
+	server = c.getSmtpServer()
+	password = c.getSmtpPassword()
+
+	sendMail( from_addr, to_addr, body , from_addr, password, server , port);
 
 
