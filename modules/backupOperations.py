@@ -2,7 +2,16 @@
 # checkDirs:  make sure that all needed directories are existing
 #
 
+from db import database
+from config import config
+from core import log
+
+
 def checkDirs( container ):
+
+	c = config()
+	MAINVOLUME = c.getMainVolume()
+
  	localPath = MAINVOLUME + "/" + container.localPath	
 	
 	#be sure that the path ends with a "/"
@@ -28,6 +37,10 @@ def checkDirs( container ):
 #
 
 def archiveFolder( container , method , compress ):
+	
+	c = config()
+	MAINVOLUME = c.getMainVolume()
+
 	localPath = MAINVOLUME + "/" + container.localPath	
 
 	log("archive folder " + localPath + " with " + method )
@@ -73,6 +86,9 @@ def archiveFolder( container , method , compress ):
 def performBackup( dataID ):
         log("trying to perform backup for dataID " + str( dataID) )
 	c = config()
+	MAINVOLUME = c.getMainVolume()
+
+
 	debug = c.getDebug()	
 	data = database()
 	container = data.getDataContainer( dataID )[0]

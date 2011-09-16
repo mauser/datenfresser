@@ -5,6 +5,7 @@ sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
+from core import log
 
 import os
 
@@ -39,7 +40,7 @@ def syncMonitorData():
 		monitorClient = datenfresserMonitorClient()
 		monitorClient.sync()
 	except Exception, e:
-		traceback.print_exc(file=sys.stdout)
+		#ie.print_exc(file=sys.stdout)
 		log( str( sys.exc_info()[0] ) )
 		log("Exception during monitor sync: " + str(e) )
 
