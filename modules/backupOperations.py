@@ -24,8 +24,25 @@ from helper import *
 # checkDirs:  make sure that all needed directories are existing
 #
 
+import sys
+import os
+import subprocess
+
+from subprocess import Popen
+from subprocess import PIPE
+
+from time import time
+from time import sleep
+from time import gmtime
+
+from db import database
+from config import config
+from core import log
+from helper import *
+
+
+
 def checkDirs( container ):
- 
 	c = config()
 	MAINVOLUME = c.getMainVolume()
 
@@ -53,7 +70,7 @@ def checkDirs( container ):
 #                creates a backup of a container with the given method.
 #
 
-def archiveFolder( container , method , compress ):	
+def archiveFolder( container , method , compress ):
 	
 	c = config()
 	MAINVOLUME = c.getMainVolume()

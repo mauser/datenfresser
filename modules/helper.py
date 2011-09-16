@@ -9,6 +9,11 @@ from db import database
 from subprocess import Popen
 from subprocess import PIPE
 
+from core import log
+
+from monitor import datenfresserMonitorServer
+from monitor import datenfresserMonitorClient
+
 
 
 def executeCommand( command ):
@@ -41,7 +46,7 @@ def syncMonitorData():
 		monitorClient = datenfresserMonitorClient()
 		monitorClient.sync()
 	except Exception, e:
-		traceback.print_exc(file=sys.stdout)
+		#ie.print_exc(file=sys.stdout)
 		log( str( sys.exc_info()[0] ) )
 		log("Exception during monitor sync: " + str(e) )
 
