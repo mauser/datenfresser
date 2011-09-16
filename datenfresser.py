@@ -233,7 +233,11 @@ def main( cliArguments ):
 		pidFile = open( pidFileName , "w" )
 		pidFile.write( str( os.getpid() ) ) 
 		pidFile.close()
-	
+
+		#the user forced an backup of all containers
+		if cliArguments.forceAll:
+			for id in d.getAllIDs():
+				performBackup( id )
 
 		while 1:
 			print getNextUdevNotification()	
@@ -258,7 +262,7 @@ if __name__ == "__main__":
 	cliArguments = CliArguments()
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hmvd", ["help", "monitor", "verbose","daemon"])
+		opts, args = getopt.getopt(sys.argv[1:], "hmvdf", ["help", "monitor", "verbose","daemon","forceAll"])
 	except getopt.GetoptError, err:
 		print str(err) 
 		#usage()
@@ -271,7 +275,9 @@ if __name__ == "__main__":
 		    cliArguments.verbose = True
 		if o == "-m":
 		    cliArguments.monitor = True
-		elif o in ("-h", "--help"):
+		if o == "-f":
+		    cliArguments.forceAll = True
+	    	elif o in ("-h", "--help"):
 		    #usage()
 		    sys.exit()
 

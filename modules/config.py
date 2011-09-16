@@ -230,6 +230,7 @@ class CliArguments:
 		self.monitor = False
 		self.verbose = False
 		self.daemon = False
+		self.forceAll = False
 
 
 

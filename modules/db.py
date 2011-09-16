@@ -40,6 +40,29 @@ class database:
 		'''check if our database is installed properly'''
 		self.checkTables()
 
+ 	def getAllIDs(self):
+		'''get all datacontainer ids'''
+	
+		actionList = []
+		'''get all datacontainer ids'''
+		sql="SELECT dataID FROM dataContainer"	
+		self.cursor.execute(sql)
+		rows = self.cursor.fetchall()
+		for row in rows:
+			actionList.append( str(row[0]) );
+		return actionList
+
+	def tickAction(self):
+		
+		#holds dataID's of the container which are scheduled for backup now
+		
+		sql="SELECT dataID FROM dataContainer"	
+		self.cursor.execute(sql)
+		rows = self.cursor.fetchall()
+		for row in rows:
+			actionList.append( str(row[0]) );
+		return actionList
+
 	def tickAction(self):
 		
 		#holds dataID's of the container which are scheduled for backup now
