@@ -1,16 +1,15 @@
 import os
 import sys
+import smtplib
+from subprocess import Popen
+from subprocess import PIPE
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
 
 from config import config
 from db import database
-from subprocess import Popen
-from subprocess import PIPE
-
 from core import log
-
 from monitor import datenfresserMonitorServer
 from monitor import datenfresserMonitorClient
 
@@ -108,6 +107,8 @@ def notifyByMail( body ):
 	server = c.getSmtpServer()
 	password = c.getSmtpPassword()
 
-	sendMail( from_addr, to_addr, body , from_addr, password, server , port);
+	header = 'To:' + to_addr + '\r\n' + 'From: ' + from_addr + '\r\n' + 'Subject: Your datenfresser backup \r\n\r\n'
+
+	sendMail( from_addr, to_addr, header + body , from_addr, password, server , port);
 
 
