@@ -2,9 +2,22 @@
 # checkDirs:  make sure that all needed directories are existing
 #
 
+import sys
+import os
+import subprocess
+
+from subprocess import Popen
+from subprocess import PIPE
+
+from time import time
+from time import sleep
+from time import gmtime
+
 from db import database
 from config import config
 from core import log
+from helper import *
+
 
 
 def checkDirs( container ):

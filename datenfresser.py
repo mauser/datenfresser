@@ -23,12 +23,6 @@ import getopt
 import traceback
 import smtplib
 
-from time import time
-from time import sleep
-from time import gmtime
-from subprocess import Popen
-from subprocess import PIPE
-
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
@@ -38,11 +32,11 @@ from config import CliArguments
 from db import database
 from db import monitorLog
 from webserver import datenfresser_webserver
-from monitor import datenfresserMonitorServer
-from monitor import datenfresserMonitorClient
 from core import *
 from helper import *
 from backupOperations import *
+from monitor import datenfresserMonitorServer
+from monitor import datenfresserMonitorClient
 
 c = config()
 MAINVOLUME = c.getMainVolume()
