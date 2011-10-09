@@ -163,11 +163,17 @@ def performBackup( dataID ):
 					id = data.startJob( "archive" , int(dataID))
 					archiveFolder( container , method , compress )
 					data.finishJob( int(dataID),int(id), "finished","","", 0)
-					notifyByMail("Job for dataID " + str(dataID) + " was succesful: " + str(output)) 
+
+					mailBody = "Backup finished on host '" + str(c.getHostname()) + "'\n"
+					mailBody += "Job for dataID " + str(dataID) + " was succesful: " + str(output)
+					notifyByMail( mailBody ) 
 			else:
 				#Oh, the backup was not successful. Maybe we should try again later?
 				data.finishJob( int(dataID), int(id), "aborted", errorMessage, output, transferredSize )
-				notifyByMail("Job for dataID " + str(dataID) + " was not succesful: " + str(error_message)) 
+				
+				mailBody = "Backup aborted on host '" + str(c.getHostname()) + "'\n"
+				mailBody +="Job for dataID " + str(dataID) + " was not succesful: " + str(errorMessage)	
+				notifyByMail(mailBody) 
 	syncMonitorData()
 
 
