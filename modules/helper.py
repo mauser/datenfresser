@@ -1,8 +1,10 @@
 import os
 import sys
 import smtplib
+import datetime
 from subprocess import Popen
 from subprocess import PIPE
+
 
 sys.path.append("/usr/lib/datenfresser/modules")
 sys.path.append("/usr/lib/datenfresser")
@@ -107,7 +109,10 @@ def notifyByMail( body ):
 	server = c.getSmtpServer()
 	password = c.getSmtpPassword()
 
-	header = 'To:' + to_addr + '\r\n' + 'From: ' + from_addr + '\r\n' + 'Subject: Your datenfresser backup \r\n\r\n'
+	date = datetime.datetime.now().strftime( "%d/%m/%Y %H:%M" )
+	date_string = "Date: " + date + " \r\n"
+
+	header = 'To:' + to_addr + '\r\n' + 'From: ' + from_addr + '\r\n' + date_string + 'Subject: Your datenfresser backup \r\n\r\n'
 
 	sendMail( from_addr, to_addr, header + body , from_addr, password, server , port);
 
