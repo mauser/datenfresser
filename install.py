@@ -159,7 +159,7 @@ if os.path.isfile(CONFIG_FILENAME):
 			user = c.getUsername()
 
 else:
-	( user,volume) = createConfig(USERNAME,"/var/datenfresser")
+	(user,volume) = createConfig(USERNAME,"/var/datenfresser")
 
 ###################################################################
 #check if user backupUser exists
@@ -256,12 +256,11 @@ if sys.platform == "darwin":
 else:
 	os.system("chmod +x /etc/init.d/datenfresser")
 
-os.system("chmod +x " + LIB_PATH + "/web/cgi-root/*.py")
+os.system("chmod +x %s/web/cgi-root/*.py" % LIB_PATH)
 
-#os.system("chown -R " + user + " " + volume)
-os.system("chown -R " + user + " " + "/var/lib/datenfresser")
+os.system("chown -R %s /var/lib/datenfresser" % user)
 os.system("touch /var/log/datenfresser.log")
-os.system("chown -R " + user + " " + "/var/log/datenfresser.log")
+os.system("chown -R %s /var/log/datenfresser.log" % user)
 
 print "Configuration successful"
 

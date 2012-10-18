@@ -173,7 +173,9 @@ def performBackup( dataID ):
 				
 				mailBody = "Backup aborted on host '" + str(c.getHostname()) + "'\n"
 				mailBody +="Job for dataID " + str(dataID) + " was not succesful: " + str(errorMessage)	
-				notifyByMail(mailBody) 
+				notifyByMail(mailBody)
+	else:
+		log("Unsupported container type: %s" % container.type)
 	syncMonitorData()
 
 
