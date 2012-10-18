@@ -61,8 +61,8 @@ def getpwnam(name,pwfile='/etc/passwd'):
 def createConfig( USERNAME , mainVolume_preset ):
 
 
-	mainVolume = raw_input( "main backup volume:  " + "[" + DEFAULT_MAINVOLUME + "]" )
-	backupUser = raw_input( "backup user: [" + USERNAME  +"]" )
+	mainVolume = raw_input( "main backup volume:  [%s]" % DEFAULT_MAINVOLUME) 
+	backupUser = raw_input( "backup user: [%s]" % USERNAME) 
 
 	if backupUser == "":
 		backupUser = USERNAME
@@ -71,8 +71,11 @@ def createConfig( USERNAME , mainVolume_preset ):
 		mainVolume = DEFAULT_MAINVOLUME
 		
 	if not os.path.isdir( mainVolume ):
-		os.mkdir( mainVolume );	
-
+		try:
+			os.mkdir( mainVolume );
+		except OSError: 
+			print "Creating the directory %s failed." % mainVolume
+			sys.exit(1)
 
 	output = open( CONFIG_FILENAME , "w")
 	
